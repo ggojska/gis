@@ -22,7 +22,7 @@ Zadania do przypisania do poszczególnych osób:
 
 ### Maciej Pacześny 187229
 
-### Grzegorz Gojska (uzupełnij swój nr indeksu)
+### Grzegorz Gojska (174173)
 
 ## Harmonogram prac
 
