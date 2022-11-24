@@ -21,6 +21,7 @@ W ogólnym zarysie zdanie obejmuje stworzenie serwisu, który pokazuje na mapie 
   * najbliższe w stosunku do danego punktu
   * sortowanie wyników np. po cenie
 * wyszukianie "najtańszej" drogi pomiędzy dwoma punktami, tzn. droga która jest najtańsza biorąc pod uwagę spalanie paliwa (podanego przez użytkownika) oraz cenę paliwa na stacjach benzynowych po drodze
+  * alternatywny przypadek użycia, gdyby powyższy był zbyt trudny do implementacji: wyszukiwanie najkrótszej drogi pomiędzy punktami i podanie całkowitego kosztu przejazdu, uwzględniając cenę paliwa na stacjach na wyszukanej drodze i spalanie samochodu
 * dodawanie ocen i komentarzy do stacji benzynowych (zalogowany użytkownik)
 * zapisywanie danych o swoim samochodzie (model, spalanie) (zalogowany użytkownik)
 
