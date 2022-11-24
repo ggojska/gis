@@ -54,3 +54,4 @@ Na realizację zadania składają się:
 * bezpieczne uwierzytelnianie użytkownika (oparte na tokenie)
 * hasła użytkowników przechowywane w bazie danych w bezpieczny sposób (hash + salt)
 * baza danych zabezpieczona przed atakami SQL Injection
+* zróżnicowanie widoku graficznego markera na mapie w zależności sieci, do której należy dana stacja benzynowa
