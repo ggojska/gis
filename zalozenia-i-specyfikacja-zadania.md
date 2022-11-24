@@ -32,25 +32,25 @@ Na realizację zadania składają się:
 
 ### Technologie
 
-* Front-end:
+* front-end:
   * HTML, CSS, JS
   * biblioteki/ frameworki specyficzne dla GIS (OpenLayers)
-* Back-end:
+* back-end:
   * dowolny serwer WWW
   * Python + Flask
   * baza danych Sqlite
 
 ### Narzędzia
 
-* Dowolne środowisko developerske (np. vscode, pycharm)
-* Repozytorium git na platformie Gitlab
-* Komunikator Discord
+* dowolne środowisko developerske (np. vscode, pycharm)
+* repozytorium git na platformie Gitlab
+* komunikator Discord
 
 ## Specyfikacja wymagań
 
-* Strona www wyświetla się poprawnie na dowolnej, nowoczesnej przeglądarce internetowej na komputerze osobistym (dostosowanie wyglądu do obsługi urządzeń przenośnych nie jest przewidziane)
-* Strona www zgodna ze standardami HTML/XHTML, CSS konsorcjum W3
-* Back-end stworzony w oparciu o wzorzec MVC
-* Bezpieczne uwierzytelnianie użytkownika (oparte na tokenie)
-* Hasła użytkowników przechowywane w bazie danych w bezpieczny sposób (hash + salt)
-* Baza danych zabezpieczona przed atakami SQL Injection
+* strona www wyświetla się poprawnie na dowolnej, nowoczesnej przeglądarce internetowej na komputerze osobistym (dostosowanie wyglądu do obsługi urządzeń przenośnych nie jest przewidziane)
+* strona www zgodna ze standardami HTML/XHTML, CSS konsorcjum W3
+* back-end stworzony w oparciu o wzorzec MVC
+* bezpieczne uwierzytelnianie użytkownika (oparte na tokenie)
+* hasła użytkowników przechowywane w bazie danych w bezpieczny sposób (hash + salt)
+* baza danych zabezpieczona przed atakami SQL Injection
