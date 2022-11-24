@@ -8,7 +8,7 @@
 
 ## Opis zadania
 
-W ogólnym zarysie zdanie obejmuje stworzenie serwisu, który pokazuje na mapie stacje benzynowe różnych sieci.
+W ogólnym zarysie zadanie obejmuje stworzenie serwisu, który pokazuje na mapie stacje benzynowe różnych sieci.
 
 ### Przewidywane przypadki użycia
 
