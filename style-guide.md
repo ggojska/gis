@@ -1,6 +1,6 @@
 # Wskazówki dotyczące stylu kodowania
 
-* w ogólności trzymamy się PEP8: [https://peps.python.org/pep-0008/]
+* w ogólności trzymamy się PEP8: https://peps.python.org/pep-0008/
 * nazwy plików, folderów w projekcie: snake case, małymi literami
 * nazwy klas: CamelCase
 * nazwy metod, funkcji, zmiennych: snake case, małymi literami
