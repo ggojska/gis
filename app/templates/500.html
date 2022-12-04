@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>Coś poszło bardzo nie tak...</h1>
+  <h1>{% block title %}Coś poszło bardzo nie tak...{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
-  <p>Błąd 500</p>
+  <h3>Błąd 500</h3>
   <p>Nastąpił wewnętrzny błąd serwera podczas przetwarzania zapytania.</p>
 {% endblock %}

@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>Coś poszło nie tak...</h1>
+  <h1>{% block title %}Coś poszło nie tak...{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
-  <p>Błąd 404</p>
+  <h3>Błąd 404</h3>
   <p>Żądana strona nie została znaleziona - upewnij się, że wpisałeś poprawny adres.</p>
 {% endblock %}
