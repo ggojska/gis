@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% from "_formhelpers.html" import render_field %}
+
+{% block title %} - logowanie{% endblock %}
+
+{% block header %}
+  <h1>Zaloguj się</h1>
+{% endblock %}
+
+{% block content %}
+  <form method="POST">
+    {{ form.csrf_token }}
+    {{ render_field(form.email) }}
+    {{ render_field(form.password) }}
+    {{ render_field(form.remember_me) }}
+    {{ render_field(form.submit) }}
+  </form>
+  <br>
+  <p>Nie masz konta? <a href="{{ url_for('auth.register') }}">Zarejestruj się</a>.</p>
+{% endblock %}
