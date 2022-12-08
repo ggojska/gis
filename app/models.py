@@ -40,6 +40,18 @@ class GasStation(db.Model):
     name = db.Column(db.String(255), index=True)
     location = db.Column(db.String(255))
     icon = db.Column(db.Text)
+    fuels = db.relationship('Fuel', backref='Fuel')
 
     def __repr__(self):
         return f"<Gas station {self.name}>"
+
+class Fuel(db.Model):
+    __tablename__ = 'fuels'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(10), nullable=False)
+    price = db.Column(db.Numeric(5,2), nullable=False)
+    gas_station_id = db.Column(db.Integer, db.ForeignKey('gas_stations.id'))
+
+    def __repr__(self):
+        return f"<Fuel {self.name}>"
