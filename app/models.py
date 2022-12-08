@@ -31,3 +31,15 @@ class User(UserMixin, db.Model):
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+
+class GasStation(db.Model):
+    __tablename__ = 'gas_stations'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255), index=True)
+    location = db.Column(db.String(255))
+    icon = db.Column(db.Text)
+
+    def __repr__(self):
+        return f"<Gas station {self.name}>"
