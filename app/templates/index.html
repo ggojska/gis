@@ -1,5 +1,12 @@
 {% extends 'base.html' %}
 
-{% block content %}
-  <h1>Tu będzie mapa</h1>
+{% block head %}
+{{ super() }}
+<script src="http://www.openlayers.org/api/OpenLayers.js"></script>
+<script src="{{ url_for('static', filename='map.js') }}"></script>
+<script>
+  window.addEventListener("load", () => {
+    init();
+  });
+</script>
 {% endblock %}

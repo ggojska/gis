@@ -6,4 +6,4 @@
 *.iml
 flaskblog.egg-info/*
 venv/
-
+*.sqlite

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% from "_formhelpers.html" import render_field %}
+
+{% block title %} - rejestracja{% endblock %}
+
+{% block header %}
+  <h1>Stwórz nowe konto</h1>
+{% endblock %}
+
+{% block content %}
+  <form method="POST">
+    {{ form.csrf_token }}
+    {{ render_field(form.email) }}
+    {{ render_field(form.username) }}
+    {{ render_field(form.password) }}
+    {{ render_field(form.password_check) }}
+    {{ render_field(form.submit) }}
+  </form>
+  <br>
+  <p>Masz już konto? <a href="{{ url_for('auth.login') }}">Zaloguj się</a>.</p>
+{% endblock %}
