@@ -25,3 +25,10 @@ def get_gas_stations():
         'next': next,
         'count': pagination.total
     })
+
+@api.route('/gas_stations/<int:id>')
+def get_gas_station(id):
+    station = GasStation.query.get_or_404(id)
+    json = station.to_json()
+    json["fuels"] = [fuel.to_json() for fuel in station.fuels]
+    return jsonify(json)
