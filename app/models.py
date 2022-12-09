@@ -1,3 +1,4 @@
+from flask import url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 
@@ -42,6 +43,9 @@ class GasStation(db.Model):
     lon = db.Column(db.Float, index=True)
     fuels = db.relationship('Fuel', backref='Fuel')
 
+    def get_icon(self):
+        return url_for('static', filename=self.name.lower() + '.png')
+
     def __repr__(self):
         return f"<Gas station {self.name}>"
 
@@ -51,6 +55,7 @@ class GasStation(db.Model):
             "name": self.name,
             "lat": self.lat,
             "lon": self.lon,
+            "icon": self.get_icon(),
             "fuels": [fuel.to_json() for fuel in self.fuels]
         }
         return station
