@@ -7,3 +7,4 @@
 flaskblog.egg-info/*
 venv/
 *.sqlite
+*.http
