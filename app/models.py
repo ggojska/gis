@@ -38,8 +38,8 @@ class GasStation(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), index=True)
-    location = db.Column(db.String(255))
-    icon = db.Column(db.Text)
+    lat = db.Column(db.Float, index=True)
+    lon = db.Column(db.Float, index=True)
     fuels = db.relationship('Fuel', backref='Fuel')
 
     def __repr__(self):
