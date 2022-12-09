@@ -45,6 +45,17 @@ class GasStation(db.Model):
     def __repr__(self):
         return f"<Gas station {self.name}>"
 
+    def to_json(self):
+        station = {
+            "id": self.id,
+            "name": self.name,
+            "lat": self.lat,
+            "lon": self.lon,
+            "fuels": [fuel.to_json() for fuel in self.fuels]
+        }
+        return station
+
+
 class Fuel(db.Model):
     __tablename__ = 'fuels'
 
@@ -55,3 +66,11 @@ class Fuel(db.Model):
 
     def __repr__(self):
         return f"<Fuel {self.name}>"
+
+    def to_json(self):
+        fuel = {
+            "id": self.id,
+            "name": self.name,
+            "price": self.price
+        }
+        return fuel
