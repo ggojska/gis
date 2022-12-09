@@ -56,7 +56,6 @@ class GasStation(db.Model):
             "lat": self.lat,
             "lon": self.lon,
             "icon": self.get_icon(),
-            "fuels": [fuel.to_json() for fuel in self.fuels]
         }
         return station
 
