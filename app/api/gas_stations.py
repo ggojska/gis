@@ -1,7 +1,7 @@
 from flask import jsonify, request, url_for, current_app
 from sqlalchemy.sql import text
 
-from ..models import GasStation, db
+from ..models import GasStation
 from ..sql import sql
 from . import api
 
@@ -12,21 +12,21 @@ def get_gas_stations():
     lat = request.args.get('lat', type=float)
     lon = request.args.get('lon', type=float)
     radius = request.args.get('radius', type=int)
+    per_page = current_app.config['STATIONS_PER_PAGE']
     prev, next = None, None
 
     if lat and lon and radius:
-        query = GasStation.query.from_statement(text(sql.select_gas_stations_with_distance)).\
-            params(lat=lat, lon=lon, radius=radius).all()
-        stations = query
+        query = GasStation.query.from_statement(text(sql.select_gas_stations_with_distance))
+        stations = query.params(lat=lat, lon=lon, radius=radius).all()
         total = len(stations)
 
     else:
         query = GasStation.query
-        pagination = query.paginate(
-                page=page, per_page=current_app.config['STATIONS_PER_PAGE'],
+        pagination = query.order_by(GasStation.id).paginate(
+                page=page, per_page=per_page,
                 error_out=False)
         stations = pagination.items
-        
+
         if pagination.has_prev:
             prev = url_for('api.get_gas_stations', page=page-1)
         if pagination.has_next:
