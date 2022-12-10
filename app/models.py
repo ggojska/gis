@@ -41,6 +41,7 @@ class GasStation(db.Model):
     name = db.Column(db.String(255), index=True)
     lat = db.Column(db.Float, index=True)
     lon = db.Column(db.Float, index=True)
+    distance = db.Column(db.Float)
     fuels = db.relationship('Fuel', backref='Fuel')
 
     def get_icon(self):
@@ -55,6 +56,7 @@ class GasStation(db.Model):
             "name": self.name,
             "lat": self.lat,
             "lon": self.lon,
+            "distance": self.distance,
             "icon": self.get_icon(),
         }
         return station
