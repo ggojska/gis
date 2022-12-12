@@ -1,3 +1,5 @@
+from math import ceil
+
 from flask import jsonify, request, url_for, current_app
 from sqlalchemy.sql import text
 
@@ -12,11 +14,18 @@ def get_gas_stations():
     lat = request.args.get('lat', type=float)
     lon = request.args.get('lon', type=float)
     radius = request.args.get('radius', type=int)
-    per_page = current_app.config['STATIONS_PER_PAGE']
+    per_page = request.args.get('per_page', type=int)
+    if not per_page:
+        per_page = current_app.config['STATIONS_PER_PAGE']
     prev, next = None, None
 
     if lat and lon and radius:
-        query = GasStation.query.from_statement(text(sql.select_gas_stations_with_distance))
+        text_sql = text(sql.select_gas_stations_with_distance)
+        text_sql = text_sql.columns(GasStation.id, GasStation.name, GasStation.lat,
+            GasStation.lon, GasStation.distance)
+        text_sql = text_sql.select().where(text("distance < :radius")).\
+            limit(per_page).offset(per_page * (page-1))
+        query = GasStation.query.from_statement(text_sql)
         stations = query.params(lat=lat, lon=lon, radius=radius).all()
         total = len(stations)
 
