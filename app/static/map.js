@@ -1,53 +1,110 @@
-var map;
-var mercator = new OpenLayers.Projection("EPSG:900913");
-var wgs84 = new OpenLayers.Projection("EPSG:4326");
 var apiKey = "ApTJzdkyN1DdFKkRAE6QIDtzihNaf6IWJsT-nQ_2eMoO4PN__0Tzhl2-WgJtXFSp";
-var options = {
-    projection: mercator,
-    controls: [],
-    displayProjection: wgs84
-};
+var map;
+var queue = [];
+var markerSource;
+const ZOOM_THRESHOLD = 11;
+const WAIT_UNTIL_SEND_REQ = 2750;
+const api_url = "http://127.0.0.1:5000/api/v1/";
 
 function init() {
-    map = new OpenLayers.Map("mapa", options);
 
-    var bingRoads = new OpenLayers.Layer.Bing({
-        name: 'drogi',
-        key: apiKey,
-        type: "Road"
+    map = new ol.Map({
+        target: document.getElementById("mapa"),
+        projection: new ol.proj.Projection("EPSG:4326"),
+        view: new ol.View({
+            center: ol.proj.fromLonLat([18.64542, 54.34766]),
+            zoom: 10
+        })
     });
-    var bingAerials =
-        new OpenLayers.Layer.Bing({
-            name: 'satelita',
-            key: apiKey,
-            type: "Aerial"
+
+    var osm = new ol.layer.Tile({
+        source: new ol.source.OSM()
+    });
+
+    map.getLayers().insertAt(0, osm);
+
+    map.on("moveend", function () {
+        view = map.getView()
+        var zoom = view.getZoom();
+        if (zoom > ZOOM_THRESHOLD) {
+            var center = view.getCenter();
+            var coordsTransform = ol.proj.toLonLat(center);
+            var lon = coordsTransform[0];
+            var lat = coordsTransform[1];
+
+            var extent = map.getView().calculateExtent(map.getSize());
+            var left = ol.proj.toLonLat(ol.extent.getBottomLeft(extent));
+            var right = ol.proj.toLonLat(ol.extent.getBottomRight(extent));
+            var radius = Math.floor(ol.sphere.getDistance(left, right) / 2);
+            queue.push([lon, lat, radius]);
+
+            setTimeout(function () {
+                getNewMarkers();
+            }, WAIT_UNTIL_SEND_REQ);
+        }
+        else {
+            clearMarkers();
+        };
+    });
+}
+
+function getNewMarkers() {
+    if (queue.length) {
+        elem = queue.pop();
+        queue = [];
+
+        var request;
+        request = new XMLHttpRequest();
+        request.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                setNewMarkers(this);
+            }
+        };
+        request.open('GET', api_url + "/gas_stations?lon=" + elem[0] + "&lat=" + elem[1] + "&radius=" + elem[2]);
+        request.send();
+    };
+}
+
+function setNewMarkers(request) {
+    json = JSON.parse(request.response);
+
+    clearMarkers();
+    markers = [];
+    json.gas_stations.forEach(element => {
+        var point = new ol.Feature({
+            geometry: new ol.geom.Point(ol.proj.fromLonLat([element.lon, element.lat])),
         });
-    var bingAerialsWithLabels =
-        new OpenLayers.Layer.Bing({
-            name: 'hybryda',
-            key: apiKey,
-            type: "AerialWithLabels"
+
+        point.setStyle(
+            new ol.style.Style({
+                image: new ol.style.Icon({
+                    src: element.icon,
+                    scale: 0.8,
+                }),
+            })
+        );
+
+        markers.push(point);
+    });
+
+    if (typeof markerSource === 'undefined') {
+        markerSource = new ol.source.Vector({
+            features: markers,
         });
-    var osm = new OpenLayers.Layer.OSM("Simple OSM Map");
-    map.addLayers([osm, bingRoads, bingAerials, bingAerialsWithLabels]);
+    }
+    else {
+        if (markers !== 'undefined') markerSource.addFeatures(markers);
+    }
 
-    // Dodawanie kontrolki do wybierania warstw
-    var layerSwitcher = new OpenLayers.Control.LayerSwitcher();
-    var zoomBar = new OpenLayers.Control.PanZoomBar();
-    var overview = new OpenLayers.Control.OverviewMap();
-    var scaleLine = new OpenLayers.Control.ScaleLine();
-    var kbDefaults = new OpenLayers.Control.KeyboardDefaults();
-    var mousePos = new OpenLayers.Control.MousePosition();
+    var markerLayer = new ol.layer.Vector({
+        source: markerSource,
+    });
 
-    map.addControl(layerSwitcher);
-    map.addControl(zoomBar);
-    map.addControl(overview);
-    map.addControl(scaleLine);
-    map.addControl(kbDefaults);
-    map.addControl(mousePos);
+    map.addLayer(markerLayer);
+}
 
-    map.displayProjection = wgs84;
-
-    // Ustawianie wyśrodkowania na podane wspołrzedne + transofmacja wgs84 -> mercator
-    map.setCenter(new OpenLayers.LonLat(18.64542, 54.34766).transform(wgs84, mercator), 7);
+function clearMarkers() {
+    if (typeof markerSource !== 'undefined') {
+        markerSource.clear();
+    }
 }
