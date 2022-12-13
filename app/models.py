@@ -1,4 +1,6 @@
-from flask import url_for
+import os
+
+from flask import url_for, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 
@@ -45,7 +47,11 @@ class GasStation(db.Model):
     fuels = db.relationship('Fuel', backref='Fuel')
 
     def get_icon(self):
-        return url_for('static', filename=self.name.lower() + '.png')
+        if os.path.exists(os.path.join(
+            current_app.config["STATIC_DIR"],
+            self.name.lower() + '.png')):
+            return url_for('static', filename=self.name.lower() + '.png')
+        return url_for('static', filename="gas_station.png")
 
     def __repr__(self):
         return f"<Gas station {self.name}>"
