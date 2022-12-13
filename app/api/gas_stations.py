@@ -1,5 +1,3 @@
-from math import ceil
-
 from flask import jsonify, request, url_for, current_app
 from sqlalchemy.sql import text
 
