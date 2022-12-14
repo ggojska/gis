@@ -1,4 +1,5 @@
 var map;
+var popup;
 var queue = [];
 var markerSource;
 const ZOOM_THRESHOLD = 11;
@@ -21,6 +22,12 @@ function init() {
     });
 
     map.getLayers().insertAt(0, osm);
+
+    var popupBody = document.getElementById('popup');
+    popup = new ol.Overlay({
+        element: popupBody,
+    });
+    map.addOverlay(popup);
 
     map.on("moveend", function () {
         view = map.getView()
@@ -46,6 +53,10 @@ function init() {
         };
     });
 
+    map.on("pointermove", function (evt) {
+        if (evt.dragging) return;
+        displayFeatureInfo(evt);
+    });
 }
 
 function getNewMarkers() {
@@ -101,4 +112,48 @@ function clearMarkers() {
     if (typeof markerSource !== 'undefined') {
         markerSource.clear();
     }
+}
+
+function displayFeatureInfo(evt) {
+    var myFeature;
+
+    map.forEachFeatureAtPixel(evt.pixel, function (feature) {
+        myFeature = feature;
+    });
+
+    if (typeof myFeature !== 'undefined') {
+        popup.setPosition(evt.coordinate);
+
+        var id = myFeature.values_.id;
+        var request;
+        request = new XMLHttpRequest();
+        request.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                document.getElementById("popup").innerHTML = getGasStationInfoFromResponse(this);
+            }
+        };
+        request.open('GET', api_url + "/gas_stations/" + id);
+        request.send();
+    } else {
+        popup.setPosition(undefined);
+    }
+};
+
+function getGasStationInfoFromResponse(request) {
+    json = JSON.parse(request.response);
+
+    var info = [];
+    info.push("<p>Stacja <strong>" + json.name + "</strong></p>")
+
+    var isFuelPriceInfo = false;
+    json.fuels.forEach(fuel => {
+        info.push("<p>" + fuel.name + ": <strong>" + fuel.price + "</strong></p>");
+        isFuelPriceInfo = true;
+    });
+
+    if (!isFuelPriceInfo) {
+        info.push("<p>brak informacji o cenach paliwa na stacji</p>");
+    }
+
+    return info.join("");
 }
