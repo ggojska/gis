@@ -4,6 +4,7 @@
 <head>
   {% block head %}
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='ol.css') }}">
   <title>Mapa stacji benzynowych{% block title %}{% endblock %}</title>
   {% endblock %}
 </head>
@@ -34,6 +35,7 @@
     {% endfor %}
     
     {% if mapa %}
+      <div id="popup" class="ol-popup"></div>
       <div id="mapa"></div>
     {% else %}
       <div id="content">

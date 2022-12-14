@@ -1,5 +1,5 @@
-var apiKey = "ApTJzdkyN1DdFKkRAE6QIDtzihNaf6IWJsT-nQ_2eMoO4PN__0Tzhl2-WgJtXFSp";
 var map;
+var popup;
 var queue = [];
 var markerSource;
 const ZOOM_THRESHOLD = 11;
@@ -23,6 +23,12 @@ function init() {
 
     map.getLayers().insertAt(0, osm);
 
+    var popupBody = document.getElementById('popup');
+    popup = new ol.Overlay({
+        element: popupBody,
+    });
+    map.addOverlay(popup);
+
     map.on("moveend", function () {
         view = map.getView()
         var zoom = view.getZoom();
@@ -45,6 +51,11 @@ function init() {
         else {
             clearMarkers();
         };
+    });
+
+    map.on("pointermove", function (evt) {
+        if (evt.dragging) return;
+        displayFeatureInfo(evt);
     });
 }
 
@@ -73,6 +84,7 @@ function setNewMarkers(request) {
     json.gas_stations.forEach(element => {
         var point = new ol.Feature({
             geometry: new ol.geom.Point(ol.proj.fromLonLat([element.lon, element.lat])),
+            id: element.id
         });
 
         point.setStyle(
@@ -87,19 +99,12 @@ function setNewMarkers(request) {
         markers.push(point);
     });
 
-    if (typeof markerSource === 'undefined') {
-        markerSource = new ol.source.Vector({
-            features: markers,
-        });
-    }
-    else {
-        if (markers !== 'undefined') markerSource.addFeatures(markers);
-    }
+    if (typeof markerSource === 'undefined') markerSource = new ol.source.Vector();
+    markerSource.addFeatures(markers);
 
     var markerLayer = new ol.layer.Vector({
         source: markerSource,
     });
-
     map.addLayer(markerLayer);
 }
 
@@ -107,4 +112,48 @@ function clearMarkers() {
     if (typeof markerSource !== 'undefined') {
         markerSource.clear();
     }
+}
+
+function displayFeatureInfo(evt) {
+    var myFeature;
+
+    map.forEachFeatureAtPixel(evt.pixel, function (feature) {
+        myFeature = feature;
+    });
+
+    if (typeof myFeature !== 'undefined') {
+        popup.setPosition(evt.coordinate);
+
+        var id = myFeature.values_.id;
+        var request;
+        request = new XMLHttpRequest();
+        request.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                document.getElementById("popup").innerHTML = getGasStationInfoFromResponse(this);
+            }
+        };
+        request.open('GET', api_url + "/gas_stations/" + id);
+        request.send();
+    } else {
+        popup.setPosition(undefined);
+    }
+};
+
+function getGasStationInfoFromResponse(request) {
+    json = JSON.parse(request.response);
+
+    var info = [];
+    info.push("<p>Stacja <strong>" + json.name + "</strong></p>")
+
+    var isFuelPriceInfo = false;
+    json.fuels.forEach(fuel => {
+        info.push("<p>" + fuel.name + ": <strong>" + fuel.price + "</strong></p>");
+        isFuelPriceInfo = true;
+    });
+
+    if (!isFuelPriceInfo) {
+        info.push("<p>brak informacji o cenach paliwa na stacji</p>");
+    }
+
+    return info.join("");
 }
