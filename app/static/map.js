@@ -1,4 +1,3 @@
-var apiKey = "ApTJzdkyN1DdFKkRAE6QIDtzihNaf6IWJsT-nQ_2eMoO4PN__0Tzhl2-WgJtXFSp";
 var map;
 var queue = [];
 var markerSource;
@@ -46,6 +45,7 @@ function init() {
             clearMarkers();
         };
     });
+
 }
 
 function getNewMarkers() {
@@ -73,6 +73,7 @@ function setNewMarkers(request) {
     json.gas_stations.forEach(element => {
         var point = new ol.Feature({
             geometry: new ol.geom.Point(ol.proj.fromLonLat([element.lon, element.lat])),
+            id: element.id
         });
 
         point.setStyle(
@@ -87,19 +88,12 @@ function setNewMarkers(request) {
         markers.push(point);
     });
 
-    if (typeof markerSource === 'undefined') {
-        markerSource = new ol.source.Vector({
-            features: markers,
-        });
-    }
-    else {
-        if (markers !== 'undefined') markerSource.addFeatures(markers);
-    }
+    if (typeof markerSource === 'undefined') markerSource = new ol.source.Vector();
+    markerSource.addFeatures(markers);
 
     var markerLayer = new ol.layer.Vector({
         source: markerSource,
     });
-
     map.addLayer(markerLayer);
 }
 
