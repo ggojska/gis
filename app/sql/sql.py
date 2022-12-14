@@ -5,7 +5,7 @@ SELECT
     , gas_stations.name AS name
     , gas_stations.lat AS lat
     , gas_stations.lon AS lon
-    , ROUND(2.0 * 6371.0 *
+    , ROUND(2.0 * 6371.0 * 1000 * 
     atan2(
         sqrt(
             sin((lat * pi()/180.0 - :lat * pi()/180.0)/2) *
