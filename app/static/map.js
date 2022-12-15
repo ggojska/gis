@@ -91,7 +91,7 @@ function setNewMarkers(request) {
             new ol.style.Style({
                 image: new ol.style.Icon({
                     src: element.icon,
-                    size: [24, 24]
+                    scale: 1
                 }),
             })
         );
