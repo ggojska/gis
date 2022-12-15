@@ -49,9 +49,9 @@ class GasStation(db.Model):
     def get_icon(self):
         if os.path.exists(os.path.join(
             current_app.config["STATIC_DIR"],
-            self.name.lower() + '.png')):
-            return url_for('static', filename=self.name.lower() + '.png')
-        return url_for('static', filename="gas_station.png")
+            self.name.lower() + '.ico')):
+            return url_for('static', filename=self.name.lower() + '.ico')
+        return url_for('static', filename="gas_station.ico")
 
     def __repr__(self):
         return f"<Gas station {self.name}>"
