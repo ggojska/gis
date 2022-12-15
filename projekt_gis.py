@@ -14,4 +14,5 @@ if os.getenv('IMPORT_SAMPLE_DATA') == "1":
     if os.path.exists(path):
         with open(path, "r", encoding="utf-8") as file:
             data = file.read()
-        db.session.execute(data)
+            db.session.execute(data)
+            db.session.commit()
