@@ -72,7 +72,7 @@ header {
 #fuel {
     border-collapse: collapse;
     font-size: medium;
-    width: 7vw;
+    width: 100%;
 }
 
 #fuel td,
