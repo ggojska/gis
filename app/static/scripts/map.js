@@ -1,6 +1,7 @@
 var map;
 var popup;
 var queue = [];
+var stations = {};
 var markerSource;
 const ZOOM_THRESHOLD = 12;
 const WAIT_UNTIL_SEND_REQ = 2750;
@@ -56,6 +57,10 @@ function init() {
     map.on("pointermove", function (evt) {
         if (evt.dragging) return;
         displayFeatureInfo(evt);
+    });
+
+    map.on("movestart", function () {
+        queue = [];
     });
 }
 
@@ -123,17 +128,24 @@ function displayFeatureInfo(evt) {
 
     if (typeof myFeature !== 'undefined') {
         popup.setPosition(evt.coordinate);
-
         var id = myFeature.values_.id;
+
+        if (id in stations) {
+            document.getElementById("popup").innerHTML = getGasStationInfoFromResponse(stations[id]);
+            return;
+        }
+
         var request;
         request = new XMLHttpRequest();
         request.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
+                stations[id] = this;
                 document.getElementById("popup").innerHTML = getGasStationInfoFromResponse(this);
             }
         };
         request.open('GET', api_url + "/gas_stations/" + id);
         request.send();
+
     } else {
         popup.setPosition(undefined);
     }
