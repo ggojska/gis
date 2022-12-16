@@ -11,8 +11,9 @@ class LoginForm(FlaskForm):
         Length(1, 64, message="Nazwa użytkownika musi mieć minimum 1 znak i maksimum 64 znaki."),
         Email(message="Nieprawidłowy adres email.")])
     password = PasswordField('Hasło', validators=[DataRequired()])
-    remember_me = BooleanField('Pozostaw mnie zalogowanym')
+    remember_me = BooleanField('Pozostaw zalogowanym')
     submit = SubmitField('Zaloguj')
+    submit.label = None
 
 class RegistrationForm(FlaskForm):
     username = StringField('Nazwa użytkownika', validators=[DataRequired(),
@@ -20,7 +21,7 @@ class RegistrationForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(),
         Length(1, 64, message="Adres email nie może być dłuższy, niż 64 znaki."),
         Email(message="Nieprawidłowy adres email.")])
-    password = PasswordField('Password', validators=[DataRequired(),
+    password = PasswordField('Hasło', validators=[DataRequired(),
         Length(8, message="Hasło musi mieć minimum 8 znaków."),
         EqualTo('password_check', message='Hasła muszą się zgadzać.')])
     password_check = PasswordField('Powtórz hasło', validators=[DataRequired()])
