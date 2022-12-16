@@ -145,14 +145,17 @@ function getGasStationInfoFromResponse(request) {
     var info = [];
     info.push("<p>Stacja <strong>" + json.name + "</strong></p>")
 
-    var isFuelPriceInfo = false;
+    var isFuelPriceInfo = json.fuels.length;
+    if (isFuelPriceInfo) info.push('<table id="fuel">');
     json.fuels.forEach(fuel => {
-        info.push("<p>" + fuel.name + ": <strong>" + fuel.price + "</strong></p>");
-        isFuelPriceInfo = true;
+        info.push("<tr><td>" + fuel.name + "</td><td><strong>" + fuel.price + "</strong></td></tr>");
     });
 
-    if (!isFuelPriceInfo) {
-        info.push("<p>brak informacji o cenach paliwa na stacji</p>");
+    if (isFuelPriceInfo) {
+        info.push('</table>')
+    }
+    else {
+        info.push("<p>brak informacji o cenach paliwa</p>");
     }
 
     return info.join("");

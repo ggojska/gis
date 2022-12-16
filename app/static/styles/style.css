@@ -68,3 +68,22 @@ header {
     width: 100%;
     height: 92vh;
 }
+
+#fuel {
+    border-collapse: collapse;
+    font-size: medium;
+    width: 7vw;
+}
+
+#fuel td,
+th {
+    border: 0px solid #dddddd;
+    text-align: left;
+    padding: 5px;
+    width: 50%;
+    text-align: center;
+}
+
+#fuel tr:nth-child(even) {
+    background-color: #dddddd;
+}
