@@ -51,8 +51,8 @@ class GasStation(db.Model):
             current_app.config["STATIC_DIR"],
             "assets",
             self.name.lower() + '.ico')):
-            return url_for('static/assets', filename=self.name.lower() + '.ico')
-        return url_for('static/assets', filename="gas_station.ico")
+            return url_for('static/assets', filename='/assets/' + self.name.lower() + '.ico')
+        return url_for('static', filename="/assets/gas_station.ico")
 
     def __repr__(self):
         return f"<Gas station {self.name}>"

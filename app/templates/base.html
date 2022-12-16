@@ -3,8 +3,8 @@
 
 <head>
   {% block head %}
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='ol.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='/styles/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='/styles/ol.css') }}">
   <title>Mapa stacji benzynowych{% block title %}{% endblock %}</title>
   {% endblock %}
 </head>
