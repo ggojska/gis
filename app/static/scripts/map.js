@@ -97,7 +97,7 @@ function setNewMarkers(request) {
                 image: new ol.style.Icon({
                     src: element.icon,
                     scale: 1
-                }),
+                })
             })
         );
 
@@ -128,6 +128,7 @@ function displayFeatureInfo(evt) {
 
     if (typeof myFeature !== 'undefined') {
         popup.setPosition(evt.coordinate);
+        map.getTarget().style.cursor = "pointer";
         var id = myFeature.values_.id;
 
         if (id in stations) {
@@ -148,6 +149,7 @@ function displayFeatureInfo(evt) {
 
     } else {
         popup.setPosition(undefined);
+        map.getTarget().style.cursor = "";
     }
 };
 
