@@ -1,5 +1,5 @@
 {% macro render_field(field) %}
-  <div class="form-row">{{ field.label }}</div>
+  <div class="form-row">{% if field.name != "submit" %} {{ field.label }} {% endif %}</div>
   <div class="form-row">{{ field(**kwargs)|safe }}</div>
   {% if field.errors %}
     <ul class=errors>
