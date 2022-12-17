@@ -9,7 +9,8 @@ from ..models import User
 class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(),
         Length(1, 64, message="Nazwa użytkownika musi mieć minimum 1 znak i maksimum 64 znaki."),
-        Email(message="Nieprawidłowy adres email.")])
+        Email(message="Nieprawidłowy adres email.")],
+        render_kw={"autocomplete": "off"})
     password = PasswordField('Hasło', validators=[DataRequired()])
     remember_me = BooleanField('Pozostaw zalogowanym')
     submit = SubmitField('Zaloguj')
@@ -17,10 +18,12 @@ class LoginForm(FlaskForm):
 
 class RegistrationForm(FlaskForm):
     username = StringField('Nazwa użytkownika', validators=[DataRequired(),
-        Length(1, 64, message="Nazwa użytkownika musi mieć minimum 1 znak i maksimum 64 znaki.")])
+        Length(1, 64, message="Nazwa użytkownika musi mieć minimum 1 znak i maksimum 64 znaki.")],
+        render_kw={"autocomplete": "off"})
     email = StringField('Email', validators=[DataRequired(),
         Length(1, 64, message="Adres email nie może być dłuższy, niż 64 znaki."),
-        Email(message="Nieprawidłowy adres email.")])
+        Email(message="Nieprawidłowy adres email.")],
+        render_kw={"autocomplete": "off"})
     password = PasswordField('Hasło', validators=[DataRequired(),
         Length(8, message="Hasło musi mieć minimum 8 znaków."),
         EqualTo('password_check', message='Hasła muszą się zgadzać.')])
