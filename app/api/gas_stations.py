@@ -35,14 +35,13 @@ def get_gas_stations():
     print(query)
 
     if lat and lon and radius:
-        text_sql = sql.select_gas_stations_with_distance.replace(":lon", str(lon)).\
-            replace(":lat", str(lat))
-        text_sql = text(text_sql)
-        cte = select([column('id'), column('harvesine')], use_labels=True).select_from(text_sql).\
-            cte("cte")
-        query = query.join(cte, cte.columns["id"] == GasStation.id)
-        query = query.filter(column('harvesine') < radius)
-        query_ordered = query.order_by(column('harvesine').asc())
+        text_sql = text(sql.select_gas_stations_with_distance.replace(":lon", str(lon))\
+            .replace(":lat", str(lat)))
+        cte = select([column('id'), column('harvesine')], use_labels=True).select_from(text_sql)\
+            .cte("cte")
+        query_ordered = query.join(cte, cte.columns["id"] == GasStation.id)\
+                .filter(column('harvesine') < radius)\
+                .order_by(column('harvesine').asc())
     else:
         query_ordered = query.order_by(GasStation.id)
 
