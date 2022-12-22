@@ -12,7 +12,7 @@ class LoginForm(FlaskForm):
         Email(message="Nieprawidłowy adres email.")],
         render_kw={"autocomplete": "off"})
     password = PasswordField('Hasło', validators=[DataRequired()])
-    remember_me = BooleanField('Pozostaw zalogowanym')
+    remember_me = BooleanField('Pozostań zalogowanym')
     submit = SubmitField('Zaloguj')
     submit.label = None
 
