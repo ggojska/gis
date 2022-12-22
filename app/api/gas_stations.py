@@ -1,5 +1,6 @@
 from flask import jsonify, request, url_for, current_app
 from sqlalchemy.sql import text, func, select, column
+from sqlalchemy.orm import joinedload
 
 from ..models import GasStation, Fuel
 from ..sql import sql
@@ -23,12 +24,15 @@ def get_gas_stations():
         per_page = current_app.config['STATIONS_PER_PAGE']
     next, prev = None, None
 
-    query = GasStation.query
+    query = GasStation.query.outerjoin(GasStation.fuels)
+
     if name:
         query = query.filter(func.lower(GasStation.name).like(name))
 
     if fuel:
         query = query.filter(func.lower(Fuel.name).like(fuel))
+
+    print(query)
 
     if lat and lon and radius:
         text_sql = sql.select_gas_stations_with_distance.replace(":lon", str(lon)).\
@@ -38,8 +42,11 @@ def get_gas_stations():
             cte("cte")
         query = query.join(cte, cte.columns["id"] == GasStation.id)
         query = query.filter(column('harvesine') < radius)
+        query_ordered = query.order_by(column('harvesine').asc())
+    else:
+        query_ordered = query.order_by(GasStation.id)
 
-    pagination = query.order_by(GasStation.id).paginate(
+    pagination = query_ordered.paginate(
             page=page,
             per_page=per_page,
             error_out=False
