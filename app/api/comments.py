@@ -42,7 +42,10 @@ def get_comment(id):
 @api.route('/comments/<int:id>', methods=['DELETE'])
 def delete_comment(id):
     comment = Comment.query.get_or_404(id)
-    db.session.remove(comment)
+    # if g.current_user != comment.user:
+        # return errors.forbidden('Nie można usuwać komentarzy innych użytkowników')
+
+    db.session.delete(comment)
     db.session.commit()
     response = jsonify({"message": "Resource successfully deleted"})
     response.status_code = 201
@@ -92,8 +95,8 @@ def post_new_comment(id):
 @api.route('/comments/<int:id>', methods=['PUT'])
 def update_comment(id):
     comment = Comment.query.get_or_404(id)
-    if g.current_user != comment.user:
-        return errors.forbidden('Nie można edytować komentarzy innych użytkowników')
+    # if g.current_user != comment.user:
+        # return errors.forbidden('Nie można edytować komentarzy innych użytkowników')
 
     new_comment = Comment.from_json(request.json)
     comment.comment = new_comment.comment
