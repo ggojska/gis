@@ -45,6 +45,7 @@ class GasStation(db.Model):
     lon = db.Column(db.Float, index=True)
     distance = db.Column(db.Float)
     fuels = db.relationship("Fuel", backref="gas_station")
+    comments = db.relationship("Comment", backref="gas_station")
 
     def get_icon(self):
         if os.path.exists(os.path.join(
@@ -87,3 +88,22 @@ class Fuel(db.Model):
             "price": self.price
         }
         return fuel
+
+
+class Comment(db.Model):
+    __tablename__ = 'comments'
+
+    id = db.Column(db.Integer, primary_key=True)
+    comment = db.Column(db.Text)
+    rate = db.Column(db.Numeric(2,1))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    gas_station_id = db.Column(db.Integer, db.ForeignKey('gas_stations.id'))
+
+    def to_json(self):
+        comment = {
+            "id": self.id,
+            "comment": self.comment,
+            "rate": self.rate,
+            "user": None,
+        }
+        return comment
