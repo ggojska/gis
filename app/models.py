@@ -27,9 +27,6 @@ class User(UserMixin, db.Model):
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-    def __repr__(self):
-        return f"<User {self.username}>"
-
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -55,9 +52,6 @@ class GasStation(db.Model):
             return url_for('static', filename='/assets/' + self.name.lower() + '.ico')
         return url_for('static', filename="/assets/gas_station.ico")
 
-    def __repr__(self):
-        return f"<Gas station {self.name}>"
-
     def to_json(self):
         station = {
             "id": self.id,
@@ -77,9 +71,6 @@ class Fuel(db.Model):
     name = db.Column(db.String(10), nullable=False)
     price = db.Column(db.Numeric(5,2), nullable=False)
     gas_station_id = db.Column(db.Integer, db.ForeignKey('gas_stations.id'))
-
-    def __repr__(self):
-        return f"<Fuel {self.name}>"
 
     def to_json(self):
         fuel = {
