@@ -7,6 +7,7 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'hard to guess string'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     STATIONS_PER_PAGE = 100
+    COMMENTS_PER_PAGE = 100
     STATIC_DIR = os.path.join(basedir, "app", "static")
 
     @staticmethod
