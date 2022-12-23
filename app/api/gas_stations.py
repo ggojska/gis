@@ -65,4 +65,5 @@ def get_gas_station(id):
     station = GasStation.query.get_or_404(id)
     json = station.to_json()
     json["fuels"] = [fuel.to_json() for fuel in station.fuels]
+    json["comments"] = [comment.to_json() for comment in station.comments]
     return jsonify(json)
