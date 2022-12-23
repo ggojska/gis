@@ -5,7 +5,7 @@ var stations = {};
 var markerSource;
 const ZOOM_THRESHOLD = 12;
 const WAIT_UNTIL_SEND_REQ = 2750;
-const api_url = "http://127.0.0.1:5000/api/v1/";
+const api_url = "/api/v1/";
 
 function init() {
 

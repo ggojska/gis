@@ -44,7 +44,7 @@ class GasStation(db.Model):
     lat = db.Column(db.Float, index=True)
     lon = db.Column(db.Float, index=True)
     distance = db.Column(db.Float)
-    fuels = db.relationship('Fuel', backref='Fuel')
+    fuels = db.relationship("Fuel", backref="gas_station")
 
     def get_icon(self):
         if os.path.exists(os.path.join(
