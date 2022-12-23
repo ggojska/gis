@@ -8,6 +8,7 @@ from sqlalchemy.orm import validates
 
 from . import db
 from . import login_manager
+from .exceptions import ValidationError
 
 
 class User(UserMixin, db.Model):
@@ -44,7 +45,7 @@ class GasStation(db.Model):
     lon = db.Column(db.Float, index=True)
     distance = db.Column(db.Float)
     fuels = db.relationship("Fuel", backref="gas_station")
-    comments = db.relationship("Comment", backref="gas_station")
+    comments = db.relationship("Comment", backref="gas_station", lazy='dynamic')
 
     def get_icon(self):
         if os.path.exists(os.path.join(
@@ -106,6 +107,17 @@ class Comment(db.Model):
             "user_id": self.user_id,
         }
         return comment
+
+    @staticmethod
+    def from_json(json_comment):
+        comment = json_comment.get('comment')
+        rate = json_comment.get('rate')
+        if not rate or not comment:
+            raise ValidationError("komentarz lub ocena muszą zostać uzupełnione")
+        if rate:
+            if type(rate) != float:
+                raise ValidationError("ocena musi być liczbą")
+        return Comment(comment=comment, rate=rate)
 
     @validates('rate')
     def validate_column_name(self, key, value):

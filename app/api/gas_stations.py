@@ -5,7 +5,7 @@ from sqlalchemy.sql import text, func, select, column
 
 from ..models import GasStation, Fuel, db
 from ..sql import sql
-from . import api
+from . import api, errors
 
 
 @api.route('/gas_stations/')
@@ -62,8 +62,9 @@ def get_gas_stations():
 
 @api.route('/gas_stations/<int:id>')
 def get_gas_station(id):
-    station = GasStation.query.get_or_404(id)
+    station = GasStation.query.get(id)
+    if not station:
+         return errors.not_found(f'stacja o id {id} nie istnieje')
     json = station.to_json()
     json["fuels"] = [fuel.to_json() for fuel in station.fuels]
-    json["comments"] = [comment.to_json() for comment in station.comments]
     return jsonify(json)
