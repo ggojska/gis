@@ -1,8 +1,9 @@
+from math import ceil
+
 from flask import jsonify, request, url_for, current_app
 from sqlalchemy.sql import text, func, select, column
-from sqlalchemy.orm import joinedload
 
-from ..models import GasStation, Fuel
+from ..models import GasStation, Fuel, db
 from ..sql import sql
 from . import api
 
@@ -24,15 +25,13 @@ def get_gas_stations():
         per_page = current_app.config['STATIONS_PER_PAGE']
     next, prev = None, None
 
-    query = GasStation.query.outerjoin(GasStation.fuels)
+    query = db.session.query(GasStation).outerjoin(GasStation.fuels)
 
     if name:
         query = query.filter(func.lower(GasStation.name).like(name))
 
     if fuel:
         query = query.filter(func.lower(Fuel.name).like(fuel))
-
-    print(query)
 
     if lat and lon and radius:
         text_sql = text(sql.select_gas_stations_with_distance.replace(":lon", str(lon))\
@@ -45,19 +44,14 @@ def get_gas_stations():
     else:
         query_ordered = query.order_by(GasStation.id)
 
-    pagination = query_ordered.paginate(
-            page=page,
-            per_page=per_page,
-            error_out=False
-            )
-    stations = pagination.items
-
-    if pagination.has_prev:
+    offset = per_page * (page-1)
+    stations = query_ordered.limit(per_page).offset(offset).distinct()
+    total = query_ordered.distinct(GasStation.id).count()
+    
+    if page > 1:
         prev = url_for('api.get_gas_stations', page=page-1)
-    if pagination.has_next:
+    if ceil(total/per_page) > page:
         next = url_for('api.get_gas_stations', page=page+1)
-
-    total = pagination.total
 
     return jsonify({
         'gas_stations': [station.to_json() for station in stations],
