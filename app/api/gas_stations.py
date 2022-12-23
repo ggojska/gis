@@ -62,7 +62,9 @@ def get_gas_stations():
 
 @api.route('/gas_stations/<int:id>')
 def get_gas_station(id):
-    station = GasStation.query.get_or_404(id)
+    station = GasStation.query.get(id)
+    if not station:
+         return errors.not_found(f'stacja o id {id} nie istnieje')
     json = station.to_json()
     json["fuels"] = [fuel.to_json() for fuel in station.fuels]
     return jsonify(json)

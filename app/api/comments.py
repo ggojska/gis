@@ -35,7 +35,9 @@ def get_comments():
 
 @api.route('/comments/<int:id>')
 def get_comment(id):
-    comment = Comment.query.get_or_404(id)
+    comment = Comment.query.get(id)
+    if not comment:
+         return errors.not_found(f'nie znaleziono komentarza')
     return jsonify(comment.to_json())
 
 
@@ -62,7 +64,10 @@ def get_gas_station_comments(id):
     if not per_page:
         per_page = current_app.config['STATIONS_PER_PAGE']
 
-    station = GasStation.query.get_or_404(id)
+    station = GasStation.query.get(id)
+    if not station:
+         return errors.not_found(f'stacja o id {id} nie istnieje')
+
     pagination = station.comments.order_by(Comment.created_at.asc()).paginate(
         page=page, per_page=current_app.config['COMMENTS_PER_PAGE'],
         error_out=False)
@@ -88,7 +93,10 @@ def post_new_comment(id):
     if not g.get("current_user"):
         return errors.unauthorized("operacja dozwolona tylko dla zalogowanego użytkownika")
 
-    station = GasStation.query.get_or_404(id)
+    station = GasStation.query.get(id)
+    if not station:
+         return errors.not_found(f'stacja o id {id} nie istnieje')
+
     comment = Comment.from_json(request.json)
     comment.user = g.current_user
     db.session.add(comment)
@@ -106,7 +114,10 @@ def update_comment(id):
     if g.current_user != comment.user:
         return errors.forbidden('nie można edytować komentarzy innych użytkowników')
 
-    comment = Comment.query.get_or_404(id)
+    comment = Comment.query.get(id)
+    if not comment:
+         return errors.not_found(f'nie znaleziono komentarza')
+
     new_comment = Comment.from_json(request.json)
     comment.comment = new_comment.comment
     comment.rate = new_comment.rate
