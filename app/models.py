@@ -87,6 +87,7 @@ class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     comment = db.Column(db.Text)
     rate = db.Column(db.Numeric(2,1))
+    user = db.relationship("User", backref="comment")
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     gas_station_id = db.Column(db.Integer, db.ForeignKey('gas_stations.id'))
 
@@ -95,6 +96,7 @@ class Comment(db.Model):
             "id": self.id,
             "comment": self.comment,
             "rate": self.rate,
-            "user": None,
+            "user": self.user.username,
+            "user_id": self.user_id,
         }
         return comment
