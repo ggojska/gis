@@ -41,13 +41,16 @@ def get_comment(id):
 
 @api.route('/comments/<int:id>', methods=['DELETE'])
 def delete_comment(id):
-    comment = Comment.query.get_or_404(id)
-    # if g.current_user != comment.user:
-        # return errors.forbidden('Nie można usuwać komentarzy innych użytkowników')
+    if not g.get("current_user"):
+        return errors.unauthorized("operacja dozwolona tylko dla zalogowanego użytkownika")
 
+    if g.current_user != comment.user:
+        return errors.forbidden('nie można usuwać komentarzy innych użytkowników')
+
+    comment = Comment.query.get_or_404(id)
     db.session.delete(comment)
     db.session.commit()
-    response = jsonify({"message": "Resource successfully deleted"})
+    response = jsonify({"message": "resource successfully deleted"})
     response.status_code = 201
     return response
 
@@ -82,6 +85,9 @@ def get_gas_station_comments(id):
 
 @api.route('/gas_stations/<int:id>/comments', methods=['POST'])
 def post_new_comment(id):
+    if not g.get("current_user"):
+        return errors.unauthorized("operacja dozwolona tylko dla zalogowanego użytkownika")
+
     station = GasStation.query.get_or_404(id)
     comment = Comment.from_json(request.json)
     comment.user = g.current_user
@@ -94,10 +100,13 @@ def post_new_comment(id):
 
 @api.route('/comments/<int:id>', methods=['PUT'])
 def update_comment(id):
-    comment = Comment.query.get_or_404(id)
-    # if g.current_user != comment.user:
-        # return errors.forbidden('Nie można edytować komentarzy innych użytkowników')
+    if not g.get("current_user"):
+        return errors.unauthorized("operacja dozwolona tylko dla zalogowanego użytkownika")
 
+    if g.current_user != comment.user:
+        return errors.forbidden('nie można edytować komentarzy innych użytkowników')
+
+    comment = Comment.query.get_or_404(id)
     new_comment = Comment.from_json(request.json)
     comment.comment = new_comment.comment
     comment.rate = new_comment.rate
