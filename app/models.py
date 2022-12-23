@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 
 from flask import url_for, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -88,6 +89,8 @@ class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     comment = db.Column(db.Text)
     rate = db.Column(db.Numeric(2,1))
+    created_at = db.Column(db.DateTime, default=datetime.now())
+    updated_at = db.Column(db.DateTime, default=datetime.now())
     user = db.relationship("User", backref="comment")
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     gas_station_id = db.Column(db.Integer, db.ForeignKey('gas_stations.id'))
@@ -97,6 +100,8 @@ class Comment(db.Model):
             "id": self.id,
             "comment": self.comment,
             "rate": self.rate,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
             "user": self.user.username,
             "user_id": self.user_id,
         }
