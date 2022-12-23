@@ -8,6 +8,10 @@ from . import api
 @api.route('/comments/')
 def get_comments():
     page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', type=int)
+    if not per_page:
+        per_page = current_app.config['STATIONS_PER_PAGE']
+
     pagination = Comment.query.order_by(Comment.created_at.desc()).paginate(
         page=page, per_page=current_app.config['COMMENTS_PER_PAGE'],
         error_out=False)
@@ -30,8 +34,12 @@ def get_comments():
 
 @api.route('/gas_stations/<int:id>/comments')
 def get_gas_station_comments(id):
-    station = GasStation.query.get_or_404(id)
     page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', type=int)
+    if not per_page:
+        per_page = current_app.config['STATIONS_PER_PAGE']
+
+    station = GasStation.query.get_or_404(id)
     pagination = station.comments.order_by(Comment.created_at.asc()).paginate(
         page=page, per_page=current_app.config['COMMENTS_PER_PAGE'],
         error_out=False)
