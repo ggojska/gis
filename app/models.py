@@ -3,6 +3,7 @@ import os
 from flask import url_for, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
+from sqlalchemy.orm import validates
 
 from . import db
 from . import login_manager
@@ -100,3 +101,11 @@ class Comment(db.Model):
             "user_id": self.user_id,
         }
         return comment
+
+    @validates('rate')
+    def validate_column_name(self, key, value):
+        if value < 1.0:
+            raise ValueError('ocena musi być wyższa lub równa 1')
+        if value > 5.0:
+            raise ValueError('ocena musi być niższa lub równa 5')
+        return value
