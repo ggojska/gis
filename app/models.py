@@ -47,6 +47,16 @@ class GasStation(db.Model):
     fuels = db.relationship("Fuel", backref="gas_station")
     comments = db.relationship("Comment", backref="gas_station", lazy='dynamic')
 
+    def average_rate(self):
+        sum, count = 0.0, 0
+        if self.comments:
+            for comment in self.comments:
+                if comment.rate:
+                    sum += float(comment.rate)
+                    count += 1
+        if count > 0:
+            return round(sum/count,2)
+
     def get_icon(self):
         if os.path.exists(os.path.join(
             current_app.config["STATIC_DIR"],
@@ -63,6 +73,7 @@ class GasStation(db.Model):
             "lon": self.lon,
             "distance": self.distance,
             "icon": self.get_icon(),
+            "average_rate": self.average_rate(),
         }
         return station
 
