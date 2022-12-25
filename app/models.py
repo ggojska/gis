@@ -137,3 +137,35 @@ class Comment(db.Model):
         if value > 5.0:
             raise ValueError('ocena musi być niższa lub równa 5')
         return value
+
+
+class Car(db.Model):
+    __tablename__ = 'cars'
+
+    id = db.Column(db.Integer, primary_key=True)
+    make = db.Column(db.String(20), nullable=False)
+    model = db.Column(db.String(20), nullable=False)
+    combustion = db.Column(db.Numeric(3,1), nullable=False)
+    fuel = db.Column(db.String(10), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+    def to_json(self):
+        car = {
+            "id": self.id,
+            "make": self.make,
+            "model": self.model,
+            "fuel": self.fuel,
+            "combustion": self.combustion
+        }
+        return car
+
+
+    @staticmethod
+    def from_json(json_car):
+        make = json_car.get('car')
+        model = json_car.get('model')
+        combustion = json_car.get('combustion')
+        fuel = json_car.get('fuel')
+        if type(combustion) != float:
+            raise ValidationError("spalanie musi być liczbą")
+        return Car(make=make, model=model, combustion=combustion)
