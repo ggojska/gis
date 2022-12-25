@@ -5,11 +5,14 @@ from flask import url_for, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from sqlalchemy.orm import validates
+from sqlalchemy import select, text
 
 from . import db
 from . import login_manager
 from .exceptions import ValidationError
 
+
+fuels_lookup = select(text("DISTINCT name FROM fuels"))
 
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
@@ -159,13 +162,32 @@ class Car(db.Model):
         }
         return car
 
-
     @staticmethod
     def from_json(json_car):
         make = json_car.get('car')
+        if not make:
+            raise ValidationError("marka samochodu mysi być podana")
         model = json_car.get('model')
+        if not model:
+            raise ValidationError("model samochodu musi być podany")
         combustion = json_car.get('combustion')
-        fuel = json_car.get('fuel')
+        if not combustion:
+            raise ValidationError("spalanie samochodu musi być podane")
         if type(combustion) != float:
             raise ValidationError("spalanie musi być liczbą")
+        fuel = json_car.get('fuel')
+        user_id = json_car.get('user_id')
+        if user_id:
+            raise ValidationError("samochód musi być przypisany do użytkownika")
         return Car(make=make, model=model, combustion=combustion)
+
+    @validates('fuel')
+    def validate_column_name(self, key, value):
+        if not value:
+            raise ValidationError("typ paliwa musi byc podany")
+        if not hasattr(Car, 'available_fuels'):
+            Car.available_fuels = db.session.execute(fuels_lookup).fetchall()
+        for tuple in Car.available_fuels:
+            if tuple[0].lower() == value.lower():
+                return value
+        raise ValidationError(f"nieznany typ paliwa: {value}")
