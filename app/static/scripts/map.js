@@ -4,7 +4,7 @@ var queue = [];
 var stations = {};
 var markerSource;
 const ZOOM_THRESHOLD = 12;
-const WAIT_UNTIL_SEND_REQ = 2750;
+const SEND_REQ_DELAY = 2300;
 const api_url = "/api/v1/";
 
 function init() {
@@ -47,7 +47,7 @@ function init() {
 
             setTimeout(function () {
                 getNewMarkers();
-            }, WAIT_UNTIL_SEND_REQ);
+            }, SEND_REQ_DELAY);
         }
         else {
             clearMarkers();
