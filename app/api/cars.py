@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from flask import jsonify, request, url_for, current_app, g
+from flask import jsonify, request, url_for, g
 
 from ..models import User, Car, db
 from . import api, errors
