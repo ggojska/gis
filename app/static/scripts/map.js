@@ -2,6 +2,7 @@ var map;
 var popup;
 var queue = [];
 var stations = {};
+var searchActive = False;
 var markerSource;
 const ZOOM_THRESHOLD = 12;
 const SEND_REQ_DELAY = 2300;
@@ -66,8 +67,7 @@ function pushToRequestQueue()
     var right = ol.proj.toLonLat(ol.extent.getBottomRight(extent));
     var radius = Math.floor(ol.sphere.getDistance(left, right) / 2);
     var name = "";
-    var fuel = "";
-    queue.push([lat, lon, radius]);
+    queue.push([lat, lon, radius, name]);
 }
 
 function getNewMarkers() {
@@ -91,10 +91,15 @@ function prepareRequest(lat, lon, radius) {
     return request;
 }
 
-function searchByGasStationName(name) {
-    var request = prepareRequest(elem[1], elem[0], elem[2]);
-    request.url = request.url + "&name=" + name
-    // TODO
+function search() {
+    pushToRequestQueue();
+    getNewMarkers();
+    searchActive = True;
+}
+
+function closeSearch() {
+    searchActive = False;
+    clearMarkers();
 }
 
 function setNewMarkers(request) {
