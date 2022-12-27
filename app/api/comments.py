@@ -111,12 +111,12 @@ def update_comment(id):
     if not g.get("current_user"):
         return errors.unauthorized("operacja dozwolona tylko dla zalogowanego użytkownika")
 
-    if g.current_user != comment.user:
-        return errors.forbidden('nie można edytować komentarzy innych użytkowników')
-
     comment = Comment.query.get(id)
     if not comment:
          return errors.not_found(f'nie znaleziono komentarza')
+
+    if g.current_user != comment.user:
+        return errors.forbidden('nie można edytować komentarzy innych użytkowników')
 
     new_comment = Comment.from_json(request.json)
     comment.comment = new_comment.comment
