@@ -21,6 +21,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(64), unique=True, index=True)
     username = db.Column(db.String(64), unique=True, index=True)
     password_hash = db.Column(db.String(128))
+    cars = db.relationship("Car", backref="user", lazy='dynamic')
 
     @property
     def password(self):
@@ -151,6 +152,7 @@ class Car(db.Model):
     combustion = db.Column(db.Numeric(3,1), nullable=False)
     fuel = db.Column(db.String(10), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user = db.relationship("User", backref="car")
 
     def to_json(self):
         car = {
