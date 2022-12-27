@@ -2,9 +2,9 @@ var map;
 var popup;
 var queue = [];
 var stations = {};
-var searchActive = False;
+var searchActive = false;
 var markerSource;
-const ZOOM_THRESHOLD = 12;
+const ZOOM_THRESHOLD = 13;
 const SEND_REQ_DELAY = 2300;
 const api_url = "/api/v1/";
 
@@ -94,11 +94,11 @@ function prepareRequest(lat, lon, radius) {
 function search() {
     pushToRequestQueue();
     getNewMarkers();
-    searchActive = True;
+    searchActive = true;
 }
 
 function closeSearch() {
-    searchActive = False;
+    searchActive = false;
     clearMarkers();
 }
 
