@@ -34,17 +34,7 @@ function init() {
         view = map.getView()
         var zoom = view.getZoom();
         if (zoom > ZOOM_THRESHOLD) {
-            var center = view.getCenter();
-            var coordsTransform = ol.proj.toLonLat(center);
-            var lon = coordsTransform[0];
-            var lat = coordsTransform[1];
-
-            var extent = map.getView().calculateExtent(map.getSize());
-            var left = ol.proj.toLonLat(ol.extent.getBottomLeft(extent));
-            var right = ol.proj.toLonLat(ol.extent.getBottomRight(extent));
-            var radius = Math.floor(ol.sphere.getDistance(left, right) / 2);
-            queue.push([lon, lat, radius]);
-
+            pushToRequestQueue();
             setTimeout(function () {
                 getNewMarkers();
             }, SEND_REQ_DELAY);
@@ -64,11 +54,27 @@ function init() {
     });
 }
 
+function pushToRequestQueue()
+{
+    var center = view.getCenter();
+    var coordsTransform = ol.proj.toLonLat(center);
+    var lon = coordsTransform[0];
+    var lat = coordsTransform[1];
+
+    var extent = map.getView().calculateExtent(map.getSize());
+    var left = ol.proj.toLonLat(ol.extent.getBottomLeft(extent));
+    var right = ol.proj.toLonLat(ol.extent.getBottomRight(extent));
+    var radius = Math.floor(ol.sphere.getDistance(left, right) / 2);
+    var name = "";
+    var fuel = "";
+    queue.push([lat, lon, radius]);
+}
+
 function getNewMarkers() {
     if (queue.length) {
         elem = queue.pop();
         queue = [];
-        const request = prepareRequest(elem[1], elem[0], elem[2]);
+        const request = prepareRequest(elem[0], elem[1], elem[2]);
         request.send();
     };
 }
@@ -83,6 +89,12 @@ function prepareRequest(lat, lon, radius) {
     };
     request.open('GET', api_url + "/gas_stations?lon=" +lon + "&lat=" + lat + "&radius=" + radius);
     return request;
+}
+
+function searchByGasStationName(name) {
+    var request = prepareRequest(elem[1], elem[0], elem[2]);
+    request.url = request.url + "&name=" + name
+    // TODO
 }
 
 function setNewMarkers(request) {
