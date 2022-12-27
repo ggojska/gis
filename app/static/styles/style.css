@@ -16,7 +16,6 @@ nav {
 }
 
 nav h1 {
-    display: inline-block;
     margin: auto;
     padding: 15px 30px 15px;
 }
@@ -24,10 +23,6 @@ nav h1 {
 nav h1 a {
     text-decoration: none;
     color: #000000;
-}
-
-nav ul {
-    display: inline-block;
 }
 
 nav li {
@@ -49,6 +44,18 @@ nav li a {
 
 nav li a:hover {
     background-color: grey;
+}
+
+.nav {
+    display: inline-block;
+}
+
+#start, #center, #end {
+    width: 33%;
+}
+
+#end {
+    text-align: right;
 }
 
 .content {
