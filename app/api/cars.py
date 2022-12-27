@@ -48,7 +48,7 @@ def add_new_car(id):
          return errors.not_found(f'użytkownik o id {id} nie istnieje')
 
     if g.current_user != user:
-        return errors.forbidden('nie można dodawać samochodów do użytkowników')
+        return errors.forbidden('nie można dodawać samochodów do innych użytkowników')
 
     car = Car.from_json(request.json)
     car.user_id = id
