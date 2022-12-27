@@ -68,17 +68,21 @@ function getNewMarkers() {
     if (queue.length) {
         elem = queue.pop();
         queue = [];
-
-        var request;
-        request = new XMLHttpRequest();
-        request.onreadystatechange = function () {
-            if (this.readyState == 4 && this.status == 200) {
-                setNewMarkers(this);
-            }
-        };
-        request.open('GET', api_url + "/gas_stations?lon=" + elem[0] + "&lat=" + elem[1] + "&radius=" + elem[2]);
+        const request = prepareRequest(elem[1], elem[0], elem[2]);
         request.send();
     };
+}
+
+function prepareRequest(lat, lon, radius) {
+    var request;
+    request = new XMLHttpRequest();
+    request.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            setNewMarkers(this);
+        }
+    };
+    request.open('GET', api_url + "/gas_stations?lon=" +lon + "&lat=" + lat + "&radius=" + radius);
+    return request;
 }
 
 function setNewMarkers(request) {
