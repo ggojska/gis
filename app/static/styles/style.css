@@ -241,6 +241,20 @@ label {
     background-color: #166da7;
 }
 
-ul>li {
-    margin-top: 10px
+li {
+    margin-top: 10px;
 }
+
+.cars>* {
+    width: 100%;
+}
+
+.car-description {
+    width: 40%;
+}
+
+.car-description, .car-edit {
+    display: block;
+    float: left;
+}
+
