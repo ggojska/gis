@@ -1,5 +1,6 @@
 <form class="searchbar">
-  <input type="text" title="Szukaj po nazwie stacji" placeholder="Szukaj po nazwie stacji" onfocus="this.placeholder=''" onblur="this.placeholder='Szukaj po nazwie stacji'">
-  <input type="text" title="Szukaj po nazwie paliwa" style="display: none;" placeholder="Szukaj po nazwie paliwa" onfocus="this.placeholder=''" onblur="this.placeholder='Szukaj po nazwie paliwa'">
-  <button type="button" onclick="performSearch()">Szukaj</button> 
+  <input type="text" name="gas_station_name" title="Szukaj po nazwie stacji" placeholder="Szukaj po nazwie stacji" onfocus="this.placeholder=''" onblur="this.placeholder='Szukaj po nazwie stacji'">
+  <input type="text" name="fuel_name" title="Szukaj po nazwie paliwa" style="display: none;" placeholder="Szukaj po nazwie paliwa" onfocus="this.placeholder=''" onblur="this.placeholder='Szukaj po nazwie paliwa'">
+  <button type="button" id="close_search_button" onclick="endSearch()">X</button>
+  <button type="button" id="search_button" title="Szukaj" onclick="startSearch()">Szukaj</button> 
 </form>
