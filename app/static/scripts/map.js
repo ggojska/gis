@@ -73,9 +73,8 @@ function pushToRequestQueue()
 function getNewMarkers() {
     if (queue.length) {
         if (!searchActive) {
-            elem = queue.pop();
+            const request = prepareRequest(queue.pop());
             queue = [];
-            const request = prepareRequest(elem);
             request.send();
         };
     };
