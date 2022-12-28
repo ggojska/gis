@@ -152,7 +152,7 @@ class Car(db.Model):
     combustion = db.Column(db.Numeric(3,1), nullable=False)
     fuel = db.Column(db.String(10), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    user = db.relationship("User", backref="car")
+    # user = db.relationship("User", backref="car")
 
     def to_json(self):
         car = {

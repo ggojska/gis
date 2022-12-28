@@ -2,9 +2,10 @@ var map;
 var popup;
 var queue = [];
 var stations = {};
+var searchActive = false;
 var markerSource;
 const ZOOM_THRESHOLD = 12;
-const WAIT_UNTIL_SEND_REQ = 2750;
+const SEND_REQ_DELAY = 2300;
 const api_url = "/api/v1/";
 
 function init() {
@@ -34,23 +35,13 @@ function init() {
         view = map.getView()
         var zoom = view.getZoom();
         if (zoom > ZOOM_THRESHOLD) {
-            var center = view.getCenter();
-            var coordsTransform = ol.proj.toLonLat(center);
-            var lon = coordsTransform[0];
-            var lat = coordsTransform[1];
-
-            var extent = map.getView().calculateExtent(map.getSize());
-            var left = ol.proj.toLonLat(ol.extent.getBottomLeft(extent));
-            var right = ol.proj.toLonLat(ol.extent.getBottomRight(extent));
-            var radius = Math.floor(ol.sphere.getDistance(left, right) / 2);
-            queue.push([lon, lat, radius]);
-
+            if (!searchActive) pushToRequestQueue();
             setTimeout(function () {
                 getNewMarkers();
-            }, WAIT_UNTIL_SEND_REQ);
+            }, SEND_REQ_DELAY);
         }
         else {
-            clearMarkers();
+            if (!searchActive) clearMarkers();
         };
     });
 
@@ -64,21 +55,79 @@ function init() {
     });
 }
 
+function pushToRequestQueue()
+{
+    var center = view.getCenter();
+    var coordsTransform = ol.proj.toLonLat(center);
+    var lon = coordsTransform[0];
+    var lat = coordsTransform[1];
+
+    var extent = map.getView().calculateExtent(map.getSize());
+    var left = ol.proj.toLonLat(ol.extent.getBottomLeft(extent));
+    var right = ol.proj.toLonLat(ol.extent.getBottomRight(extent));
+    var radius = Math.floor(ol.sphere.getDistance(left, right) / 2);
+    options = {"lat": lat, "lon": lon, "radius": radius}
+    
+    const name = document.getElementsByName("gas_station_name")[0].value;
+    if (name.length > 0) options.name = name;
+
+    const fuel = document.getElementsByName("fuel_name")[0].value;
+    if (fuel.length > 0) options.fuel = fuel;
+
+    queue.push(options);
+}
+
 function getNewMarkers() {
     if (queue.length) {
-        elem = queue.pop();
+        const request = prepareRequest(queue.pop());
         queue = [];
-
-        var request;
-        request = new XMLHttpRequest();
-        request.onreadystatechange = function () {
-            if (this.readyState == 4 && this.status == 200) {
-                setNewMarkers(this);
-            }
-        };
-        request.open('GET', api_url + "/gas_stations?lon=" + elem[0] + "&lat=" + elem[1] + "&radius=" + elem[2]);
         request.send();
     };
+}
+
+function prepareRequest(options) {
+    var request;
+    request = new XMLHttpRequest();
+    request.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            setNewMarkers(this);
+        }
+    };
+    request_url = api_url + "/gas_stations?lon=" +options.lon + "&lat=" + options.lat + "&radius=" + options.radius
+    if ("name" in options) request_url = request_url + "&name=" + options.name;
+    if ("fuel" in options) request_url = request_url + "&fuel=" + options.fuel;
+
+    request.open('GET', request_url);
+    return request;
+}
+
+function canSearch() {
+    const name = document.getElementsByName("gas_station_name")[0].value;
+    const fuel = document.getElementsByName("fuel_name")[0].value;
+    return ((fuel.length > 0) || (name.length > 0))
+    
+}
+
+function startSearch() {
+    if (canSearch())
+    {
+        clearMarkers();
+        pushToRequestQueue();
+        getNewMarkers();
+        document.getElementById("close-search-button").style.display = "flex";
+        searchActive = true;
+    }
+}
+
+function endSearch() {
+    if (searchActive)
+    {
+        clearMarkers();
+        document.getElementsByName("fuel_name")[0].value = "";
+        document.getElementsByName("gas_station_name")[0].value = "";
+        document.getElementById("close-search-button").style.display = "none";
+        searchActive = false;
+    }
 }
 
 function setNewMarkers(request) {
