@@ -240,3 +240,7 @@ label {
 .loginform input[type=submit]:focus {
     background-color: #166da7;
 }
+
+ul>li {
+    margin-top: 10px
+}
