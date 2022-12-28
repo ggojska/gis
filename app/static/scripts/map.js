@@ -66,8 +66,8 @@ function pushToRequestQueue()
     var left = ol.proj.toLonLat(ol.extent.getBottomLeft(extent));
     var right = ol.proj.toLonLat(ol.extent.getBottomRight(extent));
     var radius = Math.floor(ol.sphere.getDistance(left, right) / 2);
-    var name = "";
-    queue.push([lat, lon, radius, name]);
+    options = {"lat": lat, "lon": lon, "radius": radius}
+    queue.push(options);
 }
 
 function getNewMarkers() {
@@ -75,13 +75,13 @@ function getNewMarkers() {
         if (!searchActive) {
             elem = queue.pop();
             queue = [];
-            const request = prepareRequest(elem[0], elem[1], elem[2]);
+            const request = prepareRequest(elem);
             request.send();
         };
     };
 }
 
-function prepareRequest(lat, lon, radius) {
+function prepareRequest(options) {
     var request;
     request = new XMLHttpRequest();
     request.onreadystatechange = function () {
@@ -89,7 +89,10 @@ function prepareRequest(lat, lon, radius) {
             setNewMarkers(this);
         }
     };
-    request.open('GET', api_url + "/gas_stations?lon=" +lon + "&lat=" + lat + "&radius=" + radius);
+    request_url = api_url + "/gas_stations?lon=" +options.lon + "&lat=" + options.lat + "&radius=" + options.radius
+    if ("name" in options) request_url = request_url + "&name=" + options.name;
+
+    request.open('GET', request_url);
     return request;
 }
 
