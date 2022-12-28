@@ -114,6 +114,7 @@ function startSearch() {
         clearMarkers();
         pushToRequestQueue();
         getNewMarkers();
+        document.getElementById("close-search-button").style.display = "flex";
         searchActive = true;
     }
 }
@@ -124,6 +125,7 @@ function endSearch() {
         clearMarkers();
         document.getElementsByName("fuel_name")[0].value = "";
         document.getElementsByName("gas_station_name")[0].value = "";
+        document.getElementById("close-search-button").style.display = "none";
         searchActive = false;
     }
 }

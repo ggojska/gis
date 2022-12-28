@@ -1,13 +1,10 @@
 <form class="search-bar">
-  <div class="input-container">
-    <input type="text" name="gas_station_name" title="Szukaj po nazwie stacji" placeholder="Szukaj po nazwie stacji"
-      onfocus="this.placeholder=''" onblur="this.placeholder='Szukaj po nazwie stacji'">
-    <input type="text" name="fuel_name" title="Szukaj po nazwie paliwa" style="display: none;"
-      placeholder="Szukaj po nazwie paliwa" onfocus="this.placeholder=''"
-      onblur="this.placeholder='Szukaj po nazwie paliwa'">
-    <input type="text" placeholder="Enter text here">
-    <button type="button">▾</button>
-  </div>
-  <button type="button" id="close-search-button" onclick="endSearch()">X</button>
+  <input type="text" name="gas_station_name" title="Szukaj po nazwie stacji" placeholder="Szukaj po nazwie stacji"
+    onfocus="this.placeholder=''" onblur="this.placeholder='Szukaj po nazwie stacji'">
+  <input type="text" name="fuel_name" title="Szukaj po nazwie paliwa" style="display: none;"
+    placeholder="Szukaj po nazwie paliwa" onfocus="this.placeholder=''"
+    onblur="this.placeholder='Szukaj po nazwie paliwa'">
+  <!-- <button type="button" id="drop-down-button">▾</button> -->
+  <button type="button" id="close-search-button" title="Anuluj wyszukiwanie" onclick="endSearch()">X</button>
   <button type="button" id="search-button" title="Szukaj" onclick="startSearch()">Szukaj</button>
 </form>
