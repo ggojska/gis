@@ -91,6 +91,7 @@ function prepareRequest(options) {
     };
     request_url = api_url + "/gas_stations?lon=" +options.lon + "&lat=" + options.lat + "&radius=" + options.radius
     if ("name" in options) request_url = request_url + "&name=" + options.name;
+    if ("fuel" in options) request_url = request_url + "&fuel=" + options.fuel;
 
     request.open('GET', request_url);
     return request;
