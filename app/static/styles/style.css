@@ -118,7 +118,7 @@ th {
 }
 
 .searchbar input {
-    width: 85%;
+    width: 80%;
     background-color: #efefef;
     color: #333333;
     border: 2px solid #999999;
@@ -132,13 +132,21 @@ th {
     border: 2px solid #367fb0;
 }
 
-.searchbar button {
+#close_search_button {
+    width: 4%;
+}
+
+#search_button {
     width: 14%;
+}
+
+.searchbar button {
     background-color: #367fb0;
+    border: none;
     font-weight: bold;
     color: white;
     padding: 10px;
-    border: none;
+    margin: 1px 1px 1px 1px;
     border-radius: 5px;
     box-sizing: border-box;
     outline: none;
