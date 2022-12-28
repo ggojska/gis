@@ -4,7 +4,7 @@ var queue = [];
 var stations = {};
 var searchActive = false;
 var markerSource;
-const ZOOM_THRESHOLD = 13;
+const ZOOM_THRESHOLD = 12;
 const SEND_REQ_DELAY = 2300;
 const api_url = "/api/v1/";
 
@@ -72,10 +72,12 @@ function pushToRequestQueue()
 
 function getNewMarkers() {
     if (queue.length) {
-        elem = queue.pop();
-        queue = [];
-        const request = prepareRequest(elem[0], elem[1], elem[2]);
-        request.send();
+        if (!searchActive) {
+            elem = queue.pop();
+            queue = [];
+            const request = prepareRequest(elem[0], elem[1], elem[2]);
+            request.send();
+        };
     };
 }
 
@@ -136,7 +138,7 @@ function setNewMarkers(request) {
 
 function clearMarkers() {
     if (typeof markerSource !== 'undefined') {
-        markerSource.clear();
+        if (!searchActive) markerSource.clear();
     }
 }
 
