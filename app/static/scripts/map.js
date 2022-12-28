@@ -101,20 +101,30 @@ function prepareRequest(options) {
     return request;
 }
 
+function canSearch() {
+    const name = document.getElementsByName("gas_station_name")[0].value;
+    const fuel = document.getElementsByName("fuel_name")[0].value;
+    return ((fuel.length > 0) || (name.length > 0))
+    
+}
+
 function startSearch() {
-    clearMarkers();
-    pushToRequestQueue();
-    getNewMarkers();
-    searchActive = true;
+    if (canSearch())
+    {
+        clearMarkers();
+        pushToRequestQueue();
+        getNewMarkers();
+        searchActive = true;
+    }
 }
 
 function endSearch() {
     if (searchActive)
     {
-        searchActive = false;
         clearMarkers();
         document.getElementsByName("fuel_name")[0].value = "";
         document.getElementsByName("gas_station_name")[0].value = "";
+        searchActive = false;
     }
 }
 
