@@ -50,7 +50,9 @@ nav li a:hover {
     display: inline-block;
 }
 
-#start, #center, #end {
+#start,
+#center,
+#end {
     width: 33%;
 }
 
@@ -110,12 +112,44 @@ th {
     border-radius: 5px;
 }
 
-label {
-    font-weight: bold;
+.searchbar {
+    display: flex;
+    align-items: center;
 }
 
-form {
-    /* display: none; */
+.searchbar input {
+    width: 85%;
+    background-color: #efefef;
+    color: #333333;
+    border: 2px solid #999999;
+    border-radius: 5px;
+    padding: 10px;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.searchbar input:focus {
+    border: 2px solid #367fb0;
+}
+
+.searchbar button {
+    width: 14%;
+    background-color: #367fb0;
+    font-weight: bold;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    box-sizing: border-box;
+    outline: none;
+    cursor: pointer;
+}
+
+.searchbar button:hover {
+    background-color: #166da7;
+}
+
+.loginform {
     margin-left: auto;
     margin-right: auto;
     width: 100%;
@@ -126,9 +160,13 @@ form {
     margin-top: 10px;
 }
 
-input[type=text], 
-input[type=password],
-input[type=checkbox] {
+label {
+    font-weight: bold;
+}
+
+.loginform input[type=text],
+.loginform input[type=password],
+.loginform input[type=checkbox] {
     background-color: #efefef;
     color: #333333;
     border: 2px solid #999999;
@@ -138,26 +176,26 @@ input[type=checkbox] {
     outline: none;
 }
 
-input[type=text]:focus, 
-input[type=password]:focus,
-input[type=checkbox]:focus,
-input[type=checkbox]:hover {
+.loginform input[type=text]:focus,
+.loginform input[type=password]:focus,
+.loginform input[type=checkbox]:focus,
+.loginform input[type=checkbox]:hover {
     background-color: #ffffff;
     border: 2px solid #367fb0;
 }
 
-input[type=text], 
-input[type=password] {
+.loginform input[type=text],
+.loginform input[type=password] {
     width: 100%;
 }
 
-input[type=checkbox] {
+.loginform input[type=checkbox] {
     width: 25px;
     height: 25px;
     margin-top: 10px;
 }
 
-input[type=submit] {
+.loginform input[type=submit] {
     width: 300px;
     background-color: #367fb0;
     font-size: 20px;
@@ -166,12 +204,12 @@ input[type=submit] {
     margin-top: 20px;
     border: none;
     border-radius: 5px;
-    cursor:pointer;
+    cursor: pointer;
     letter-spacing: 2px;
     outline: none;
 }
 
-input[type=submit]:hover, 
-input[type=submit]:focus {
+.loginform input[type=submit]:hover,
+.loginform input[type=submit]:focus {
     background-color: #166da7;
 }
