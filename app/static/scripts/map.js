@@ -35,13 +35,13 @@ function init() {
         view = map.getView()
         var zoom = view.getZoom();
         if (zoom > ZOOM_THRESHOLD) {
-            pushToRequestQueue();
+            if (!searchActive) pushToRequestQueue();
             setTimeout(function () {
                 getNewMarkers();
             }, SEND_REQ_DELAY);
         }
         else {
-            clearMarkers();
+            if (!searchActive) clearMarkers();
         };
     });
 
@@ -67,16 +67,21 @@ function pushToRequestQueue()
     var right = ol.proj.toLonLat(ol.extent.getBottomRight(extent));
     var radius = Math.floor(ol.sphere.getDistance(left, right) / 2);
     options = {"lat": lat, "lon": lon, "radius": radius}
+    
+    const name = document.getElementsByName("gas_station_name")[0].value;
+    if (name.length > 0) options.name = name;
+
+    const fuel = document.getElementsByName("fuel_name")[0].value;
+    if (fuel.length > 0) options.fuel = fuel;
+
     queue.push(options);
 }
 
 function getNewMarkers() {
     if (queue.length) {
-        if (!searchActive) {
-            const request = prepareRequest(queue.pop());
-            queue = [];
-            request.send();
-        };
+        const request = prepareRequest(queue.pop());
+        queue = [];
+        request.send();
     };
 }
 
@@ -96,15 +101,21 @@ function prepareRequest(options) {
     return request;
 }
 
-function search() {
+function startSearch() {
+    clearMarkers();
     pushToRequestQueue();
     getNewMarkers();
     searchActive = true;
 }
 
-function closeSearch() {
-    searchActive = false;
-    clearMarkers();
+function endSearch() {
+    if (searchActive)
+    {
+        searchActive = false;
+        clearMarkers();
+        document.getElementsByName("fuel_name")[0].value = "";
+        document.getElementsByName("gas_station_name")[0].value = "";
+    }
 }
 
 function setNewMarkers(request) {
@@ -141,7 +152,7 @@ function setNewMarkers(request) {
 
 function clearMarkers() {
     if (typeof markerSource !== 'undefined') {
-        if (!searchActive) markerSource.clear();
+        markerSource.clear();
     }
 }
 
