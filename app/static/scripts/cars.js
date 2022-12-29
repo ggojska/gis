@@ -1,7 +1,13 @@
 const api_url = "/api/v1/";
 
 function addCar() {
-    document.getElementsByClassName("carform")[0].style.display = '';
+    if (document.getElementsByClassName("carform")[0].style.display  === 'none') {
+        document.getElementsByClassName("carform")[0].style.display = '';
+    }
+    else
+    {
+        document.getElementsByClassName("carform")[0].style.display = 'none';
+    }
 }
 
 function deleteCar(carId) {
