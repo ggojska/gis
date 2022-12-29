@@ -101,6 +101,11 @@ th {
     background-color: #dddddd;
 }
 
+.rate {
+    color:#444444;
+    font-size: 14px;
+}
+
 .flash {
     max-width: 980px;
     margin-left: auto;

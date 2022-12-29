@@ -217,6 +217,14 @@ function getGasStationInfoFromResponse(request) {
 
     var info = [];
     info.push("<p>Stacja <strong>" + json.name + "</strong></p>")
+    if (json.average_rate === null)
+    {
+        info.push("<p class=rate>brak ocen</p>")
+    }
+    else
+    {
+        info.push("<p class=rate>ocena " + json.average_rate + "</p>")
+    }
 
     var isFuelPriceInfo = json.fuels.length;
     if (isFuelPriceInfo) info.push('<table id="fuel">');
