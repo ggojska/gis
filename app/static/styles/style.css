@@ -290,8 +290,8 @@ li {
 .big-popup {
     position: absolute;
     background-color: #FFFFFF;
-    width: 50%;
-    left: 25%;
+    width: 35%;
+    left: 32.5%;
     height: 80%;
     top: 15%;
     z-index: 10000;
