@@ -214,7 +214,7 @@ function displayGasStationPopup(evt) {
         popup.setPosition(undefined);
         map.getTarget().style.cursor = "";
         map.getTarget().onclick = function() {
-            //pass
+            // pass
         };
     }
 };
