@@ -12,7 +12,7 @@ from . import login_manager
 from .exceptions import ValidationError
 
 
-fuels_lookup = select(text("DISTINCT name FROM fuels"))
+fuels_lookup = select(text("DISTINCT name FROM fuels ORDER BY name"))
 
 class User(UserMixin, db.Model):
     __tablename__ = 'users'

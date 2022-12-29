@@ -1,9 +1,15 @@
 {% extends 'base.html' %}
+{% from "_formhelpers.html" import render_field %}
 
 {% block title %} - konto{% endblock %}
 
+{% block head %}
+{{ super() }}
+<script src="{{ url_for('static', filename='scripts/cars.js') }}"></script>
+{% endblock %}
+
 {% block header %}
-<h1>Twoje konto</h1>
+<h1>Moje konto</h1>
 {% endblock %}
 
 {% block content %}
@@ -11,6 +17,24 @@
   <ul>
     <li><b>Nazwa użytkownika:</b> {{ current_user.username }}</li>
     <li><b>Adres email:</b> {{ current_user.email }}</li>
+    <li><b>Moje samochody:</b></li>
+    <ul class="cars">
+      {% for car in current_user.cars %}
+      <li name="{{car.id}}"><span class="car-description">{{ car.make }} {{ car.model }}, spalanie: {{ car.combustion }}
+          l/100km {{ car.fuel }}</span> <span class="car-edit"><button class="car-button" type="button"
+            title="Usuń samochód" onclick="deleteCar({{car.id}})">Usuń</button></span></li>
+      {% endfor %}
+      <li><button class="car-button" type="button" onclick="addCar()">Dodaj nowy samochód</button>
+        <form class="carform" style="display: none" method="POST">
+          {{ form.csrf_token }}
+          {{ render_field(form.make) }}
+          {{ render_field(form.model) }}
+          {{ render_field(form.combustion) }}
+          {{ render_field(form.fuel) }}
+          {{ render_field(form.submit) }}
+        </form>
+      </li>
+    </ul>
   </ul>
 </div>
 {% endblock %}

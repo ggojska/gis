@@ -21,6 +21,25 @@ def get_car(id):
     return jsonify(car.to_json())
 
 
+@api.route('/cars/<int:id>', methods=['DELETE'])
+def delete_car(id):
+    # if not g.get("current_user"):
+    #     return errors.unauthorized("operacja dozwolona tylko dla zalogowanego użytkownika")
+
+    car = Car.query.get(id)
+    if not car:
+         return errors.not_found(f'nie znaleziono samochodu')
+
+    # if g.current_user != car.user:
+        # return errors.forbidden('niedozwolone')
+
+    db.session.delete(car)
+    db.session.commit()
+    response = jsonify({"message": "resource successfully deleted"})
+    response.status_code = 201
+    return response
+
+
 @api.route('/users/<int:id>/cars')
 def get_user_cars(id):
     if not g.get("current_user"):

@@ -108,24 +108,34 @@ function canSearch() {
     
 }
 
+function searchStringChanged() {
+    if (canSearch()) {
+        document.getElementById("close-search-button").style.display = "flex";
+    }
+    else
+    {
+        document.getElementById("close-search-button").style.display = "";
+    }
+}
+
 function startSearch() {
     if (canSearch())
     {
         clearMarkers();
         pushToRequestQueue();
         getNewMarkers();
-        document.getElementById("close-search-button").style.display = "flex";
         searchActive = true;
     }
 }
 
 function endSearch() {
+    document.getElementsByName("fuel_name")[0].value = "";
+    document.getElementsByName("gas_station_name")[0].value = "";
+    document.getElementById("close-search-button").style.display = "none";
+    
     if (searchActive)
     {
         clearMarkers();
-        document.getElementsByName("fuel_name")[0].value = "";
-        document.getElementsByName("gas_station_name")[0].value = "";
-        document.getElementById("close-search-button").style.display = "none";
         searchActive = false;
     }
 }
