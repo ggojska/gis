@@ -102,7 +102,7 @@ th {
 }
 
 .rate {
-    color:#444444;
+    color: #444444;
     font-size: 14px;
 }
 
@@ -285,4 +285,20 @@ li {
 .car-edit {
     display: block;
     float: left;
+}
+
+.big-popup {
+    position: absolute;
+    background-color: #FFFFFF;
+    width: 50%;
+    left: 25%;
+    height: 80%;
+    top: 15%;
+    z-index: 10000;
+    border: 2px solid #999999;
+    border-radius: 5px;
+    padding: 10px;
+    box-sizing: border-box;
+    outline: none;
+    display: none;
 }
