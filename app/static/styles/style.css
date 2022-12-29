@@ -302,3 +302,28 @@ li {
     outline: none;
     display: none;
 }
+
+.close-button {
+    width: 4%;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.close-button:hover {
+    transform: scale(1.3);
+}
+
+.station-info {
+}
+
+.info-row {
+    display: block;
+}
+
+.comment {
+}
+
+.comment-row {
+    display: block;
+}
