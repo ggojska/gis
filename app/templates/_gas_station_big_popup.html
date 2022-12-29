@@ -1,0 +1,33 @@
+<div class="close-button" onclick="hideGasStationInfo()">X</div>
+<div class="station-info">
+  <div class="info-row">Stacja <strong>{{ station.name }}</strong></div>
+  <div class="info-row">
+    <p class="rate">
+    {% if station.average_rate %}
+    brak ocen
+    {% else %}
+    średnia ocena {{ station.average_rate }}
+    {% endif %}
+  </p>
+  </div>
+  <div class="info-row">
+    <div class="comment">
+      {% for comment in station.comments %}
+      <div class="comment-row" id="{{comment.id}}">
+        <span class="comment-author">{{ comment.user }}</span> 
+        <span class="comment-created">{{ comment.created_at }}</span> 
+        <span class="comment-updated">{% if comment.updated_at} (edytowany) {% endif %}</span>
+        {% if current_user.user_id == comment.user_id %}
+        <div class="comment-edit">Edytuj</div>
+        {% endif %}
+      </div>
+      {% if comment.rate}
+      <div class="comment-row">{{ comment.rate }}</div>
+      {% endif %}
+      {% if comment.comment} 
+      <div class="comment-row">{{ comment.comment }}</div>
+      {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</div>
