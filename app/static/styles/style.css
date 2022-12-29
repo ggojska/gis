@@ -295,7 +295,7 @@ li {
     height: 80%;
     top: 15%;
     z-index: 10000;
-    border: 2px solid #999999;
+    border: 1px solid #999999;
     border-radius: 5px;
     padding: 10px;
     box-sizing: border-box;
