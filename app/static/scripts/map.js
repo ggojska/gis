@@ -45,6 +45,12 @@ function init() {
         };
     });
 
+    map.on("click", function (evt) {
+        if (document.getElementById("big-popup").style.display !== "none") {
+            document.getElementById("big-popup").style.display = "none";
+        }
+    });
+
     map.on("pointermove", function (evt) {
         if (evt.dragging) return;
         displayGasStationPopup(evt);
@@ -185,7 +191,7 @@ function displayGasStationPopup(evt) {
         popup.setPosition(evt.coordinate);
         map.getTarget().style.cursor = "pointer";
         map.getTarget().onclick = function() {
-            displayGasStationInfo(id, evt.coordinate);
+            displayGasStationInfo(id);
         };
         var id = myFeature.values_.id;
 
@@ -207,6 +213,9 @@ function displayGasStationPopup(evt) {
     } else {
         popup.setPosition(undefined);
         map.getTarget().style.cursor = "";
+        map.getTarget().onclick = function() {
+            //pass
+        };
     }
 };
 
@@ -238,7 +247,7 @@ function getGasStationInfoFromResponse(request) {
     return info.join("");
 }
 
-function displayGasStationInfo(gasStationId, coordinate) {
+function displayGasStationInfo(gasStationId) {
     var request = new XMLHttpRequest();
     request.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
