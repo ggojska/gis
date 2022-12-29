@@ -187,6 +187,29 @@ th {
     margin-top: 10px;
 }
 
+.carform>* {
+    width: 200px;
+}
+
+.carform input[type=text],
+.carform input[type=number],
+.carform select {
+    background-color: #efefef;
+    color: #333333;
+    border: 1px solid #999999;
+    border-radius: 5px;
+    padding: 3px;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.carform input[type=text]:focus,
+.carform input[type=number]:focus,
+.carform select:focus {
+    background-color: #ffffff;
+    border: 1px solid #367fb0;
+}
+
 label {
     font-weight: bold;
 }
@@ -253,8 +276,8 @@ li {
     width: 40%;
 }
 
-.car-description, .car-edit {
+.car-description,
+.car-edit {
     display: block;
     float: left;
 }
-
