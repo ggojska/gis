@@ -6,7 +6,7 @@ var searchActive = false;
 var markerSource;
 const ZOOM_THRESHOLD = 12;
 const SEND_REQ_DELAY = 2300;
-const api_url = "/api/v1/";
+const api_url = "/api/v1";
 
 function init() {
 
@@ -45,9 +45,15 @@ function init() {
         };
     });
 
+    map.on("click", function (evt) {
+        if (document.getElementById("big-popup").style.display !== "none") {
+            document.getElementById("big-popup").style.display = "none";
+        }
+    });
+
     map.on("pointermove", function (evt) {
         if (evt.dragging) return;
-        displayFeatureInfo(evt);
+        displayGasStationPopup(evt);
     });
 
     map.on("movestart", function () {
@@ -55,8 +61,7 @@ function init() {
     });
 }
 
-function pushToRequestQueue()
-{
+function pushToRequestQueue() {
     var center = view.getCenter();
     var coordsTransform = ol.proj.toLonLat(center);
     var lon = coordsTransform[0];
@@ -66,8 +71,8 @@ function pushToRequestQueue()
     var left = ol.proj.toLonLat(ol.extent.getBottomLeft(extent));
     var right = ol.proj.toLonLat(ol.extent.getBottomRight(extent));
     var radius = Math.floor(ol.sphere.getDistance(left, right) / 2);
-    options = {"lat": lat, "lon": lon, "radius": radius}
-    
+    options = { "lat": lat, "lon": lon, "radius": radius }
+
     const name = document.getElementsByName("gas_station_name")[0].value;
     if (name.length > 0) options.name = name;
 
@@ -93,7 +98,7 @@ function prepareRequest(options) {
             setNewMarkers(this);
         }
     };
-    request_url = api_url + "/gas_stations?lon=" +options.lon + "&lat=" + options.lat + "&radius=" + options.radius
+    request_url = api_url + "/gas_stations?lon=" + options.lon + "&lat=" + options.lat + "&radius=" + options.radius
     if ("name" in options) request_url = request_url + "&name=" + options.name;
     if ("fuel" in options) request_url = request_url + "&fuel=" + options.fuel;
 
@@ -105,22 +110,20 @@ function canSearch() {
     const name = document.getElementsByName("gas_station_name")[0].value;
     const fuel = document.getElementsByName("fuel_name")[0].value;
     return ((fuel.length > 0) || (name.length > 0))
-    
+
 }
 
 function searchStringChanged() {
     if (canSearch()) {
         document.getElementById("close-search-button").style.display = "flex";
     }
-    else
-    {
+    else {
         document.getElementById("close-search-button").style.display = "";
     }
 }
 
 function startSearch() {
-    if (canSearch())
-    {
+    if (canSearch()) {
         clearMarkers();
         pushToRequestQueue();
         getNewMarkers();
@@ -132,9 +135,8 @@ function endSearch() {
     document.getElementsByName("fuel_name")[0].value = "";
     document.getElementsByName("gas_station_name")[0].value = "";
     document.getElementById("close-search-button").style.display = "none";
-    
-    if (searchActive)
-    {
+
+    if (searchActive) {
         clearMarkers();
         searchActive = false;
     }
@@ -178,7 +180,7 @@ function clearMarkers() {
     }
 }
 
-function displayFeatureInfo(evt) {
+function displayGasStationPopup(evt) {
     var myFeature;
 
     map.forEachFeatureAtPixel(evt.pixel, function (feature) {
@@ -188,6 +190,9 @@ function displayFeatureInfo(evt) {
     if (typeof myFeature !== 'undefined') {
         popup.setPosition(evt.coordinate);
         map.getTarget().style.cursor = "pointer";
+        map.getTarget().onclick = function() {
+            displayGasStationInfo(id);
+        };
         var id = myFeature.values_.id;
 
         if (id in stations) {
@@ -195,8 +200,7 @@ function displayFeatureInfo(evt) {
             return;
         }
 
-        var request;
-        request = new XMLHttpRequest();
+        var request = new XMLHttpRequest();
         request.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
                 stations[id] = this;
@@ -209,6 +213,9 @@ function displayFeatureInfo(evt) {
     } else {
         popup.setPosition(undefined);
         map.getTarget().style.cursor = "";
+        map.getTarget().onclick = function() {
+            // pass
+        };
     }
 };
 
@@ -217,6 +224,12 @@ function getGasStationInfoFromResponse(request) {
 
     var info = [];
     info.push("<p>Stacja <strong>" + json.name + "</strong></p>")
+    if (json.average_rate === null) {
+        info.push("<p class=rate>brak ocen</p>")
+    }
+    else {
+        info.push("<p class=rate>ocena " + json.average_rate + "</p>")
+    }
 
     var isFuelPriceInfo = json.fuels.length;
     if (isFuelPriceInfo) info.push('<table id="fuel">');
@@ -232,4 +245,16 @@ function getGasStationInfoFromResponse(request) {
     }
 
     return info.join("");
+}
+
+function displayGasStationInfo(gasStationId) {
+    var request = new XMLHttpRequest();
+    request.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            document.getElementById("big-popup").style.display = "flex";
+            document.getElementById("big-popup").innerHTML = this.responseText;
+        }
+    };
+    request.open('GET', api_url + "/gas_stations/" + gasStationId + "/comments");
+    request.send();
 }

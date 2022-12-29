@@ -37,8 +37,10 @@
     {% endfor %}
     
     {% if mapa %}
+      <div id="mapa" style="z-index: 0">
+        <div id="big-popup" class="big-popup"></div>
+      </div>
       <div id="popup" class="ol-popup"></div>
-      <div id="mapa"></div>
     {% else %}
       <div id="content">
         {% block content %}{% endblock %}

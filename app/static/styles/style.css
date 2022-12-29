@@ -101,6 +101,11 @@ th {
     background-color: #dddddd;
 }
 
+.rate {
+    color: #444444;
+    font-size: 14px;
+}
+
 .flash {
     max-width: 980px;
     margin-left: auto;
@@ -280,4 +285,20 @@ li {
 .car-edit {
     display: block;
     float: left;
+}
+
+.big-popup {
+    position: absolute;
+    background-color: #FFFFFF;
+    width: 35%;
+    left: 32.5%;
+    height: 80%;
+    top: 15%;
+    z-index: 10000;
+    border: 1px solid #999999;
+    border-radius: 5px;
+    padding: 10px;
+    box-sizing: border-box;
+    outline: none;
+    display: none;
 }
