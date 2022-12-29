@@ -4,11 +4,11 @@
 
 {% block head %}
 {{ super() }}
-<script src="{{ url_for('static', filename='/scripts/cars.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/cars.js') }}"></script>
 {% endblock %}
 
 {% block header %}
-<h1>Twoje konto</h1>
+<h1>Moje konto</h1>
 {% endblock %}
 
 {% block content %}
@@ -21,10 +21,10 @@
       {% for car in current_user.cars %}
       <li name="{{car.id}}"><span class="car-description">{{ car.make }} {{ car.model }}, spalanie: {{ car.combustion }}
           l/100km {{ car.fuel }}</span> <span class="car-edit"><button class="car-button" type="button"
-            title="Edytuj samochód" onlick="editCar({{car.id}})">Edytuj</button> <button class="car-button" type="button"
-            title="Usuń samochód" onlick="deleteCar({{car.id}})">Usuń</button></span></li>
+            title="Edytuj samochód" onclick="editCar({{car.id}})">Edytuj</button> <button class="car-button" type="button"
+            title="Usuń samochód" onclick="deleteCar({{car.id}})">Usuń</button></span></li>
       {% endfor %}
-      <li><button class="car-button" type="button" onlick="addCar()">Dodaj nowy samochód</button></li>
+      <li><button class="car-button" type="button" onclick="addCar()">Dodaj nowy samochód</button></li>
     </ul>
   </ul>
 </div>

@@ -23,17 +23,16 @@ def get_car(id):
 
 @api.route('/cars/<int:id>', methods=['DELETE'])
 def delete_car(id):
-    if not g.get("current_user"):
-        return errors.unauthorized("operacja dozwolona tylko dla zalogowanego użytkownika")
+    # if not g.get("current_user"):
+    #     return errors.unauthorized("operacja dozwolona tylko dla zalogowanego użytkownika")
 
     car = Car.query.get(id)
     if not car:
          return errors.not_found(f'nie znaleziono samochodu')
 
-    if g.current_user != car.user:
-        return errors.forbidden('niedozwolone')
+    # if g.current_user != car.user:
+        # return errors.forbidden('niedozwolone')
 
-    car = Car.query.get_or_404(id)
     db.session.delete(car)
     db.session.commit()
     response = jsonify({"message": "resource successfully deleted"})
