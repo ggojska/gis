@@ -7,7 +7,7 @@
 {% if station.fuels %}
 <table class="fuel">
   {% for fuel in station.fuels %}
-  <tr><td> {{ fuel.name }}</td><td><strong>{{ fuel.price }}</strong></td></tr>
+  <tr><td>{{ fuel.name }}</td><td><strong>{{ fuel.price }}</strong></td></tr>
   {% endfor %}
 </table>
 {% else %}
