@@ -59,7 +59,7 @@ class GasStation(db.Model):
                     sum += float(comment.rate)
                     count += 1
         if count > 0:
-            return round(sum/count,2)
+            return round(sum/count, 2)
 
     def get_icon(self):
         if os.path.exists(os.path.join(
