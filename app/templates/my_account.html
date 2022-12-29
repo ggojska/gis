@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% from "_formhelpers.html" import render_field %}
 
 {% block title %} - konto{% endblock %}
 
@@ -21,10 +22,18 @@
       {% for car in current_user.cars %}
       <li name="{{car.id}}"><span class="car-description">{{ car.make }} {{ car.model }}, spalanie: {{ car.combustion }}
           l/100km {{ car.fuel }}</span> <span class="car-edit"><button class="car-button" type="button"
-            title="Edytuj samochód" onclick="editCar({{car.id}})">Edytuj</button> <button class="car-button" type="button"
             title="Usuń samochód" onclick="deleteCar({{car.id}})">Usuń</button></span></li>
       {% endfor %}
-      <li><button class="car-button" type="button" onclick="addCar()">Dodaj nowy samochód</button></li>
+      <li><button class="car-button" type="button" onclick="addCar()">Dodaj nowy samochód</button>
+        <form class="carform" style="display: none" method="POST">
+          {{ form.csrf_token }}
+          {{ render_field(form.make) }}
+          {{ render_field(form.model) }}
+          {{ render_field(form.combustion) }}
+          {{ render_field(form.fuel) }}
+          {{ render_field(form.submit) }}
+        </form>
+      </li>
     </ul>
   </ul>
 </div>
