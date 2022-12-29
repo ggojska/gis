@@ -1,11 +1,7 @@
 const api_url = "/api/v1/";
 
 function addCar() {
-    console.log("Add car");
-}
-
-function editCar(carId) {
-    console.log("Edit car " + carId);
+    document.getElementsByClassName("carform")[0].style.display = '';
 }
 
 function deleteCar(carId) {
