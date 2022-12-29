@@ -82,13 +82,13 @@ header {
     height: 92vh;
 }
 
-#fuel {
+.fuel {
     border-collapse: collapse;
     font-size: medium;
     width: 100%;
 }
 
-#fuel td,
+.fuel td,
 th {
     border: 0px solid #dddddd;
     text-align: left;
@@ -97,7 +97,7 @@ th {
     text-align: center;
 }
 
-#fuel tr:nth-child(even) {
+.fuel tr:nth-child(even) {
     background-color: #dddddd;
 }
 

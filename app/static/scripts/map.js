@@ -232,7 +232,7 @@ function getGasStationInfoFromResponse(request) {
     }
 
     var isFuelPriceInfo = json.fuels.length;
-    if (isFuelPriceInfo) info.push('<table id="fuel">');
+    if (isFuelPriceInfo) info.push('<table class="fuel">');
     json.fuels.forEach(fuel => {
         info.push("<tr><td>" + fuel.name + "</td><td><strong>" + fuel.price + "</strong></td></tr>");
     });
