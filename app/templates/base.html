@@ -11,7 +11,7 @@
 <body>
   <nav>
     <div id="start" class="nav"><h1><a href="{{ url_for('main.index') }}" title="Wróć do strony głównej">Mapa stacji benzynowych</a></h1></div>
-    <div id="center" class="nav">{% if mapa %} {% include 'searchbar.html' %} {% endif %}</div>
+    <div id="center" class="nav">{% if mapa %} {% include '_searchbar.html' %} {% endif %}</div>
     <div id="end" class="nav">
       <ul>
         {% if current_user.is_authenticated %}
