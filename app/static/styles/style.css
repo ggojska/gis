@@ -82,13 +82,13 @@ header {
     height: 92vh;
 }
 
-#fuel {
+.fuel {
     border-collapse: collapse;
     font-size: medium;
     width: 100%;
 }
 
-#fuel td,
+.fuel td,
 th {
     border: 0px solid #dddddd;
     text-align: left;
@@ -97,7 +97,7 @@ th {
     text-align: center;
 }
 
-#fuel tr:nth-child(even) {
+.fuel tr:nth-child(even) {
     background-color: #dddddd;
 }
 
@@ -301,4 +301,65 @@ li {
     box-sizing: border-box;
     outline: none;
     display: none;
+}
+
+.close-button {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-weight: bold;
+    font-size: 20px;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.close-button:hover {
+    transform: scale(1.3);
+}
+
+.station-info {
+    margin: 10px;
+    width: 100%;
+}
+
+.info-row,
+.comment-row {
+    display: block;
+    width: 100%;
+}
+
+.comment {
+    margin-top: 20px;
+}
+
+.my-comment {
+    background-color: #eeeeee;
+    border-radius: 5px;
+    border-width: 1px;
+    border-color: #eeeeee;
+    border-style: dotted;
+}
+
+.comment-author,
+.comment-created,
+.comment-edit, 
+.comment-delete {
+    margin-right: 10px;
+}
+
+.comment-author {
+    font-weight: bold;
+}
+
+.yellow-stars {
+    color: #FFFF00;
+    text-shadow: 0 0 1px #111111;
+}
+
+.grey-stars {
+    color:#BBBBBB;
+    text-shadow: 0 0 1px #111111;
 }

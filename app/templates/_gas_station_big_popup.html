@@ -1,0 +1,47 @@
+<button type="button" class="close-button" title="Zamknij" onclick="hideGasStationInfo()">X</button>
+<div class="station-info">
+  <div class="info-row">Stacja <strong>{{ station.name }}</strong></div>
+  <div class="info-row">
+    <p class="rate">
+    {% if station.average_rate() %}
+    średnia ocena {{ station.average_rate() }}
+    {% else %}
+    brak ocen
+    {% endif %}
+    </p>
+  </div>
+  <div class="info-row">
+    {% for comment in station.comments %}
+    {% if current_user == comment.user %}
+    <div class="comment my-comment">
+    {% else %}
+    <div class="comment">
+    {% endif %}
+      <div class="comment-row" id="{{comment.id}}">
+        <span class="comment-author">{{ comment.user.username }}</span> 
+        <span class="comment-created">{{ comment.created_at }}</span> 
+        {% if current_user == comment.user %}
+        <span class="comment-edit">Edytuj</span>
+        <span class="comment-delete">Usuń</span>
+        {% endif %}
+      </div>
+      {% if comment.rate %}
+      <div class="comment-row">
+        <p class="rate">
+          <span class="yellow-stars">
+          {% for n in range(comment.rate|int) %}&#9733{% endfor %}
+          </span>
+          <span class="grey-stars">
+          {% for n in range(5 - comment.rate|int) %}&#9733{% endfor %}
+          </span>
+          {{ comment.rate }}
+        </p>
+      </div>
+      {% endif %}
+      {% if comment.comment %}
+      <div class="comment-row">{{ comment.comment }}</div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</div>

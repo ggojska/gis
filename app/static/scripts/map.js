@@ -110,7 +110,6 @@ function canSearch() {
     const name = document.getElementsByName("gas_station_name")[0].value;
     const fuel = document.getElementsByName("fuel_name")[0].value;
     return ((fuel.length > 0) || (name.length > 0))
-
 }
 
 function searchStringChanged() {
@@ -188,26 +187,27 @@ function displayGasStationPopup(evt) {
     });
 
     if (typeof myFeature !== 'undefined') {
+        var id = myFeature.values_.id;
+
         popup.setPosition(evt.coordinate);
         map.getTarget().style.cursor = "pointer";
         map.getTarget().onclick = function() {
             displayGasStationInfo(id);
         };
-        var id = myFeature.values_.id;
 
         if (id in stations) {
-            document.getElementById("popup").innerHTML = getGasStationInfoFromResponse(stations[id]);
+            document.getElementById("popup").innerHTML = stations[id];
             return;
         }
 
         var request = new XMLHttpRequest();
         request.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
-                stations[id] = this;
-                document.getElementById("popup").innerHTML = getGasStationInfoFromResponse(this);
+                stations[id] = this.responseText;
+                document.getElementById("popup").innerHTML = this.responseText;
             }
         };
-        request.open('GET', api_url + "/gas_stations/" + id);
+        request.open('GET', "/gas_stations/" + id + "/popup");
         request.send();
 
     } else {
@@ -219,34 +219,6 @@ function displayGasStationPopup(evt) {
     }
 };
 
-function getGasStationInfoFromResponse(request) {
-    json = JSON.parse(request.response);
-
-    var info = [];
-    info.push("<p>Stacja <strong>" + json.name + "</strong></p>")
-    if (json.average_rate === null) {
-        info.push("<p class=rate>brak ocen</p>")
-    }
-    else {
-        info.push("<p class=rate>ocena " + json.average_rate + "</p>")
-    }
-
-    var isFuelPriceInfo = json.fuels.length;
-    if (isFuelPriceInfo) info.push('<table id="fuel">');
-    json.fuels.forEach(fuel => {
-        info.push("<tr><td>" + fuel.name + "</td><td><strong>" + fuel.price + "</strong></td></tr>");
-    });
-
-    if (isFuelPriceInfo) {
-        info.push('</table>')
-    }
-    else {
-        info.push("<p>brak informacji o cenach paliwa</p>");
-    }
-
-    return info.join("");
-}
-
 function displayGasStationInfo(gasStationId) {
     var request = new XMLHttpRequest();
     request.onreadystatechange = function () {
@@ -255,6 +227,14 @@ function displayGasStationInfo(gasStationId) {
             document.getElementById("big-popup").innerHTML = this.responseText;
         }
     };
-    request.open('GET', api_url + "/gas_stations/" + gasStationId + "/comments");
+    request.open('GET', "/gas_stations/" + gasStationId + "/bigpopup");
     request.send();
+}
+
+function hideGasStationInfo() {
+    document.getElementById("big-popup").style.display = "none";
+    map.getTarget().style.cursor = "";
+    map.getTarget().onclick = function() {
+        // pass
+    };
 }
