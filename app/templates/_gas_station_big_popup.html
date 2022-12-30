@@ -11,23 +11,37 @@
     </p>
   </div>
   <div class="info-row">
+    {% for comment in station.comments %}
+    {% if current_user == comment.user %}
+    <div class="comment my-comment">
+    {% else %}
     <div class="comment">
-      {% for comment in station.comments %}
+    {% endif %}
       <div class="comment-row" id="{{comment.id}}">
         <span class="comment-author">{{ comment.user.username }}</span> 
         <span class="comment-created">{{ comment.created_at }}</span> 
-        <span class="comment-updated">{% if comment.updated_at %} (edytowany) {% endif %}</span>
-        {% if current_user.user_id == comment.user_id %}
-        <div class="comment-edit">Edytuj</div>
+        {% if current_user == comment.user %}
+        <span class="comment-edit">Edytuj</span>
+        <span class="comment-delete">Usuń</span>
         {% endif %}
       </div>
       {% if comment.rate %}
-      <div class="comment-row">{{ comment.rate }}</div>
+      <div class="comment-row">
+        <p class="rate">
+          <span class="yellow-stars">
+          {% for n in range(comment.rate|int) %}&#9733{% endfor %}
+          </span>
+          <span class="grey-stars">
+          {% for n in range(5 - comment.rate|int) %}&#9733{% endfor %}
+          </span>
+          {{ comment.rate }}
+        </p>
+      </div>
       {% endif %}
       {% if comment.comment %}
       <div class="comment-row">{{ comment.comment }}</div>
       {% endif %}
-      {% endfor %}
     </div>
+    {% endfor %}
   </div>
 </div>

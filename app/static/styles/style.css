@@ -322,15 +322,44 @@ li {
 
 .station-info {
     margin: 10px;
+    width: 100%;
 }
 
-.info-row {
+.info-row,
+.comment-row {
     display: block;
+    width: 100%;
 }
 
 .comment {
+    margin-top: 20px;
 }
 
-.comment-row {
-    display: block;
+.my-comment {
+    background-color: #eeeeee;
+    border-radius: 5px;
+    border-width: 1px;
+    border-color: #eeeeee;
+    border-style: dotted;
+}
+
+.comment-author,
+.comment-created,
+.comment-edit, 
+.comment-delete {
+    margin-right: 10px;
+}
+
+.comment-author {
+    font-weight: bold;
+}
+
+.yellow-stars {
+    color: #FFFF00;
+    text-shadow: 0 0 1px #111111;
+}
+
+.grey-stars {
+    color:#BBBBBB;
+    text-shadow: 0 0 1px #111111;
 }
