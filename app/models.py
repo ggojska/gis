@@ -21,7 +21,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(64), unique=True, index=True)
     username = db.Column(db.String(64), unique=True, index=True)
     password_hash = db.Column(db.String(128))
-    cars = db.relationship("Car", backref="user", lazy='dynamic')
+    cars = db.relationship("Car", backref="user", lazy='dynamic', order_by="Car.id",)
 
     @property
     def password(self):
@@ -49,7 +49,7 @@ class GasStation(db.Model):
     lon = db.Column(db.Float, index=True)
     distance = db.Column(db.Float)
     fuels = db.relationship("Fuel", backref="gas_station")
-    comments = db.relationship("Comment", backref="gas_station", lazy='dynamic')
+    comments = db.relationship("Comment", backref="gas_station", lazy='dynamic', order_by="desc(Comment.created_at)",)
 
     def average_rate(self):
         sum, count = 0.0, 0
