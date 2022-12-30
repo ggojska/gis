@@ -230,3 +230,11 @@ function displayGasStationInfo(gasStationId) {
     request.open('GET', "/gas_stations/" + gasStationId + "/bigpopup");
     request.send();
 }
+
+function hideGasStationInfo() {
+    document.getElementById("big-popup").style.display = "none";
+    map.getTarget().style.cursor = "";
+    map.getTarget().onclick = function() {
+        // pass
+    };
+}
