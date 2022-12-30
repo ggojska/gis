@@ -4,7 +4,7 @@
   <div class="info-row">
     <p class="rate">
     {% if station.average_rate %}
-    średnia ocena {{ station.average_rate }}
+    średnia ocena {{ station.average_rate() }}
     {% else %}
     brak ocen
     {% endif %}
@@ -14,17 +14,17 @@
     <div class="comment">
       {% for comment in station.comments %}
       <div class="comment-row" id="{{comment.id}}">
-        <span class="comment-author">{{ comment.user }}</span> 
+        <span class="comment-author">{{ comment.user.username }}</span> 
         <span class="comment-created">{{ comment.created_at }}</span> 
-        <span class="comment-updated">{% if comment.updated_at} (edytowany) {% endif %}</span>
+        <span class="comment-updated">{% if comment.updated_at %} (edytowany) {% endif %}</span>
         {% if current_user.user_id == comment.user_id %}
         <div class="comment-edit">Edytuj</div>
         {% endif %}
       </div>
-      {% if comment.rate}
+      {% if comment.rate %}
       <div class="comment-row">{{ comment.rate }}</div>
       {% endif %}
-      {% if comment.comment} 
+      {% if comment.comment %}
       <div class="comment-row">{{ comment.comment }}</div>
       {% endif %}
       {% endfor %}
