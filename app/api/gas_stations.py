@@ -5,7 +5,7 @@ from sqlalchemy.sql import text, func, select, column
 
 from ..models import GasStation, Fuel, db
 from ..sql import sql
-from . import api, errors
+from . import api
 
 
 @api.route('/gas_stations/')
