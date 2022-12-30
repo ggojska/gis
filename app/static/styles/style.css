@@ -306,6 +306,7 @@ li {
 .close-button {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-weight: bold;
+    font-size: 20px;
     position: absolute;
     top: 5px;
     right: 5px;
@@ -320,6 +321,7 @@ li {
 }
 
 .station-info {
+    margin: 10px;
 }
 
 .info-row {
