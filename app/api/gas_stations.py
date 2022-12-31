@@ -38,6 +38,7 @@ def get_gas_stations():
             .replace(":lat", str(lat)))
         cte = select([column('id'), column('harvesine')], use_labels=True).select_from(text_sql)\
             .cte("cte")
+        query = query.add_columns(column('harvesine').label("harvesine"))
         query_ordered = query.join(cte, cte.columns["id"] == GasStation.id)\
                 .filter(column('harvesine') < radius)\
                 .order_by(column('harvesine').asc())
@@ -47,14 +48,23 @@ def get_gas_stations():
     offset = per_page * (page-1)
     stations = query_ordered.limit(per_page).offset(offset).distinct()
     total = query_ordered.distinct(GasStation.id).count()
-    
+
     if page > 1:
         prev = url_for('api.get_gas_stations', page=page-1)
     if ceil(total/per_page) > page:
         next = url_for('api.get_gas_stations', page=page+1)
 
+    if type(stations[0]) == GasStation:
+        stations_list = [station.to_json() for station in stations]
+    else:
+        stations_list = []
+        for station in stations:
+            d = station[0].to_json()
+            d["distance"] = station[1]
+            stations_list.append(d)
+
     return jsonify({
-        'gas_stations': [station.to_json() for station in stations],
+        'gas_stations': stations_list,
         'prev': prev,
         'next': next,
         'count': total

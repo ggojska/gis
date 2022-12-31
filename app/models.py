@@ -47,7 +47,6 @@ class GasStation(db.Model):
     name = db.Column(db.String(255), index=True)
     lat = db.Column(db.Float, index=True)
     lon = db.Column(db.Float, index=True)
-    distance = db.Column(db.Float)
     fuels = db.relationship("Fuel", backref="gas_station")
     comments = db.relationship("Comment", backref="gas_station", lazy='dynamic', order_by="desc(Comment.created_at)",)
 
@@ -75,7 +74,7 @@ class GasStation(db.Model):
             "name": self.name,
             "lat": self.lat,
             "lon": self.lon,
-            "distance": self.distance,
+            "distance": None,
             "icon": self.get_icon(),
             "average_rate": self.average_rate(),
         }
