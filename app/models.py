@@ -137,10 +137,17 @@ class Comment(db.Model):
     def validate_column_name(self, key, value):
         if value:
             if value < 1.0:
-                raise ValueError('ocena musi być wyższa lub równa 1')
+                raise ValidationError('ocena musi być wyższa lub równa 1')
             if value > 5.0:
-                raise ValueError('ocena musi być niższa lub równa 5')
+                raise ValidationError('ocena musi być niższa lub równa 5')
             return value
+        elif not value and not self.comment:
+            raise ValidationError('nie można dodać pustego komentarza bez oceny')
+
+    @validates('comment')
+    def validate_column_name(self, key, value):
+        if not value and not self.comment:
+            raise ValidationError('nie można dodać pustego komentarza bez oceny')
 
 
 class Car(db.Model):
@@ -152,7 +159,6 @@ class Car(db.Model):
     combustion = db.Column(db.Numeric(3,1), nullable=False)
     fuel = db.Column(db.String(10), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    # user = db.relationship("User", backref="car")
 
     def to_json(self):
         car = {
@@ -163,25 +169,6 @@ class Car(db.Model):
             "combustion": self.combustion
         }
         return car
-
-    @staticmethod
-    def from_json(json_car):
-        make = json_car.get('car')
-        if not make:
-            raise ValidationError("marka samochodu mysi być podana")
-        model = json_car.get('model')
-        if not model:
-            raise ValidationError("model samochodu musi być podany")
-        combustion = json_car.get('combustion')
-        if not combustion:
-            raise ValidationError("spalanie samochodu musi być podane")
-        if type(combustion) != float:
-            raise ValidationError("spalanie musi być liczbą")
-        fuel = json_car.get('fuel')
-        user_id = json_car.get('user_id')
-        if user_id:
-            raise ValidationError("samochód musi być przypisany do użytkownika")
-        return Car(make=make, model=model, combustion=combustion)
 
     @validates('fuel')
     def validate_column_name(self, key, value):
