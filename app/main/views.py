@@ -63,7 +63,6 @@ def add_comment(id):
          return page_not_found()
 
     form = CommentForm()
-    
     if form.validate_on_submit():
         try:
             comment = Comment(rate=form.rate.data,
