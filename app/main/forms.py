@@ -28,6 +28,3 @@ class CommentForm(FlaskForm):
     submit = SubmitField('Zapisz')
     submit.label = None
 
-    def validate_name(form, rate, comment):
-        if not rate and not comment:
-            raise ValidationError('Nie można zapisać pustego komentarza bez oceny')
