@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, DecimalField, SelectField
-from wtforms.validators import DataRequired, Length, NumberRange
+from wtforms.validators import DataRequired, Length, NumberRange, Optional
 from wtforms import ValidationError
 from wtforms.widgets import TextArea
 
@@ -18,11 +18,12 @@ class CarForm(FlaskForm):
 
 
 class CommentForm(FlaskForm):
-    rate = DecimalField('Ocena', places=1, validators=[NumberRange(min=1.0, max=5.0, 
+    rate = DecimalField('Ocena', places=1, validators=[Optional(),\
+        NumberRange(min=1.0, max=5.0, 
         message="Dozwolona ocena z przedziału 1.0 - 5.0")],
         render_kw={"step": "0.5"})
-    comment = StringField('Komentarz', validators=[Length(0, 4000,\
-        message="Komentarz nie może mieć więcej, niż 4000 znaków"),],\
+    comment = StringField('Komentarz', validators=[Optional(),\
+        Length(0, 4000, message="Komentarz nie może mieć więcej, niż 4000 znaków"),],\
             widget=TextArea())
     submit = SubmitField('Zapisz')
     submit.label = None
