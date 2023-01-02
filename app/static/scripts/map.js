@@ -238,3 +238,12 @@ function hideGasStationInfo() {
         // pass
     };
 }
+
+function editComment(commentId) {
+    console.log("Edit comment " + commentId)
+}
+
+function deleteComment(commentId) {
+    console.log("Delete comment " + commentId)
+
+}
