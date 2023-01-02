@@ -2,7 +2,6 @@ var map;
 var popup;
 var queue = [];
 var stations = {};
-var bigpopupDisplayed = false;
 var searchActive = false;
 var markerSource;
 const ZOOM_THRESHOLD = 12;
@@ -47,7 +46,7 @@ function init() {
     });
 
     map.on("click", function (evt) {
-        if (document.getElementById("big-popup").style.display !== "none") {
+        if (isBigPopupDisplayed()) {
             document.getElementById("big-popup").style.display = "none";
         }
     });
@@ -187,7 +186,7 @@ function displayGasStationPopup(evt) {
         myFeature = feature;
     });
 
-    if (typeof myFeature !== 'undefined' && !bigpopupDisplayed) {
+    if (typeof myFeature !== 'undefined' && !isBigPopupDisplayed()) {
         var id = myFeature.values_.id;
 
         popup.setPosition(evt.coordinate);
@@ -221,16 +220,15 @@ function displayGasStationPopup(evt) {
 };
 
 function displayGasStationInfo(gasStationId) {
-    if (!bigpopupDisplayed) {
+    if (!isBigPopupDisplayed()) {
         var request = new XMLHttpRequest();
         request.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
                 document.getElementById("big-popup").style.display = "flex";
                 document.getElementById("big-popup").innerHTML = this.responseText;
-                bigpopupDisplayed = true;
             }
         };
-        request.open('GET', "/gas_stations/" + gasStationId + "/bigpopup");
+        request.open('GET', "/gas_stations/" + gasStationId + "/comments");
         request.send();
     }
 }
@@ -241,7 +239,10 @@ function hideGasStationInfo() {
     map.getTarget().onclick = function () {
         // pass
     };
-    bigpopupDisplayed = false;
+}
+
+function isBigPopupDisplayed() {
+    return (document.getElementById("big-popup").style.display !== "none")
 }
 
 function showAddComment() {
@@ -253,11 +254,7 @@ function showAddComment() {
     }
 }
 
-function editComment(commentId) {
-    console.log("Edit comment " + commentId)
-}
-
-function deleteComment(commentId) {
+function deleteComment(gasStationId, commentId) {
     var request = new XMLHttpRequest();
     request.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
@@ -265,6 +262,6 @@ function deleteComment(commentId) {
             document.getElementById("big-popup").innerHTML = this.responseText;
         }
     };
-    request.open('POST', "/comments/" + commentId + "/delete");
+    request.open('POST', "/gas_stations/" + gasStationId + "/comments/" + commentId + "/delete");
     request.send();
 }
