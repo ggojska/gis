@@ -135,11 +135,12 @@ class Comment(db.Model):
 
     @validates('rate')
     def validate_column_name(self, key, value):
-        if value < 1.0:
-            raise ValueError('ocena musi być wyższa lub równa 1')
-        if value > 5.0:
-            raise ValueError('ocena musi być niższa lub równa 5')
-        return value
+        if value:
+            if value < 1.0:
+                raise ValueError('ocena musi być wyższa lub równa 1')
+            if value > 5.0:
+                raise ValueError('ocena musi być niższa lub równa 5')
+            return value
 
 
 class Car(db.Model):
