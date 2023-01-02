@@ -4,7 +4,7 @@ from flask_login import login_required, current_user
 from . import main
 from .. import db
 from ..models import GasStation, Car, Comment, fuels_lookup, db
-from .forms import CarForm
+from .forms import CarForm, CommentForm
 from .errors import page_not_found
 
 
@@ -59,7 +59,26 @@ def gas_station_big_popup(id):
     station = GasStation.query.get(id)
     if not station:
          return page_not_found()
-    return render_template('_gas_station_big_popup.html', station=station)
+    return render_template('_gas_station_big_popup.html', station=station, form=CommentForm())
+
+
+@main.route('/comments', methods=['POST'])
+@login_required
+def add_comment(gas_station_id):
+    station = GasStation.query.get(gas_station_id)
+    if not station:
+         return page_not_found()
+
+    form = CommentForm()
+    if form.validate_on_submit():
+        comment = Comment(rate=form.rate.data,
+                    comment=form.comment.data,
+                    user=current_user)
+        db.session.add(comment)
+        db.session.commit()
+
+    station = GasStation.query.get(gas_station_id)
+    return render_template('_gas_station_big_popup.html', station=station, form=form)
 
 
 @main.route('/comments/<int:id>/delete', methods=['POST'])
@@ -70,11 +89,12 @@ def delete_comment(id):
         flash('brak takiego komentarza')
     if current_user != comment.user:
         flash('nie można usunąc nieswojego komentarza')
-    station = comment.gas_station
+    station_id = comment.gas_station_id
     db.session.delete(comment)
     db.session.commit()
+    station = GasStation.query.get(station_id)
     flash('usunięto komentarz')
-    return render_template('_gas_station_big_popup.html', station=station)
+    return render_template('_gas_station_big_popup.html', station=station, form=CommentForm())
 
 
 @main.route('/comments/<int:id>/edit', methods=['POST'])

@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, DecimalField, SelectField
-from wtforms.validators import DataRequired, Length
+from wtforms.validators import DataRequired, Length, NumberRange
+from wtforms import ValidationError
 
 
 class CarForm(FlaskForm):
@@ -13,3 +14,17 @@ class CarForm(FlaskForm):
     fuel = SelectField(u'Rodzaj paliwa', validators=[DataRequired(),])
     submit = SubmitField('Dodaj')
     submit.label = None
+
+
+class CommentForm(FlaskForm):
+    rate = DecimalField('Ocena', places=1, validators=[NumberRange(min=1.0, max=5.0, 
+        message="Dozwolona ocena z przedziału 1.0 - 5.0")],
+        render_kw={"step": "0.5"})
+    comment = StringField('Komentarz', validators=[Length(0, 4000,\
+        message="Komentarz nie może mieć więcej, niż 4000 znaków"),])
+    submit = SubmitField('Zapisz')
+    submit.label = None
+
+    def validate_name(form, rate, comment):
+        if not rate and not comment:
+            raise ValidationError('Nie można zapisać pustego komentarza bez oceny')

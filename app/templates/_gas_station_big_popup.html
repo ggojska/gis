@@ -1,3 +1,4 @@
+{% from "_formhelpers.html" import render_field %}
 <button type="button" class="close-button" title="Zamknij" onclick="hideGasStationInfo()">X</button>
 
 <div class="station-info">
@@ -16,6 +17,12 @@
     {% endif %}
     </p>
   </div>
+  <form class="carform" method="POST">
+  {{ form.csrf_token }}
+  {{ render_field(form.rate) }}
+  {{ render_field(form.comment) }}
+  {{ render_field(form.submit) }}
+  </form>
   <div class="info-row">
     {% for comment in station.comments %}
     {% if current_user == comment.user %}
