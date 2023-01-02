@@ -1,5 +1,8 @@
 {% from "_formhelpers.html" import render_field %}
+
 <button type="button" class="close-button" title="Zamknij" onclick="hideGasStationInfo()">X</button>
+
+<iframe name="blank-iframe" id="iframe" style="display: none"></iframe>
 
 <div class="station-info">
   {% for message in get_flashed_messages() %}
@@ -17,8 +20,8 @@
     {% endif %}
     </p>
   </div>
-   <button class="car-button" type="button" onclick="showAddComment()">Dodaj nowy komentarz</button>
-  <form class="comment-form" style="display: none" method="POST">
+  <button class="car-button" type="button" onclick="showAddComment()">Dodaj nowy komentarz</button>
+  <form class="comment-form" action="/gas_stations/{{ station.id }}/comments" method="POST" target="blank-iframe" style="display: none">
   {{ form.csrf_token }}
   {{ render_field(form.rate) }}
   {{ render_field(form.comment) }}
@@ -35,11 +38,8 @@
         <span class="comment-author">{{ comment.user.username }}</span> 
         <span class="comment-created">{{ comment.created_at }}</span> 
         {% if current_user == comment.user %}
-        <span class="comment-edit">
-        <button type="button" id="edit-comment-button" title="Edytuj komentarz" onclick="editComment({{ comment.id }})">Edytuj</button>
-        </span>
         <span class="comment-delete">
-        <button type="button" id="delete-comment-button" title="Usuń komentarz" onclick="deleteComment({{ comment.id }})">Usuń</button>
+        <button type="button" id="delete-comment-button" title="Usuń komentarz" onclick="deleteComment({{ station.id }}, {{ comment.id }})">Usuń</button>
         </span>
         {% endif %}
       </div>
