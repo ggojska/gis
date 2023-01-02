@@ -1,5 +1,11 @@
 <button type="button" class="close-button" title="Zamknij" onclick="hideGasStationInfo()">X</button>
+
 <div class="station-info">
+  {% for message in get_flashed_messages() %}
+    <div class="flash">
+      {{ message }}
+    </div>
+  {% endfor %}
   <div class="info-row">Stacja <strong>{{ station.name }}</strong></div>
   <div class="info-row">
     <p class="rate">
