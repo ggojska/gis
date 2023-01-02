@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 
 from . import main
 from .. import db
-from ..models import GasStation, Car, fuels_lookup, db
+from ..models import GasStation, Car, Comment, fuels_lookup, db
 from .forms import CarForm
 from .errors import page_not_found
 
@@ -11,6 +11,7 @@ from .errors import page_not_found
 @main.route('/', methods=['GET'])
 def index():
     return render_template('index.html', mapa=True)
+
 
 @main.route('/my-account', methods=['GET', 'POST'])
 @login_required
@@ -28,6 +29,7 @@ def my_account():
         db.session.commit()
     return render_template('my_account.html', form=form)
 
+
 @main.route('/cars/<int:id>/delete', methods=['POST'])
 @login_required
 def delete_car(id):
@@ -43,6 +45,7 @@ def delete_car(id):
     flash('usunięto samochód')
     return redirect(url_for('main.my_account'))
 
+
 @main.route('/gas_stations/<int:id>/popup', methods=['GET'])
 def gas_station_popup(id):
     station = GasStation.query.get(id)
@@ -50,9 +53,41 @@ def gas_station_popup(id):
          return page_not_found()
     return render_template('_gas_station_popup.html', station=station)
 
+
 @main.route('/gas_stations/<int:id>/bigpopup', methods=['GET'])
 def gas_station_big_popup(id):
     station = GasStation.query.get(id)
     if not station:
          return page_not_found()
     return render_template('_gas_station_big_popup.html', station=station)
+
+
+@main.route('/comments/<int:id>/delete', methods=['POST'])
+@login_required
+def delete_comment(id):
+    comment = Comment.query.get(id)
+    if not comment:
+        flash('brak takiego komentarza')
+    if current_user != comment.user:
+        flash('nie można usunąc nieswojego komentarza')
+    station = comment.gas_station
+    db.session.delete(comment)
+    db.session.commit()
+    flash('usunięto komentarz')
+    return render_template('_gas_station_big_popup.html', station=station)
+
+
+@main.route('/comments/<int:id>/edit', methods=['POST'])
+@login_required
+def edit_comment(id):
+    comment = Comment.query.get(id)
+    if not comment:
+        flash('brak takiego komentarza')
+    if current_user != comment.user:
+        flash('nie można edytować nieswojego komentarza')
+    # może zwracać wyrenderowaną na nowo stronę bigpopup +
+    # podmiana HTML w js
+    # gas_station_id = comment.gas_station_id
+    # db.session.delete(comment)
+    # db.session.commit()
+    # return gas_station_big_popup(gas_station_id)
