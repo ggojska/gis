@@ -376,7 +376,7 @@ li {
     outline: none;
 }
 
-.comment-form input[type=text] {
+.comment-form textarea {
     width: 100%;
     height: 150px;
 }
