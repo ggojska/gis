@@ -6,6 +6,7 @@ from .. import db
 from ..models import GasStation, Car, Comment, fuels_lookup, db
 from .forms import CarForm, CommentForm
 from .errors import page_not_found
+from ..exceptions import ValidationError
 
 
 @main.route('/', methods=['GET'])
@@ -54,37 +55,37 @@ def gas_station_popup(id):
     return render_template('_gas_station_popup.html', station=station)
 
 
-@main.route('/gas_stations/<int:id>/bigpopup', methods=['GET'])
-def gas_station_big_popup(id):
-    station = GasStation.query.get(id)
-    if not station:
-         return page_not_found()
-    return render_template('_gas_station_big_popup.html', station=station, form=CommentForm())
-
-
-@main.route('/comments', methods=['POST'])
+@main.route('/gas_stations/<int:id>/comments', methods=['GET', 'POST'])
 @login_required
-def add_comment(gas_station_id):
-    station = GasStation.query.get(gas_station_id)
+def add_comment(id):
+    station = GasStation.query.get(id)
     if not station:
          return page_not_found()
 
     form = CommentForm()
+    
     if form.validate_on_submit():
-        comment = Comment(rate=form.rate.data,
-                    comment=form.comment.data,
-                    user=current_user)
-        db.session.add(comment)
-        db.session.commit()
+        try:
+            comment = Comment(rate=form.rate.data,
+                        comment=form.comment.data,
+                        gas_station_id=station.id,
+                        user=current_user)
+            db.session.add(comment)
+            db.session.commit()
+            station = GasStation.query.get(id)
+        except ValidationError as e:
+            if hasattr(e, 'message'):
+                flash(e.message)
+            else:
+                flash(e)
 
-    station = GasStation.query.get(gas_station_id)
     return render_template('_gas_station_big_popup.html', station=station, form=form)
 
 
-@main.route('/comments/<int:id>/delete', methods=['POST'])
+@main.route('/gas_stations/<int:gas_station_id>/comments/<int:comment_id>/delete', methods=['POST'])
 @login_required
-def delete_comment(id):
-    comment = Comment.query.get(id)
+def delete_comment(gas_station_id, comment_id):
+    comment = Comment.query.get(comment_id)
     if not comment:
         flash('brak takiego komentarza')
     if current_user != comment.user:
@@ -95,19 +96,3 @@ def delete_comment(id):
     station = GasStation.query.get(station_id)
     flash('usunięto komentarz')
     return render_template('_gas_station_big_popup.html', station=station, form=CommentForm())
-
-
-@main.route('/comments/<int:id>/edit', methods=['POST'])
-@login_required
-def edit_comment(id):
-    comment = Comment.query.get(id)
-    if not comment:
-        flash('brak takiego komentarza')
-    if current_user != comment.user:
-        flash('nie można edytować nieswojego komentarza')
-    # może zwracać wyrenderowaną na nowo stronę bigpopup +
-    # podmiana HTML w js
-    # gas_station_id = comment.gas_station_id
-    # db.session.delete(comment)
-    # db.session.commit()
-    # return gas_station_big_popup(gas_station_id)
