@@ -244,6 +244,13 @@ function editComment(commentId) {
 }
 
 function deleteComment(commentId) {
-    console.log("Delete comment " + commentId)
-
+    var request = new XMLHttpRequest();
+    request.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            document.getElementById("big-popup").style.display = "flex";
+            document.getElementById("big-popup").innerHTML = this.responseText;
+        }
+    };
+    request.open('POST', "/comments/" + commentId + "/delete");
+    request.send();
 }
