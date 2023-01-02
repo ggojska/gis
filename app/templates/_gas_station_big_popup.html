@@ -17,7 +17,8 @@
     {% endif %}
     </p>
   </div>
-  <form class="carform" method="POST">
+   <button class="car-button" type="button" onclick="showAddComment()">Dodaj nowy komentarz</button>
+  <form class="comment-form" style="display: none" method="POST">
   {{ form.csrf_token }}
   {{ render_field(form.rate) }}
   {{ render_field(form.comment) }}
