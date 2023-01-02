@@ -2,6 +2,7 @@ var map;
 var popup;
 var queue = [];
 var stations = {};
+var bigpopupDisplayed = false;
 var searchActive = false;
 var markerSource;
 const ZOOM_THRESHOLD = 12;
@@ -186,12 +187,12 @@ function displayGasStationPopup(evt) {
         myFeature = feature;
     });
 
-    if (typeof myFeature !== 'undefined') {
+    if (typeof myFeature !== 'undefined' && !bigpopupDisplayed) {
         var id = myFeature.values_.id;
 
         popup.setPosition(evt.coordinate);
         map.getTarget().style.cursor = "pointer";
-        map.getTarget().onclick = function() {
+        map.getTarget().onclick = function () {
             displayGasStationInfo(id);
         };
 
@@ -213,30 +214,43 @@ function displayGasStationPopup(evt) {
     } else {
         popup.setPosition(undefined);
         map.getTarget().style.cursor = "";
-        map.getTarget().onclick = function() {
+        map.getTarget().onclick = function () {
             // pass
         };
     }
 };
 
 function displayGasStationInfo(gasStationId) {
-    var request = new XMLHttpRequest();
-    request.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200) {
-            document.getElementById("big-popup").style.display = "flex";
-            document.getElementById("big-popup").innerHTML = this.responseText;
-        }
-    };
-    request.open('GET', "/gas_stations/" + gasStationId + "/bigpopup");
-    request.send();
+    if (!bigpopupDisplayed) {
+        var request = new XMLHttpRequest();
+        request.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                document.getElementById("big-popup").style.display = "flex";
+                document.getElementById("big-popup").innerHTML = this.responseText;
+                bigpopupDisplayed = true;
+            }
+        };
+        request.open('GET', "/gas_stations/" + gasStationId + "/bigpopup");
+        request.send();
+    }
 }
 
 function hideGasStationInfo() {
     document.getElementById("big-popup").style.display = "none";
     map.getTarget().style.cursor = "";
-    map.getTarget().onclick = function() {
+    map.getTarget().onclick = function () {
         // pass
     };
+    bigpopupDisplayed = false;
+}
+
+function showAddComment() {
+    if (document.getElementsByClassName("comment-form")[0].style.display === 'none') {
+        document.getElementsByClassName("comment-form")[0].style.display = '';
+    }
+    else {
+        document.getElementsByClassName("comment-form")[0].style.display = 'none';
+    }
 }
 
 function editComment(commentId) {
