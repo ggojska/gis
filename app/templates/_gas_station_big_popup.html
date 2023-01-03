@@ -22,7 +22,7 @@
   </div>
   {% if current_user.is_authenticated %}
   <button class="car-button" type="button" onclick="showAddComment()">Dodaj nowy komentarz</button>
-  <form class="comment-form" id="comment-form" action="" method="POST" style="display: none">
+  <form class="comment-form" id="comment-form" action="{{ url_for('main.add_comment', id=station.id) }}" method="POST" target="blank-iframe" style="display: none">
   {{ form.csrf_token }}
   {{ render_field(form.rate) }}
   {{ render_field(form.comment) }}
