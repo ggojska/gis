@@ -110,31 +110,8 @@ class Comment(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     gas_station_id = db.Column(db.Integer, db.ForeignKey('gas_stations.id'))
 
-    def to_json(self):
-        comment = {
-            "id": self.id,
-            "comment": self.comment,
-            "rate": self.rate,
-            "created_at": self.created_at,
-            "updated_at": self.updated_at,
-            "user": self.user.username,
-            "user_id": self.user_id,
-        }
-        return comment
-
-    @staticmethod
-    def from_json(json_comment):
-        comment = json_comment.get('comment')
-        rate = json_comment.get('rate')
-        if not rate or not comment:
-            raise ValidationError("komentarz lub ocena muszą zostać uzupełnione")
-        if rate:
-            if type(rate) != float:
-                raise ValidationError("ocena musi być liczbą")
-        return Comment(comment=comment, rate=rate)
-
     @validates('rate')
-    def validate_column_name(self, key, value):
+    def validate_rate(self, key, value):
         if value:
             if value < 1.0:
                 raise ValidationError('ocena musi być wyższa lub równa 1')
@@ -145,7 +122,7 @@ class Comment(db.Model):
             raise ValidationError('nie można dodać pustego komentarza bez oceny')
 
     @validates('comment')
-    def validate_column_name(self, key, value):
+    def validate_comment(self, key, value):
         if not value and not self.comment:
             raise ValidationError('nie można dodać pustego komentarza bez oceny')
 
