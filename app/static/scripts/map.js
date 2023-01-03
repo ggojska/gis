@@ -59,6 +59,24 @@ function init() {
     map.on("movestart", function () {
         queue = [];
     });
+
+    // FIXME
+    document.getElementById('comment-form').addEventListener('submit', event => {
+        event.preventDefault();
+        console.log("before form submit event")
+    
+        fetch(action, {
+            method: 'POST',
+            body: new FormData(event.target),
+        })
+            .then(response => {
+                document.getElementById("big-popup").innerHTML = response.responseText;
+            })
+            .catch(error => {
+                // handle the failure case
+                console.error(error);
+            });
+    });   
 };
 
 function pushToRequestQueue() {
@@ -254,6 +272,7 @@ function showAddComment() {
     }
 }
 
+
 function deleteComment(gasStationId, commentId) {
     var request = new XMLHttpRequest();
     request.onreadystatechange = function () {
@@ -268,8 +287,7 @@ function deleteComment(gasStationId, commentId) {
 
 function refreshGasStationInfo() {
     console.log("refreshGasStationInfo");
-    if (document.getElementById("iframe").innerHTML.length > 0)
-    {
+    if (document.getElementById("iframe").innerHTML.length > 0) {
         document.getElementById("big-popup").innerHTML = document.getElementById("iframe").innerHTML;
     }
 }
