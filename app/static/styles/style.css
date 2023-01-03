@@ -334,6 +334,7 @@ li {
 
 .comment {
     margin-top: 20px;
+    background-color: rgba(245, 245, 245, 0.8);
 }
 
 .my-comment {
