@@ -117,14 +117,13 @@ class Comment(db.Model):
                 raise ValidationError('ocena musi być wyższa lub równa 1')
             if value > 5.0:
                 raise ValidationError('ocena musi być niższa lub równa 5')
-            return value
-        elif not value and not self.comment:
-            raise ValidationError('nie można dodać pustego komentarza bez oceny')
+        return value
 
     @validates('comment')
-    def validate_comment(self, key, value):
-        if not value and not self.comment:
-            raise ValidationError('nie można dodać pustego komentarza bez oceny')
+    def validate_rate(self, key, value):
+        if not value and not self.rate:
+            raise ValidationError('komentarz lub ocena muszą być uzupełnione')
+        return value
 
 
 class Car(db.Model):
