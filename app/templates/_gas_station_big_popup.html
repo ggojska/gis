@@ -2,7 +2,7 @@
 
 <button type="button" class="close-button" title="Zamknij" onclick="hideGasStationInfo()">X</button>
 
-<iframe name="blank-iframe" id="iframe" style="display: none"></iframe>
+<iframe name="blank-iframe" id="iframe" style="display: none" onload="refreshGasStationInfo()"></iframe>
 
 <div class="station-info">
   {% for message in get_flashed_messages() %}
