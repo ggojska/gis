@@ -46,7 +46,7 @@ function init() {
     });
 
     map.on("click", function (evt) {
-        if (document.getElementById("big-popup").style.display !== "none") {
+        if (isBigPopupDisplayed()) {
             document.getElementById("big-popup").style.display = "none";
         }
     });
@@ -59,7 +59,25 @@ function init() {
     map.on("movestart", function () {
         queue = [];
     });
-}
+
+    // FIXME
+    document.getElementById('comment-form').addEventListener('submit', event => {
+        event.preventDefault();
+        console.log("before form submit event")
+    
+        fetch(action, {
+            method: 'POST',
+            body: new FormData(event.target),
+        })
+            .then(response => {
+                document.getElementById("big-popup").innerHTML = response.responseText;
+            })
+            .catch(error => {
+                // handle the failure case
+                console.error(error);
+            });
+    });   
+};
 
 function pushToRequestQueue() {
     var center = view.getCenter();
@@ -186,12 +204,12 @@ function displayGasStationPopup(evt) {
         myFeature = feature;
     });
 
-    if (typeof myFeature !== 'undefined') {
+    if (typeof myFeature !== 'undefined' && !isBigPopupDisplayed()) {
         var id = myFeature.values_.id;
 
         popup.setPosition(evt.coordinate);
         map.getTarget().style.cursor = "pointer";
-        map.getTarget().onclick = function() {
+        map.getTarget().onclick = function () {
             displayGasStationInfo(id);
         };
 
@@ -213,13 +231,49 @@ function displayGasStationPopup(evt) {
     } else {
         popup.setPosition(undefined);
         map.getTarget().style.cursor = "";
-        map.getTarget().onclick = function() {
+        map.getTarget().onclick = function () {
             // pass
         };
     }
 };
 
 function displayGasStationInfo(gasStationId) {
+    if (!isBigPopupDisplayed()) {
+        var request = new XMLHttpRequest();
+        request.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                document.getElementById("big-popup").style.display = "flex";
+                document.getElementById("big-popup").innerHTML = this.responseText;
+            }
+        };
+        request.open('GET', "/gas_stations/" + gasStationId + "/comments");
+        request.send();
+    }
+}
+
+function hideGasStationInfo() {
+    document.getElementById("big-popup").style.display = "none";
+    map.getTarget().style.cursor = "";
+    map.getTarget().onclick = function () {
+        // pass
+    };
+}
+
+function isBigPopupDisplayed() {
+    return (document.getElementById("big-popup").style.display !== "none")
+}
+
+function showAddComment() {
+    if (document.getElementsByClassName("comment-form")[0].style.display === 'none') {
+        document.getElementsByClassName("comment-form")[0].style.display = '';
+    }
+    else {
+        document.getElementsByClassName("comment-form")[0].style.display = 'none';
+    }
+}
+
+
+function deleteComment(gasStationId, commentId) {
     var request = new XMLHttpRequest();
     request.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
@@ -227,14 +281,13 @@ function displayGasStationInfo(gasStationId) {
             document.getElementById("big-popup").innerHTML = this.responseText;
         }
     };
-    request.open('GET', "/gas_stations/" + gasStationId + "/bigpopup");
+    request.open('POST', "/gas_stations/" + gasStationId + "/comments/" + commentId + "/delete");
     request.send();
 }
 
-function hideGasStationInfo() {
-    document.getElementById("big-popup").style.display = "none";
-    map.getTarget().style.cursor = "";
-    map.getTarget().onclick = function() {
-        // pass
-    };
+function refreshGasStationInfo() {
+    console.log("refreshGasStationInfo");
+    if (document.getElementById("iframe").innerHTML.length > 0) {
+        document.getElementById("big-popup").innerHTML = document.getElementById("iframe").innerHTML;
+    }
 }

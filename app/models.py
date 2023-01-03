@@ -110,35 +110,19 @@ class Comment(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     gas_station_id = db.Column(db.Integer, db.ForeignKey('gas_stations.id'))
 
-    def to_json(self):
-        comment = {
-            "id": self.id,
-            "comment": self.comment,
-            "rate": self.rate,
-            "created_at": self.created_at,
-            "updated_at": self.updated_at,
-            "user": self.user.username,
-            "user_id": self.user_id,
-        }
-        return comment
-
-    @staticmethod
-    def from_json(json_comment):
-        comment = json_comment.get('comment')
-        rate = json_comment.get('rate')
-        if not rate or not comment:
-            raise ValidationError("komentarz lub ocena muszą zostać uzupełnione")
-        if rate:
-            if type(rate) != float:
-                raise ValidationError("ocena musi być liczbą")
-        return Comment(comment=comment, rate=rate)
-
     @validates('rate')
-    def validate_column_name(self, key, value):
-        if value < 1.0:
-            raise ValueError('ocena musi być wyższa lub równa 1')
-        if value > 5.0:
-            raise ValueError('ocena musi być niższa lub równa 5')
+    def validate_rate(self, key, value):
+        if value:
+            if value < 1.0:
+                raise ValidationError('ocena musi być wyższa lub równa 1')
+            if value > 5.0:
+                raise ValidationError('ocena musi być niższa lub równa 5')
+        return value
+
+    @validates('comment')
+    def validate_rate(self, key, value):
+        if not value and not self.rate:
+            raise ValidationError('komentarz lub ocena muszą być uzupełnione')
         return value
 
 
@@ -151,7 +135,6 @@ class Car(db.Model):
     combustion = db.Column(db.Numeric(3,1), nullable=False)
     fuel = db.Column(db.String(10), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    # user = db.relationship("User", backref="car")
 
     def to_json(self):
         car = {
@@ -162,25 +145,6 @@ class Car(db.Model):
             "combustion": self.combustion
         }
         return car
-
-    @staticmethod
-    def from_json(json_car):
-        make = json_car.get('car')
-        if not make:
-            raise ValidationError("marka samochodu mysi być podana")
-        model = json_car.get('model')
-        if not model:
-            raise ValidationError("model samochodu musi być podany")
-        combustion = json_car.get('combustion')
-        if not combustion:
-            raise ValidationError("spalanie samochodu musi być podane")
-        if type(combustion) != float:
-            raise ValidationError("spalanie musi być liczbą")
-        fuel = json_car.get('fuel')
-        user_id = json_car.get('user_id')
-        if user_id:
-            raise ValidationError("samochód musi być przypisany do użytkownika")
-        return Car(make=make, model=model, combustion=combustion)
 
     @validates('fuel')
     def validate_column_name(self, key, value):

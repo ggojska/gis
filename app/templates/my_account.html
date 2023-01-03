@@ -20,7 +20,7 @@
     <li><b>Moje samochody:</b></li>
     <ul class="cars">
       {% for car in current_user.cars %}
-      <li name="{{car.id}}">
+      <li>
         <span class="car-description">{{ car.make }} {{ car.model }}, spalanie: {{ car.combustion }}
           l/100km {{ car.fuel }}</span> 
         <span class="car-edit">
