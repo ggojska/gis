@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from flask import render_template, redirect, url_for, flash
+from flask import render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
 
 from . import main
@@ -56,26 +56,34 @@ def gas_station_popup(id):
     return render_template('_gas_station_popup.html', station=station)
 
 
-@main.route('/gas_stations/<int:id>/comments', methods=['GET', 'POST'])
+@main.route('/gas_stations/<int:id>/comments', methods=['GET'])
+def get_comments(id):
+    station = GasStation.query.get(id)
+    if not station:
+         return page_not_found()
+    form = CommentForm()
+    return render_template('_gas_station_big_popup.html', station=station, form=form)
+
+
+@main.route('/gas_stations/<int:id>/comments', methods=['POST'])
 @login_required
 def add_comment(id):
     station = GasStation.query.get(id)
     if not station:
          return page_not_found()
     form = CommentForm()
-    if form.validate_on_submit():
-        try:
-            new_comment = Comment(rate=form.rate.data,
-                        comment=form.comment.data,
-                        gas_station_id=station.id,
-                        created_at=datetime.now(),
-                        user=current_user)
-            db.session.add(new_comment)
-            db.session.commit()
-            station = GasStation.query.get(id)
-        except Exception as e:
-            print(e)
-            flash(e)
+    try:
+        new_comment = Comment(rate=form.rate.data,
+                    comment=form.comment.data,
+                    gas_station_id=station.id,
+                    created_at=datetime.now(),
+                    user=current_user)
+        db.session.add(new_comment)
+        db.session.commit()
+        station = GasStation.query.get(id)
+    except Exception as e:
+        print(e)
+        flash(e)
     return render_template('_gas_station_big_popup.html', station=station, form=form)
 
 
