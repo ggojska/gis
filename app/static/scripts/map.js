@@ -59,7 +59,7 @@ function init() {
     map.on("movestart", function () {
         queue = [];
     });
-}
+};
 
 function pushToRequestQueue() {
     var center = view.getCenter();
@@ -264,4 +264,12 @@ function deleteComment(gasStationId, commentId) {
     };
     request.open('POST', "/gas_stations/" + gasStationId + "/comments/" + commentId + "/delete");
     request.send();
+}
+
+function refreshGasStationInfo() {
+    console.log("refreshGasStationInfo");
+    if (document.getElementById("iframe").innerHTML.length > 0)
+    {
+        document.getElementById("big-popup").innerHTML = document.getElementById("iframe").innerHTML;
+    }
 }
