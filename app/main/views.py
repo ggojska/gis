@@ -61,7 +61,6 @@ def add_comment(id):
     station = GasStation.query.get(id)
     if not station:
          return page_not_found()
-
     form = CommentForm()
     if form.validate_on_submit():
         try:
@@ -72,12 +71,8 @@ def add_comment(id):
             db.session.add(comment)
             db.session.commit()
             station = GasStation.query.get(id)
-        except ValidationError as e:
-            if hasattr(e, 'message'):
-                flash(e.message)
-            else:
-                flash(e)
-
+        except Exception as e:
+            flash(e)
     return render_template('_gas_station_big_popup.html', station=station, form=form)
 
 
