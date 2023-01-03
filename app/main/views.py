@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import render_template, redirect, url_for, flash
 from flask_login import login_required, current_user
 
@@ -6,7 +8,6 @@ from .. import db
 from ..models import GasStation, Car, Comment, fuels_lookup, db
 from .forms import CarForm, CommentForm
 from .errors import page_not_found
-from ..exceptions import ValidationError
 
 
 @main.route('/', methods=['GET'])
@@ -64,14 +65,16 @@ def add_comment(id):
     form = CommentForm()
     if form.validate_on_submit():
         try:
-            comment = Comment(rate=form.rate.data,
+            new_comment = Comment(rate=form.rate.data,
                         comment=form.comment.data,
                         gas_station_id=station.id,
+                        created_at=datetime.now(),
                         user=current_user)
-            db.session.add(comment)
+            db.session.add(new_comment)
             db.session.commit()
             station = GasStation.query.get(id)
         except Exception as e:
+            print(e)
             flash(e)
     return render_template('_gas_station_big_popup.html', station=station, form=form)
 
