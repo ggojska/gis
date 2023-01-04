@@ -23,6 +23,7 @@ def get_gas_stations():
     validation_result = validate_request(lat, lon, radius, search_params)
     if validation_result: return bad_request(validation_result)
 
+    # REFACTOR: move to new method, eg. get params
     name = search_params.get("name")
     if name: name = f"%{name.lower()}%"
     fuel = search_params.get("fuel")
@@ -33,6 +34,7 @@ def get_gas_stations():
 
     next, prev = None, None
 
+    # REFACTOR: move to method (eg. "build query")
     query = db.session.query(GasStation).outerjoin(GasStation.fuels)
     sort_by_column = GasStation.id
 
@@ -61,6 +63,7 @@ def get_gas_stations():
                 .filter(column('harvesine') < radius)
         sort_by_column = column('harvesine').asc()
 
+    # REFACTOR: move to new method
     if sort_by:
         if sort_by == "price":
             if sort_direction == "desc":
@@ -110,17 +113,6 @@ def get_gas_stations():
     })
 
 
-@api.route('/gas_stations/<int:id>')
-def get_gas_station(id):
-    station = GasStation.query.get(id)
-    if not station:
-         return not_found(f'stacja o id {id} nie istnieje')
-    json = station.to_json()
-    json["fuels"] = [fuel.to_json() for fuel in station.fuels]
-    json["comments"] = [comment.to_json() for comment in station.comments]
-    return jsonify(json)
-
-
 def validate_request(lat, lon, radius, search_params):
     name = search_params.get("name")
     fuel = search_params.get("fuel")
@@ -146,3 +138,14 @@ def validate_request(lat, lon, radius, search_params):
     if sort_direction:
         if not sort_direction in ["asc", "desc"]:
             return f"unknown sort direction: {sort_direction}"
+
+
+@api.route('/gas_stations/<int:id>')
+def get_gas_station(id):
+    station = GasStation.query.get(id)
+    if not station:
+         return not_found(f'stacja o id {id} nie istnieje')
+    json = station.to_json()
+    json["fuels"] = [fuel.to_json() for fuel in station.fuels]
+    json["comments"] = [comment.to_json() for comment in station.comments]
+    return jsonify(json)
