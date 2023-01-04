@@ -125,6 +125,18 @@ class Comment(db.Model):
             raise ValidationError('komentarz lub ocena muszą być uzupełnione')
         return value
 
+    def to_json(self):
+        comment = {
+            "id": self.id,
+            "comment": self.comment,
+            "rate": self.rate,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
+            "user": self.user.username,
+            "user_id": self.user_id,
+        }
+        return comment
+
 
 class Car(db.Model):
     __tablename__ = 'cars'
