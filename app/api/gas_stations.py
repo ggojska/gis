@@ -21,13 +21,16 @@ def get_gas_stations():
     next, prev = None, None
     name, fuel, price_range, sort_by, sort_direction = None, None, None, None, None
 
+    validation_result = validate_request(lat, lon, radius, {})
+    if validation_result: return bad_request(validation_result)
+
     if request.content_type == "application/json":
         search_params = request.get_json()
         if search_params:
             validation_result = validate_request(lat, lon, radius, search_params)
             if validation_result: return bad_request(validation_result)
             name, fuel, price_range, sort_by, sort_direction = get_search_params(search_params)
-    
+
     query, sort_by_column = build_query(lat, lon, radius, name, fuel, price_range)
     if not get_sort_by_column(sort_by, sort_direction) is None:
         sort_by_column = get_sort_by_column(sort_by, sort_direction)
@@ -66,8 +69,21 @@ def validate_request(lat, lon, radius, search_params):
     fuel = search_params.get("fuel")
     price_range = search_params.get("price_range")
 
+    print(f"Lat: {lat}")
+    print(f"Lon: {lon}")
+    print(f"Radius: {radius}")
+
+    if radius and not lat and not lon:
+        return "when radius is given, lat and lon must be given"
+    if radius and not lat:
+        return "when radius is given, lat must be given"
+    if radius and not lon:
+        return "when radius is given, lon must be given"
+    if (lat or lon) and not radius:
+        return "when lat or lon are given, radius must be given"
+
     if price_range:
-        if len(price_range)>2:
+        if len(price_range) > 2:
             return "price range can contain up to two values"
 
     if not fuel and price_range:
