@@ -18,72 +18,15 @@ def get_gas_stations():
     per_page = request.args.get('per_page', type=int)
     if not per_page:
         per_page = current_app.config['STATIONS_PER_PAGE']
+    next, prev = None, None
 
     search_params = request.get_json()
     validation_result = validate_request(lat, lon, radius, search_params)
     if validation_result: return bad_request(validation_result)
 
-    # REFACTOR: move to new method, eg. get params
-    name = search_params.get("name")
-    if name: name = f"%{name.lower()}%"
-    fuel = search_params.get("fuel")
-    if fuel: fuel = f"%{fuel.lower()}%"
-    price_range = search_params.get("price_range")
-    sort_by = search_params.get("sort_by")
-    sort_direction = search_params.get("sort_direction")
-
-    next, prev = None, None
-
-    # REFACTOR: move to method (eg. "build query")
-    query = db.session.query(GasStation).outerjoin(GasStation.fuels)
-    sort_by_column = GasStation.id
-
-    if name:
-        query = query.filter(func.lower(GasStation.name).like(name))
-    if fuel:
-        query = query.filter(func.lower(Fuel.name).like(fuel))
-    if price_range:
-        print(price_range)
-        if price_range[0] and not price_range[1]:
-            query = query.filter(Fuel.price >= price_range[0])
-        elif price_range[1] and not price_range[0]:
-            query = query.filter(Fuel.price <= price_range[1])
-        else:
-            query = query.filter(Fuel.price >= price_range[0]).filter(Fuel.price <= price_range[1])
-        
-        print(query)
-
-    if lat and lon and radius:
-        text_sql = text(sql.select_gas_stations_with_distance.replace(":lon", str(lon))\
-            .replace(":lat", str(lat)))
-        cte = select([column('id'), column('harvesine')], use_labels=True).select_from(text_sql)\
-            .cte("cte")
-        query = query.add_columns(column('harvesine').label("harvesine"))\
-                .join(cte, cte.columns["id"] == GasStation.id)\
-                .filter(column('harvesine') < radius)
-        sort_by_column = column('harvesine').asc()
-
-    # REFACTOR: move to new method
-    if sort_by:
-        if sort_by == "price":
-            if sort_direction == "desc":
-                sort_by_column = Fuel.price.desc()
-            else:
-                sort_by_column = Fuel.price.asc()
-        if sort_by == "distance":
-            if sort_direction == "desc":
-                sort_by_column = column('harvesine').desc()
-            else:
-                sort_by_column= column('harvesine').asc()
-        # FIXME: nie dziala, bo to jest obliczane pole
-        if sort_by == "average_rate":
-            if sort_direction == "desc":
-                pass
-                # sort_by_column = column('average_rate').desc()
-            else:
-                pass
-                # sort_by_column = column('average_rate').desc()
-    
+    name, fuel, price_range, sort_by, sort_direction = get_search_params(search_params)
+    query, sort_by_column = build_query(lat, lon, radius, name, fuel, price_range)
+    sort_by_column = get_sort_by_column(sort_by_column, sort_by, sort_direction)
     query_ordered = query.order_by(sort_by_column)
 
     offset = per_page * (page-1)
@@ -139,6 +82,68 @@ def validate_request(lat, lon, radius, search_params):
         if not sort_direction in ["asc", "desc"]:
             return f"unknown sort direction: {sort_direction}"
 
+
+def get_search_params(search_params):
+    name = search_params.get("name")
+    if name: name = f"%{name.lower()}%"
+    fuel = search_params.get("fuel")
+    if fuel: fuel = f"%{fuel.lower()}%"
+    price_range = search_params.get("price_range")
+    sort_by = search_params.get("sort_by")
+    sort_direction = search_params.get("sort_direction")
+    return name, fuel, price_range, sort_by, sort_direction
+
+
+def build_query(lat, lon, radius, name, fuel, price_range):
+    query = db.session.query(GasStation).outerjoin(GasStation.fuels)
+    sort_by_column = GasStation.id
+
+    if name:
+        query = query.filter(func.lower(GasStation.name).like(name))
+    if fuel:
+        query = query.filter(func.lower(Fuel.name).like(fuel))
+    if price_range:
+        print(price_range)
+        if price_range[0] and not price_range[1]:
+            query = query.filter(Fuel.price >= price_range[0])
+        elif price_range[1] and not price_range[0]:
+            query = query.filter(Fuel.price <= price_range[1])
+        else:
+            query = query.filter(Fuel.price >= price_range[0]).filter(Fuel.price <= price_range[1])
+
+    if lat and lon and radius:
+        text_sql = text(sql.select_gas_stations_with_distance.replace(":lon", str(lon))\
+            .replace(":lat", str(lat)))
+        cte = select([column('id'), column('harvesine')], use_labels=True).select_from(text_sql)\
+            .cte("cte")
+        query = query.add_columns(column('harvesine').label("harvesine"))\
+                .join(cte, cte.columns["id"] == GasStation.id)\
+                .filter(column('harvesine') < radius)
+        sort_by_column = column('harvesine').asc()
+
+    return query, sort_by_column
+
+def get_sort_by_column(sort_by_column, sort_by, sort_direction):
+    if sort_by:
+        if sort_by == "price":
+            if sort_direction == "desc":
+                sort_by_column = Fuel.price.desc()
+            else:
+                sort_by_column = Fuel.price.asc()
+        if sort_by == "distance":
+            if sort_direction == "desc":
+                sort_by_column = column('harvesine').desc()
+            else:
+                sort_by_column= column('harvesine').asc()
+        # FIXME: nie dziala, bo to jest obliczane pole
+        if sort_by == "average_rate":
+            if sort_direction == "desc":
+                pass
+                # sort_by_column = column('average_rate').desc()
+            else:
+                pass
+                # sort_by_column = column('average_rate').desc()
+    return sort_by_column
 
 @api.route('/gas_stations/<int:id>')
 def get_gas_station(id):
