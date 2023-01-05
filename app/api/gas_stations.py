@@ -69,10 +69,6 @@ def validate_request(lat, lon, radius, search_params):
     fuel = search_params.get("fuel")
     price_range = search_params.get("price_range")
 
-    print(f"Lat: {lat}")
-    print(f"Lon: {lon}")
-    print(f"Radius: {radius}")
-
     if radius and not lat and not lon:
         return "when radius is given, lat and lon must be given"
     if radius and not lat:
@@ -129,9 +125,7 @@ def build_query(lat, lon, radius, name, fuel, price_range):
             query = query.filter(Fuel.price <= price_range[1])
         else:
             query = query.filter(Fuel.price >= price_range[0]).filter(Fuel.price <= price_range[1])
-
     if lat and lon and radius:
-        # FIXME: possible sql injection
         text_sql = text(sql.select_gas_stations_with_distance.replace(":lon", str(lon))\
             .replace(":lat", str(lat)))
         cte = select([column('id'), column('harvesine')], use_labels=True).select_from(text_sql)\
