@@ -13,8 +13,8 @@
   <div class="info-row">Stacja <strong>{{ station.name }}</strong></div>
   <div class="info-row">
     <p class="rate">
-    {% if station.average_rate() %}
-    średnia ocena {{ station.average_rate() }}
+    {% if station.average_rate %}
+    średnia ocena {{ station.average_rate }}
     {% else %}
     brak ocen
     {% endif %}

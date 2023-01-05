@@ -1,13 +1,13 @@
 <p>Stacja <strong>{{ station.name }}</strong></p>
-{% if station.average_rate() %}
+{% if station.average_rate %}
 <p class="rate">średnia ocena
   <span class="yellow-stars">
-  {% for n in range(station.average_rate()|int) %}&#9733{% endfor %}
+  {% for n in range(station.average_rate|int) %}&#9733{% endfor %}
   </span>
   <span class="grey-stars">
-  {% for n in range(5 - station.average_rate()|int) %}&#9733{% endfor %}
+  {% for n in range(5 - station.average_rate|int) %}&#9733{% endfor %}
   </span>
-  {{ station.average_rate() }}
+  {{ station.average_rate }}
 </p>
 {% else %}
 <p class="rate">brak ocen</p>
