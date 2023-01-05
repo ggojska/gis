@@ -29,8 +29,10 @@ def get_gas_stations():
             name, fuel, price_range, sort_by, sort_direction = get_search_params(search_params)
     
     query, sort_by_column = build_query(lat, lon, radius, name, fuel, price_range)
-    sort_by_column = get_sort_by_column(sort_by, sort_direction) or sort_by_column
+    if not get_sort_by_column(sort_by, sort_direction) is None:
+        sort_by_column = get_sort_by_column(sort_by, sort_direction)
     query_ordered = query.order_by(sort_by_column)
+    print(query_ordered)
 
     offset = per_page * (page-1)
     stations = query_ordered.limit(per_page).offset(offset).distinct()
@@ -97,7 +99,6 @@ def get_search_params(search_params):
 
 def build_query(lat, lon, radius, name, fuel, price_range):
     query = db.session.query(GasStation).outerjoin(GasStation.fuels)
-    query = query.outerjoin(GasStation.comments)
     sort_by_column = GasStation.id
 
     if name:
@@ -127,8 +128,8 @@ def build_query(lat, lon, radius, name, fuel, price_range):
     return query, sort_by_column
 
 def get_sort_by_column(sort_by, sort_direction):
+    sort_by_column = None
     if sort_by:
-        sort_by_column = None
         if sort_by == "price":
             if sort_direction == "desc":
                 sort_by_column = Fuel.price.desc()
@@ -139,15 +140,12 @@ def get_sort_by_column(sort_by, sort_direction):
                 sort_by_column = column('harvesine').desc()
             else:
                 sort_by_column= column('harvesine').asc()
-        # FIXME: nie dziala, bo to jest obliczane pole
         if sort_by == "average_rate":
             if sort_direction == "desc":
-                pass
-                # sort_by_column = column('average_rate').desc()
+                sort_by_column = GasStation.average_rate.desc()
             else:
-                pass
-                # sort_by_column = column('average_rate').desc()
-        return sort_by_column
+                sort_by_column = GasStation.average_rate.asc()
+    return sort_by_column
 
 
 @api.route('/gas_stations/<int:id>')
