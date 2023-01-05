@@ -3,7 +3,7 @@ from math import ceil
 from flask import jsonify, request, url_for, current_app
 from sqlalchemy.sql import text, func, select, column
 
-from ..models import GasStation, Fuel, db
+from ..models import GasStation, Fuel, Comment, db
 from ..sql import sql
 from .errors import bad_request, not_found
 from . import api
@@ -19,14 +19,17 @@ def get_gas_stations():
     if not per_page:
         per_page = current_app.config['STATIONS_PER_PAGE']
     next, prev = None, None
+    name, fuel, price_range, sort_by, sort_direction = None, None, None, None, None
 
-    search_params = request.get_json()
-    validation_result = validate_request(lat, lon, radius, search_params)
-    if validation_result: return bad_request(validation_result)
-
-    name, fuel, price_range, sort_by, sort_direction = get_search_params(search_params)
+    if request.content_type == "application/json":
+        search_params = request.get_json()
+        if search_params:
+            validation_result = validate_request(lat, lon, radius, search_params)
+            if validation_result: return bad_request(validation_result)
+            name, fuel, price_range, sort_by, sort_direction = get_search_params(search_params)
+    
     query, sort_by_column = build_query(lat, lon, radius, name, fuel, price_range)
-    sort_by_column = get_sort_by_column(sort_by_column, sort_by, sort_direction)
+    sort_by_column = get_sort_by_column(sort_by, sort_direction) or sort_by_column
     query_ordered = query.order_by(sort_by_column)
 
     offset = per_page * (page-1)
@@ -82,7 +85,6 @@ def validate_request(lat, lon, radius, search_params):
         if not sort_direction in ["asc", "desc"]:
             return f"unknown sort direction: {sort_direction}"
 
-
 def get_search_params(search_params):
     name = search_params.get("name")
     if name: name = f"%{name.lower()}%"
@@ -93,9 +95,9 @@ def get_search_params(search_params):
     sort_direction = search_params.get("sort_direction")
     return name, fuel, price_range, sort_by, sort_direction
 
-
 def build_query(lat, lon, radius, name, fuel, price_range):
     query = db.session.query(GasStation).outerjoin(GasStation.fuels)
+    query = query.outerjoin(GasStation.comments)
     sort_by_column = GasStation.id
 
     if name:
@@ -112,6 +114,7 @@ def build_query(lat, lon, radius, name, fuel, price_range):
             query = query.filter(Fuel.price >= price_range[0]).filter(Fuel.price <= price_range[1])
 
     if lat and lon and radius:
+        # FIXME: possible sql injection
         text_sql = text(sql.select_gas_stations_with_distance.replace(":lon", str(lon))\
             .replace(":lat", str(lat)))
         cte = select([column('id'), column('harvesine')], use_labels=True).select_from(text_sql)\
@@ -123,8 +126,9 @@ def build_query(lat, lon, radius, name, fuel, price_range):
 
     return query, sort_by_column
 
-def get_sort_by_column(sort_by_column, sort_by, sort_direction):
+def get_sort_by_column(sort_by, sort_direction):
     if sort_by:
+        sort_by_column = None
         if sort_by == "price":
             if sort_direction == "desc":
                 sort_by_column = Fuel.price.desc()
@@ -143,7 +147,8 @@ def get_sort_by_column(sort_by_column, sort_by, sort_direction):
             else:
                 pass
                 # sort_by_column = column('average_rate').desc()
-    return sort_by_column
+        return sort_by_column
+
 
 @api.route('/gas_stations/<int:id>')
 def get_gas_station(id):
