@@ -5,7 +5,8 @@ from flask import url_for, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from sqlalchemy.orm import validates
-from sqlalchemy import select, text
+from sqlalchemy import select, text, func
+from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
 
 from . import db
 from . import login_manager
@@ -50,15 +51,18 @@ class GasStation(db.Model):
     fuels = db.relationship("Fuel", backref="gas_station")
     comments = db.relationship("Comment", backref="gas_station", lazy='dynamic', order_by="desc(Comment.created_at)",)
 
+    @hybrid_property
     def average_rate(self):
-        sum, count = 0.0, 0
-        if self.comments:
-            for comment in self.comments:
-                if comment.rate:
-                    sum += float(comment.rate)
-                    count += 1
-        if count > 0:
-            return round(sum/count, 2)
+        li = [comment.rate for comment in self.comments if comment.rate is not None]
+        if len(li) > 0:
+            return round(sum(li) / len(li), 2)
+
+    @average_rate.expression
+    def average_rate(self):
+        return select(func.avg(Comment.rate)).\
+                where(Comment.rate.isnot(None)).\
+                where(Comment.gas_station_id==self.id).\
+                label('average_rate')
 
     def get_icon(self):
         if os.path.exists(os.path.join(
@@ -76,7 +80,7 @@ class GasStation(db.Model):
             "lon": self.lon,
             "distance": None,
             "icon": self.get_icon(),
-            "average_rate": self.average_rate(),
+            "average_rate": self.average_rate,
         }
         return station
 
@@ -124,6 +128,18 @@ class Comment(db.Model):
         if not value and not self.rate:
             raise ValidationError('komentarz lub ocena muszą być uzupełnione')
         return value
+
+    def to_json(self):
+        comment = {
+            "id": self.id,
+            "comment": self.comment,
+            "rate": self.rate,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
+            "user": self.user.username,
+            "user_id": self.user_id,
+        }
+        return comment
 
 
 class Car(db.Model):
