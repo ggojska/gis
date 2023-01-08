@@ -94,9 +94,6 @@ function pushToRequestQueue() {
     const name = document.getElementsByName("gas_station_name")[0].value;
     if (name.length > 0) options.name = name;
 
-    const fuel = document.getElementsByName("fuel_name")[0].value;
-    if (fuel.length > 0) options.fuel = fuel;
-
     queue.push(options);
 }
 
@@ -117,17 +114,30 @@ function prepareRequest(options) {
         }
     };
     request_url = api_url + "/gas_stations?lon=" + options.lon + "&lat=" + options.lat + "&radius=" + options.radius
-    if ("name" in options) request_url = request_url + "&name=" + options.name;
-    if ("fuel" in options) request_url = request_url + "&fuel=" + options.fuel;
 
+    var request_body = {};
+    if ("name" in options) request_body["name"] = options.name;
+    if ("fuel" in options) request_body["fuel"] = options.fuel;
+    var price_range = [];
+    if ("price_min" in options) price_range[0] = options.price_min;
+    if ("price_max" in options) price_range[1] = options.price_max;
+    if (price_range.length > 0) request_body["price_range"] = price_range;
+
+    request.body = request_body;
     request.open('GET', request_url);
     return request;
 }
 
 function canSearch() {
     const name = document.getElementsByName("gas_station_name")[0].value;
-    const fuel = document.getElementsByName("fuel_name")[0].value;
-    return ((fuel.length > 0) || (name.length > 0))
+    return (name.length > 0)
+}
+
+function canSearchAdv() {
+    // const name = document.getElementsByName("gas_station_name")[0].value;
+    // const fuel = document.getElementsByName("fuel_name")[0].value;
+    // return ((fuel.length > 0) || (name.length > 0))
+    // TODO
 }
 
 function searchStringChanged() {
@@ -139,8 +149,17 @@ function searchStringChanged() {
     }
 }
 
-function startSearch() {
+function normalSearch() {
     if (canSearch()) {
+        clearMarkers();
+        pushToRequestQueue();
+        getNewMarkers();
+        searchActive = true;
+    }
+}
+
+function advancedSearch() {
+    if (canSearchAdv()) {
         clearMarkers();
         pushToRequestQueue();
         getNewMarkers();
