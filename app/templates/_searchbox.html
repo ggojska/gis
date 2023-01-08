@@ -1,0 +1,32 @@
+<form class="carform">
+  <div class="info-row">
+    <label>Nazwa stacji
+      <input type="text" name="gs_name">
+    </label>
+  </div>
+  <div class="info-row">
+    <label>Cena
+      <input type="text" name="gs_price_min" type="number" placeholder="od">
+      <input type="text" name="gs_price_max" type="number" placeholder="do">
+    </label>
+  </div>
+  <div class="info-row">
+    <label>Paliwo
+      <select id="fuel-dropdown" name="gs_fuel">
+        <option value="w">wysokoprężny</option>
+        <option value="b">benzynowy</option>
+        <option value="e" selected>elektryczny</option>
+        <option value="h">hybrydowy</option>
+      </select>
+    </label>
+  </div>
+  <div class="info-row">
+    <label>Ocena
+      <input type="text" name="gs_rate_min" type="number" placeholder="od">
+      <input type="text" name="gs_rate_max" type="number" placeholder="do">
+    </label>
+  </div>
+  <div class="info-row">
+    <button type="button" id="search-button" title="Szukaj" onclick="">Szukaj</button>
+  </div>
+</form>
