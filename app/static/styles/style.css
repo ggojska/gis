@@ -141,7 +141,7 @@ th {
     border: 2px solid #367fb0;
 }
 
-#close-search-button, 
+#close-search-button,
 #advanced-search-button {
     width: 5%;
     border: none;
@@ -221,8 +221,7 @@ th {
     outline: none;
 }
 
-.carform input[type=number]
-{
+.carform input[type=number] {
     -webkit-appearance: none;
     -moz-appearance: textfield;
 }
@@ -235,32 +234,38 @@ th {
 }
 
 label {
-    font-weight: bold;
+    font-weight: bolder;
 }
 
-.loginform input[type=text],
-.loginform input[type=password],
-.loginform input[type=checkbox] {
+input,
+select,
+textarea {
     background-color: #efefef;
     color: #333333;
-    border: 2px solid #999999;
+    border: 1px solid #999999;
     border-radius: 5px;
-    padding: 10px;
+    padding: 5px;
     box-sizing: border-box;
     outline: none;
 }
 
-.loginform input[type=text]:focus,
-.loginform input[type=password]:focus,
-.loginform input[type=checkbox]:focus,
-.loginform input[type=checkbox]:hover {
+input:focus,
+select:focus,
+textarea:focus {
     background-color: #ffffff;
-    border: 2px solid #367fb0;
+    border: 1px solid #367fb0;
 }
 
 .loginform input[type=text],
 .loginform input[type=password] {
     width: 100%;
+    padding: 10px;
+    border: 2px solid #999999;
+}
+
+.loginform input[type=text]:hover,
+.loginform input[type=password]:hover {
+    border: 2px solid #367fb0;
 }
 
 .loginform input[type=checkbox] {
@@ -306,7 +311,7 @@ li {
     float: left;
 }
 
-.big-popup, 
+.big-popup,
 .search-box {
     position: absolute;
     background-color: #FFFFFF;
@@ -328,7 +333,7 @@ li {
 .search-box {
     width: 750px;
     left: 844px;
-    height: 200px;
+    height: 230px;
     top: 75px;
 }
 
@@ -376,7 +381,7 @@ li {
 
 .comment-author,
 .comment-created,
-.comment-edit, 
+.comment-edit,
 .comment-delete {
     margin-right: 10px;
 }
@@ -391,29 +396,12 @@ li {
 }
 
 .grey-stars {
-    color:#BBBBBB;
+    color: #BBBBBB;
     text-shadow: 0 0 1px #111111;
-}
-
-.comment-form textarea,
-.comment-form input[type=number] {
-    background-color: #efefef;
-    color: #333333;
-    border: 1px solid #999999;
-    border-radius: 5px;
-    padding: 3px;
-    box-sizing: border-box;
-    outline: none;
 }
 
 .comment-form textarea {
     width: 100%;
     height: 150px;
     resize: none;
-}
-
-.comment-form textarea:focus,
-.comment-form input[type=number]:focus {
-    background-color: #ffffff;
-    border: 1px solid #367fb0;
 }
