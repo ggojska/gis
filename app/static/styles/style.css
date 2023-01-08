@@ -221,6 +221,12 @@ th {
     outline: none;
 }
 
+.carform input[type=number]
+{
+    -webkit-appearance: none;
+    -moz-appearance: textfield;
+}
+
 .carform input[type=text]:focus,
 .carform input[type=number]:focus,
 .carform select:focus {
