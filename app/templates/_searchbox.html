@@ -1,0 +1,28 @@
+<form class="search-form">
+  <div class="info-row">
+    <label>Nazwa stacji</label>
+    <input type="text" name="gs_name">
+    <div style="clear: both;"></div>
+  </div>
+  <div class="info-row">
+    <label>Cena</label>
+    <input name="gs_price_min" type="number" placeholder="od">
+    <input name="gs_price_max" type="number" placeholder="do">
+    <div style="clear: both;"></div>
+  </div>
+  <div class="info-row">
+    <label>Paliwo</label>
+    <select id="fuel-dropdown" name="gs_fuel">
+    </select>
+    <div style="clear: both;"></div>
+  </div>
+  <div class="info-row">
+    <label>Średnia ocena stacji</label>
+    <input name="gs_rate_min" type="number" placeholder="od">
+    <input name="gs_rate_max" type="number" placeholder="do">
+    <div style="clear: both;"></div>
+  </div>
+  <div class="info-row">
+    <button type="button" class="search-button" id="adv-search-button" title="Szukaj" onclick="advancedSearch()">Szukaj</button>
+  </div>
+</form>

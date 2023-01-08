@@ -59,24 +59,6 @@ function init() {
     map.on("movestart", function () {
         queue = [];
     });
-
-    // FIXME
-    document.getElementById('comment-form').addEventListener('submit', event => {
-        event.preventDefault();
-        console.log("before form submit event")
-    
-        fetch(action, {
-            method: 'POST',
-            body: new FormData(event.target),
-        })
-            .then(response => {
-                document.getElementById("big-popup").innerHTML = response.responseText;
-            })
-            .catch(error => {
-                // handle the failure case
-                console.error(error);
-            });
-    });   
 };
 
 function pushToRequestQueue() {
@@ -93,22 +75,30 @@ function pushToRequestQueue() {
 
     const name = document.getElementsByName("gas_station_name")[0].value;
     if (name.length > 0) options.name = name;
-
-    const fuel = document.getElementsByName("fuel_name")[0].value;
+    const name2 = document.getElementsByName("gs_name")[0].value;
+    if (name2.length > 0) options.name = name2;
+    const min_price = document.getElementsByName("gs_price_min")[0].value;
+    if (min_price.length > 0) options.min_price = min_price;
+    const max_price = document.getElementsByName("gs_price_max")[0].value;
+    if (max_price.length > 0) options.max_price = max_price;
+    const fuel = document.getElementsByName("gs_fuel")[0].value;
     if (fuel.length > 0) options.fuel = fuel;
+    const min_rate = document.getElementsByName("gs_rate_min")[0].value;
+    if (min_rate.length > 0) options.min_rate = min_rate;
+    const max_rate = document.getElementsByName("gs_rate_max")[0].value;
+    if (max_rate.length > 0) options.max_rate = max_rate;
 
     queue.push(options);
 }
 
 function getNewMarkers() {
     if (queue.length) {
-        const request = prepareRequest(queue.pop());
+        prepareAndSendRequest(queue.pop());
         queue = [];
-        request.send();
     };
 }
 
-function prepareRequest(options) {
+function prepareAndSendRequest(options) {
     var request;
     request = new XMLHttpRequest();
     request.onreadystatechange = function () {
@@ -117,30 +107,52 @@ function prepareRequest(options) {
         }
     };
     request_url = api_url + "/gas_stations?lon=" + options.lon + "&lat=" + options.lat + "&radius=" + options.radius
-    if ("name" in options) request_url = request_url + "&name=" + options.name;
-    if ("fuel" in options) request_url = request_url + "&fuel=" + options.fuel;
-
+    if ("name" in options) request_url += "&name=" + options.name;
+    if ("fuel" in options) request_url += "&fuel=" + options.fuel;
+    if ("min_price" in options) request_url += "&min_price=" + options.min_price;
+    if ("max_price" in options) request_url += "&max_price=" + options.max_price;
+    if ("min_rate" in options) request_url += "&min_rate=" + options.min_rate;
+    if ("max_rate" in options) request_url += "&max_rate=" + options.max_rate;
     request.open('GET', request_url);
-    return request;
+    request.send();
 }
 
 function canSearch() {
     const name = document.getElementsByName("gas_station_name")[0].value;
-    const fuel = document.getElementsByName("fuel_name")[0].value;
-    return ((fuel.length > 0) || (name.length > 0))
+    return (name.length > 0)
+}
+
+function canSearchAdv() {
+    const name = document.getElementsByName("gs_name")[0].value;
+    const min_price = document.getElementsByName("gs_price_min")[0].value;
+    const max_price = document.getElementsByName("gs_price_max")[0].value;
+    const fuel = document.getElementsByName("gs_fuel")[0].value;
+    const min_rate = document.getElementsByName("gs_rate_min")[0].value;
+    const max_rate = document.getElementsByName("gs_rate_max")[0].value;
+    return ((fuel.length > 0) || (name.length > 0) || (min_price.length > 0) || (max_price.length > 0)
+        || (min_rate.length > 0) || (max_rate.length > 0))
 }
 
 function searchStringChanged() {
     if (canSearch()) {
-        document.getElementById("close-search-button").style.display = "flex";
+        document.getElementById("close-search-button").style.display = "";
     }
     else {
         document.getElementById("close-search-button").style.display = "";
     }
 }
 
-function startSearch() {
+function normalSearch() {
     if (canSearch()) {
+        clearMarkers();
+        pushToRequestQueue();
+        getNewMarkers();
+        searchActive = true;
+    }
+}
+
+function advancedSearch() {
+    if (canSearchAdv()) {
         clearMarkers();
         pushToRequestQueue();
         getNewMarkers();
@@ -156,6 +168,33 @@ function endSearch() {
     if (searchActive) {
         clearMarkers();
         searchActive = false;
+    }
+}
+
+function showHideAdvancedSearchBox() {
+    if (document.getElementById("search-box").style.display === "none") {
+        // show adv search box
+        document.getElementById("search-box").style.display = "";
+        document.getElementById("advanced-search-button").innerHTML = "x";
+        document.getElementsByName("gas_station_name")[0].disabled = true;
+        document.getElementById("search-button").disabled = true;
+        // TODO: api call to get available fuels
+        // opcje trzeba dodawac odwrotnie, zeby byly w odpowiedniej kolejnosci
+        var select = document.getElementById("fuel-dropdown");
+        if (select.options.length < 1) {
+            for (var i = 1; i < 10; i++) {
+                var option = document.createElement('option');
+                option.text = option.value = i;
+                select.add(option, 0);
+            }
+        }
+    }
+    else {
+        // hide adv search box
+        document.getElementById("search-box").style.display = "none";
+        document.getElementById("advanced-search-button").innerHTML = "...";
+        document.getElementsByName("gas_station_name")[0].disabled = false;
+        document.getElementById("search-button").disabled = false;
     }
 }
 
@@ -271,7 +310,6 @@ function showAddComment() {
         document.getElementsByClassName("comment-form")[0].style.display = 'none';
     }
 }
-
 
 function deleteComment(gasStationId, commentId) {
     var request = new XMLHttpRequest();

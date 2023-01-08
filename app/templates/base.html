@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 
 <head>
@@ -39,6 +39,9 @@
     {% if mapa %}
       <div id="mapa" style="z-index: 0">
         <div id="big-popup" class="big-popup" style="display: none"></div>
+        <div id="search-box" class="search-box" style="display: none">
+          {% if mapa %} {% include '_searchbox.html' %} {% endif %}
+        </div>
       </div>
       <div id="popup" class="ol-popup"></div>
     {% else %}

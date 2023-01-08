@@ -130,15 +130,16 @@ th {
     padding: 10px;
     box-sizing: border-box;
     outline: none;
-    flex: 1;
+    flex: 3;
 }
 
 .search-bar input:focus {
     border: 2px solid #367fb0;
 }
 
-#close-search-button {
-    width: 4%;
+#close-search-button,
+#advanced-search-button {
+    width: 5%;
     border: none;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-weight: bold;
@@ -151,8 +152,16 @@ th {
 }
 
 #close-search-button {
-    margin-left: -4%;
-    display: none;
+    margin-left: -5%;
+}
+
+#advanced-search-button {
+    font-size: 16px;
+    left: -5%;
+}
+
+#advanced-search-button:hover {
+    background-color: grey;
 }
 
 #close-search-button:hover {
@@ -160,11 +169,11 @@ th {
     transform: scale(1.3);
 }
 
-#search-button {
+.search-button {
     width: 10%;
 }
 
-#search-button {
+.search-button {
     background-color: #367fb0;
     border: none;
     font-weight: bold;
@@ -177,7 +186,7 @@ th {
     cursor: pointer;
 }
 
-#search-button:hover {
+.search-button:hover:not(:disabled) {
     background-color: #166da7;
 }
 
@@ -187,61 +196,43 @@ th {
     width: 100%;
 }
 
-.form-row {
-    display: block;
-    margin-top: 10px;
-}
-
 .carform>* {
     width: 200px;
 }
 
-.carform input[type=text],
-.carform input[type=number],
-.carform select {
+label {
+    font-weight: bolder;
+}
+
+input,
+select,
+textarea {
     background-color: #efefef;
     color: #333333;
     border: 1px solid #999999;
     border-radius: 5px;
-    padding: 3px;
+    padding: 5px;
     box-sizing: border-box;
     outline: none;
 }
 
-.carform input[type=text]:focus,
-.carform input[type=number]:focus,
-.carform select:focus {
+input:focus,
+select:focus,
+textarea:focus {
     background-color: #ffffff;
     border: 1px solid #367fb0;
-}
-
-label {
-    font-weight: bold;
-}
-
-.loginform input[type=text],
-.loginform input[type=password],
-.loginform input[type=checkbox] {
-    background-color: #efefef;
-    color: #333333;
-    border: 2px solid #999999;
-    border-radius: 5px;
-    padding: 10px;
-    box-sizing: border-box;
-    outline: none;
-}
-
-.loginform input[type=text]:focus,
-.loginform input[type=password]:focus,
-.loginform input[type=checkbox]:focus,
-.loginform input[type=checkbox]:hover {
-    background-color: #ffffff;
-    border: 2px solid #367fb0;
 }
 
 .loginform input[type=text],
 .loginform input[type=password] {
     width: 100%;
+    padding: 10px;
+    border: 2px solid #999999;
+}
+
+.loginform input[type=text]:hover,
+.loginform input[type=password]:hover {
+    border: 2px solid #367fb0;
 }
 
 .loginform input[type=checkbox] {
@@ -287,19 +278,53 @@ li {
     float: left;
 }
 
-.big-popup {
+.big-popup,
+.search-box {
     position: absolute;
     background-color: #FFFFFF;
-    width: 35%;
-    left: 32.5%;
-    height: 80%;
-    top: 15%;
     z-index: 10000;
     border: 1px solid #999999;
     border-radius: 5px;
     padding: 10px;
     box-sizing: border-box;
     outline: none;
+}
+
+.big-popup {
+    width: 35%;
+    left: 32.5%;
+    height: 80%;
+    top: 15%;
+}
+
+.search-box {
+    width: 750px;
+    left: 844px;
+    height: 230px;
+    top: 75px;
+}
+
+.search-box input[type=number] {
+    width: 75px !important;
+}
+
+.search-box input[type=text] {
+    width: 550px !important;
+}
+
+.search-box select {
+    width: 155px !important;
+}
+
+.search-box label {
+    display: block;
+    float: left;
+    width: 150px !important;
+    margin-left: 5px !important;
+}
+
+.search-box button {
+    margin-left: 90%;
 }
 
 .close-button {
@@ -324,6 +349,11 @@ li {
     width: 100%;
 }
 
+.form-row {
+    display: block;
+    margin-top: 10px;
+}
+
 .info-row,
 .comment-row {
     display: block;
@@ -346,7 +376,7 @@ li {
 
 .comment-author,
 .comment-created,
-.comment-edit, 
+.comment-edit,
 .comment-delete {
     margin-right: 10px;
 }
@@ -361,29 +391,12 @@ li {
 }
 
 .grey-stars {
-    color:#BBBBBB;
+    color: #BBBBBB;
     text-shadow: 0 0 1px #111111;
-}
-
-.comment-form textarea,
-.comment-form input[type=number] {
-    background-color: #efefef;
-    color: #333333;
-    border: 1px solid #999999;
-    border-radius: 5px;
-    padding: 3px;
-    box-sizing: border-box;
-    outline: none;
 }
 
 .comment-form textarea {
     width: 100%;
     height: 150px;
     resize: none;
-}
-
-.comment-form textarea:focus,
-.comment-form input[type=number]:focus {
-    background-color: #ffffff;
-    border: 1px solid #367fb0;
 }
