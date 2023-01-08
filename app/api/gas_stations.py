@@ -35,7 +35,6 @@ def get_gas_stations():
     if not get_sort_by_column(sort_by, sort_direction) is None:
         sort_by_column = get_sort_by_column(sort_by, sort_direction)
     query_ordered = query.order_by(sort_by_column)
-    print(query_ordered)
 
     offset = per_page * (page-1)
     stations = query_ordered.limit(per_page).offset(offset).distinct()
