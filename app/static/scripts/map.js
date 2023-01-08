@@ -132,7 +132,7 @@ function canSearch() {
 
 function searchStringChanged() {
     if (canSearch()) {
-        document.getElementById("close-search-button").style.display = "flex";
+        document.getElementById("close-search-button").style.display = "";
     }
     else {
         document.getElementById("close-search-button").style.display = "";
