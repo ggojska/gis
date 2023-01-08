@@ -64,7 +64,7 @@ function init() {
     document.getElementById('comment-form').addEventListener('submit', event => {
         event.preventDefault();
         console.log("before form submit event")
-    
+
         fetch(action, {
             method: 'POST',
             body: new FormData(event.target),
@@ -76,7 +76,7 @@ function init() {
                 // handle the failure case
                 console.error(error);
             });
-    });   
+    });
 };
 
 function pushToRequestQueue() {
@@ -156,6 +156,21 @@ function endSearch() {
     if (searchActive) {
         clearMarkers();
         searchActive = false;
+    }
+}
+
+function showHideAdvancedSearchBox() {
+    if (document.getElementById("search-box").style.display === "none") {
+        document.getElementById("search-box").style.display = "";
+        document.getElementById("advanced-search-button").innerHTML = "x";
+        document.getElementsByName("gas_station_name")[0].disabled = true;
+        document.getElementById("search-button").disabled = true;
+    }
+    else {
+        document.getElementById("search-box").style.display = "none";
+        document.getElementById("advanced-search-button").innerHTML = "...";
+        document.getElementsByName("gas_station_name")[0].disabled = false;
+        document.getElementById("search-button").disabled = false;
     }
 }
 
@@ -271,7 +286,6 @@ function showAddComment() {
         document.getElementsByClassName("comment-form")[0].style.display = 'none';
     }
 }
-
 
 function deleteComment(gasStationId, commentId) {
     var request = new XMLHttpRequest();
