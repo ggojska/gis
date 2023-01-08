@@ -200,11 +200,6 @@ th {
     width: 200px;
 }
 
-.carform input[type=number] {
-    -webkit-appearance: none;
-    -moz-appearance: textfield;
-}
-
 label {
     font-weight: bolder;
 }
@@ -309,10 +304,27 @@ li {
     top: 75px;
 }
 
-.search-box>.info-row>* {
+.search-box input[type=number] {
+    width: 75px !important;
+}
+
+.search-box input[type=text] {
+    width: 550px !important;
+}
+
+.search-box select {
+    width: 155px !important;
+}
+
+.search-box label {
     display: block;
     float: left;
-    width: 25%;
+    width: 150px !important;
+    margin-left: 5px !important;
+}
+
+.search-box button {
+    margin-left: 90%;
 }
 
 .close-button {
