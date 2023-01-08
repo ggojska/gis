@@ -75,6 +75,18 @@ function pushToRequestQueue() {
 
     const name = document.getElementsByName("gas_station_name")[0].value;
     if (name.length > 0) options.name = name;
+    const name2 = document.getElementsByName("gs_name")[0].value;
+    if (name2.length > 0) options.name = name2;
+    const min_price = document.getElementsByName("gs_price_min")[0].value;
+    if (min_price.length > 0) options.min_price = min_price;
+    const max_price = document.getElementsByName("gs_price_max")[0].value;
+    if (max_price.length > 0) options.max_price = max_price;
+    const fuel = document.getElementsByName("gs_fuel")[0].value;
+    if (fuel.length > 0) options.fuel = fuel;
+    const min_rate = document.getElementsByName("gs_rate_min")[0].value;
+    if (min_rate.length > 0) options.min_rate = min_rate;
+    const max_rate = document.getElementsByName("gs_rate_max")[0].value;
+    if (max_rate.length > 0) options.max_rate = max_rate;
 
     queue.push(options);
 }
@@ -97,8 +109,10 @@ function prepareAndSendRequest(options) {
     request_url = api_url + "/gas_stations?lon=" + options.lon + "&lat=" + options.lat + "&radius=" + options.radius
     if ("name" in options) request_url += "&name=" + options.name;
     if ("fuel" in options) request_url += "&fuel=" + options.fuel;
-    if ("price_min" in options) request_url += "&price_min=" + options.price_min;
-    if ("price_max" in options) request_url += "&price_max=" +  options.price_max;
+    if ("min_price" in options) request_url += "&min_price=" + options.min_price;
+    if ("max_price" in options) request_url += "&max_price=" + options.max_price;
+    if ("min_rate" in options) request_url += "&min_rate=" + options.min_rate;
+    if ("max_rate" in options) request_url += "&max_rate=" +  options.max_rate;
     request.open('GET', request_url);
     request.send();
 }
@@ -109,10 +123,14 @@ function canSearch() {
 }
 
 function canSearchAdv() {
-    // const name = document.getElementsByName("gas_station_name")[0].value;
-    // const fuel = document.getElementsByName("fuel_name")[0].value;
-    // return ((fuel.length > 0) || (name.length > 0))
-    // TODO
+    const name = document.getElementsByName("gs_name")[0].value;
+    const min_price = document.getElementsByName("gs_price_min")[0].value;
+    const max_price = document.getElementsByName("gs_price_max")[0].value;
+    const fuel = document.getElementsByName("gs_fuel")[0].value;
+    const min_rate = document.getElementsByName("gs_rate_min")[0].value;
+    const max_rate = document.getElementsByName("gs_rate_max")[0].value;
+    return ((fuel.length > 0) || (name.length > 0) || (min_price.length > 0) || (max_price.length > 0)
+        || (min_rate.length > 0) || (max_rate.length > 0))
 }
 
 function searchStringChanged() {
