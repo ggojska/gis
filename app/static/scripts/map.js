@@ -112,7 +112,7 @@ function prepareAndSendRequest(options) {
     if ("min_price" in options) request_url += "&min_price=" + options.min_price;
     if ("max_price" in options) request_url += "&max_price=" + options.max_price;
     if ("min_rate" in options) request_url += "&min_rate=" + options.min_rate;
-    if ("max_rate" in options) request_url += "&max_rate=" +  options.max_rate;
+    if ("max_rate" in options) request_url += "&max_rate=" + options.max_rate;
     request.open('GET', request_url);
     request.send();
 }
@@ -173,12 +173,24 @@ function endSearch() {
 
 function showHideAdvancedSearchBox() {
     if (document.getElementById("search-box").style.display === "none") {
+        // show adv search box
         document.getElementById("search-box").style.display = "";
         document.getElementById("advanced-search-button").innerHTML = "x";
         document.getElementsByName("gas_station_name")[0].disabled = true;
         document.getElementById("search-button").disabled = true;
+        // TODO: api call to get available fuels
+        // opcje trzeba dodawac odwrotnie, zeby byly w odpowiedniej kolejnosci
+        var select = document.getElementById("fuel-dropdown");
+        if (select.options.length < 1) {
+            for (var i = 1; i < 10; i++) {
+                var option = document.createElement('option');
+                option.text = option.value = i;
+                select.add(option, 0);
+            }
+        }
     }
     else {
+        // hide adv search box
         document.getElementById("search-box").style.display = "none";
         document.getElementById("advanced-search-button").innerHTML = "...";
         document.getElementsByName("gas_station_name")[0].disabled = false;
