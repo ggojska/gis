@@ -122,10 +122,6 @@ th {
     align-items: center;
 }
 
-/* .search-bar > * {
-    float: left;
-} */
-
 .search-bar input {
     background-color: #efefef;
     color: #333333;
@@ -204,28 +200,9 @@ th {
     width: 200px;
 }
 
-.carform input[type=text],
-.carform input[type=number],
-.carform select {
-    background-color: #efefef;
-    color: #333333;
-    border: 1px solid #999999;
-    border-radius: 5px;
-    padding: 3px;
-    box-sizing: border-box;
-    outline: none;
-}
-
 .carform input[type=number] {
     -webkit-appearance: none;
     -moz-appearance: textfield;
-}
-
-.carform input[type=text]:focus,
-.carform input[type=number]:focus,
-.carform select:focus {
-    background-color: #ffffff;
-    border: 1px solid #367fb0;
 }
 
 label {
