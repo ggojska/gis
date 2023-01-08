@@ -59,24 +59,6 @@ function init() {
     map.on("movestart", function () {
         queue = [];
     });
-
-    // FIXME
-    document.getElementById('comment-form').addEventListener('submit', event => {
-        event.preventDefault();
-        console.log("before form submit event")
-
-        fetch(action, {
-            method: 'POST',
-            body: new FormData(event.target),
-        })
-            .then(response => {
-                document.getElementById("big-popup").innerHTML = response.responseText;
-            })
-            .catch(error => {
-                // handle the failure case
-                console.error(error);
-            });
-    });
 };
 
 function pushToRequestQueue() {
@@ -99,13 +81,12 @@ function pushToRequestQueue() {
 
 function getNewMarkers() {
     if (queue.length) {
-        const request = prepareRequest(queue.pop());
+        prepareAndSendRequest(queue.pop());
         queue = [];
-        request.send();
     };
 }
 
-function prepareRequest(options) {
+function prepareAndSendRequest(options) {
     var request;
     request = new XMLHttpRequest();
     request.onreadystatechange = function () {
@@ -114,18 +95,12 @@ function prepareRequest(options) {
         }
     };
     request_url = api_url + "/gas_stations?lon=" + options.lon + "&lat=" + options.lat + "&radius=" + options.radius
-
-    var request_body = {};
-    if ("name" in options) request_body["name"] = options.name;
-    if ("fuel" in options) request_body["fuel"] = options.fuel;
-    var price_range = [];
-    if ("price_min" in options) price_range[0] = options.price_min;
-    if ("price_max" in options) price_range[1] = options.price_max;
-    if (price_range.length > 0) request_body["price_range"] = price_range;
-
-    request.body = request_body;
+    if ("name" in options) request_url += "&name=" + options.name;
+    if ("fuel" in options) request_url += "&fuel=" + options.fuel;
+    if ("price_min" in options) request_url += "&price_min=" + options.price_min;
+    if ("price_max" in options) request_url += "&price_max=" +  options.price_max;
     request.open('GET', request_url);
-    return request;
+    request.send();
 }
 
 function canSearch() {
