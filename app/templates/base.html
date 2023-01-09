@@ -39,6 +39,9 @@
     {% if mapa %}
       <div id="mapa" style="z-index: 0">
         <div id="big-popup" class="big-popup" style="display: none"></div>
+        <div id="cancel-search" style="display: none">
+          <button type="button" class="cancel-search-button" onclick="endSearch()">anuluj wyszukiwanie</button>
+        </div>
         <div id="search-box" class="search-box" style="display: none">
           {% if mapa %} {% include '_searchbox.html' %} {% endif %}
         </div>
