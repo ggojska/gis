@@ -178,6 +178,7 @@ function advancedSearch() {
     pushToRequestQueue(options);
     getNewMarkers();
     searchActive = true;
+    document.getElementById("cancel-search").style.display = "";
 }
 
 function showHideAdvancedSearchBox() {
