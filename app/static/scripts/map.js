@@ -61,33 +61,21 @@ function init() {
     });
 };
 
-function pushToRequestQueue() {
-    var center = view.getCenter();
-    var coordsTransform = ol.proj.toLonLat(center);
-    var lon = coordsTransform[0];
-    var lat = coordsTransform[1];
+function pushToRequestQueue(options = {}) {
+    const center = view.getCenter();
+    const coordsTransform = ol.proj.toLonLat(center);
+    const lon = coordsTransform[0];
+    const lat = coordsTransform[1];
 
-    var extent = map.getView().calculateExtent(map.getSize());
-    var left = ol.proj.toLonLat(ol.extent.getBottomLeft(extent));
-    var right = ol.proj.toLonLat(ol.extent.getBottomRight(extent));
-    var radius = Math.floor(ol.sphere.getDistance(left, right) / 2);
-    options = { "lat": lat, "lon": lon, "radius": radius }
-
-    const name = document.getElementsByName("gas_station_name")[0].value;
-    if (name.length > 0) options.name = name;
-    const name2 = document.getElementsByName("gs_name")[0].value;
-    if (name2.length > 0) options.name = name2;
-    const min_price = document.getElementsByName("gs_price_min")[0].value;
-    if (min_price.length > 0) options.min_price = min_price;
-    const max_price = document.getElementsByName("gs_price_max")[0].value;
-    if (max_price.length > 0) options.max_price = max_price;
-    const fuel = document.getElementsByName("gs_fuel")[0].value;
-    if (fuel.length > 0) options.fuel = fuel;
-    const min_rate = document.getElementsByName("gs_rate_min")[0].value;
-    if (min_rate.length > 0) options.min_rate = min_rate;
-    const max_rate = document.getElementsByName("gs_rate_max")[0].value;
-    if (max_rate.length > 0) options.max_rate = max_rate;
-
+    const extent = map.getView().calculateExtent(map.getSize());
+    const left = ol.proj.toLonLat(ol.extent.getBottomLeft(extent));
+    const right = ol.proj.toLonLat(ol.extent.getBottomRight(extent));
+    const radius = Math.floor(ol.sphere.getDistance(left, right) / 2);
+    
+    if (typeof options === 'undefined') options = {}
+    options.lat = lat;
+    options.lon = lon;
+    options.radius = radius;
     queue.push(options);
 }
 
@@ -142,26 +130,19 @@ function searchStringChanged() {
     }
 }
 
-function normalSearch() {
-    if (canSearch()) {
-        clearMarkers();
-        pushToRequestQueue();
-        getNewMarkers();
-        searchActive = true;
-    }
-}
+function simpleSearch() {
+    clearMarkers();
 
-function advancedSearch() {
-    if (canSearchAdv()) {
-        clearMarkers();
-        pushToRequestQueue();
-        getNewMarkers();
-        searchActive = true;
-    }
+    options = {}
+    const name = document.getElementsByName("gas_station_name")[0].value;
+    if (name.length > 0) options.name = name;
+
+    pushToRequestQueue(options);
+    getNewMarkers();
+    searchActive = true;
 }
 
 function endSearch() {
-    document.getElementsByName("fuel_name")[0].value = "";
     document.getElementsByName("gas_station_name")[0].value = "";
     document.getElementById("close-search-button").style.display = "none";
 
@@ -171,9 +152,31 @@ function endSearch() {
     }
 }
 
+function advancedSearch() {
+    clearMarkers();
+
+    options = {}
+    const name2 = document.getElementsByName("gs_name")[0].value;
+    if (name2.length > 0) options.name = name2;
+    const min_price = document.getElementsByName("gs_price_min")[0].value;
+    if (min_price.length > 0) options.min_price = min_price;
+    const max_price = document.getElementsByName("gs_price_max")[0].value;
+    if (max_price.length > 0) options.max_price = max_price;
+    const fuel = document.getElementsByName("gs_fuel")[0].value;
+    if (fuel.length > 0) options.fuel = fuel;
+    const min_rate = document.getElementsByName("gs_rate_min")[0].value;
+    if (min_rate.length > 0) options.min_rate = min_rate;
+    const max_rate = document.getElementsByName("gs_rate_max")[0].value;
+    if (max_rate.length > 0) options.max_rate = max_rate;
+
+    pushToRequestQueue(options);
+    getNewMarkers();
+    searchActive = true;
+}
+
 function showHideAdvancedSearchBox() {
+    // pokazuje okienko wyszukiwania zaawansowanego
     if (document.getElementById("search-box").style.display === "none") {
-        // show advanced search box
         document.getElementById("search-box").style.display = "";
         document.getElementById("advanced-search-button").innerHTML = "x";
         document.getElementsByName("gas_station_name")[0].disabled = true;
@@ -187,8 +190,8 @@ function showHideAdvancedSearchBox() {
         request.open('GET', "/searchbox");
         request.send();
     }
+    // chowa okienko wyszukiwania zaawansowanego
     else {
-        // hide advanced search box
         document.getElementById("search-box").style.display = "none";
         document.getElementById("advanced-search-button").innerHTML = "...";
         document.getElementsByName("gas_station_name")[0].disabled = false;
