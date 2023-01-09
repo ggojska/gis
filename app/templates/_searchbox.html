@@ -13,6 +13,9 @@
   <div class="info-row">
     <label>Paliwo</label>
     <select id="fuel-dropdown" name="gs_fuel">
+      {% for fuel in fuels %}
+      <option>{{ fuel }}</option>
+      {% endfor %}
     </select>
     <div style="clear: both;"></div>
   </div>
