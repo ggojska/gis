@@ -93,6 +93,10 @@ function prepareAndSendRequest(options) {
         if (this.readyState == 4 && this.status == 200) {
             setNewMarkers(this);
         }
+        if (this.readyState == 4 && this.status == 400) {
+            resp = JSON.parse(request.responseText);
+            alert("Nieprawidłowe zapytanie: " + resp.message);
+        }
     };
     request_url = api_url + "/gas_stations?lon=" + options.lon + "&lat=" + options.lat + "&radius=" + options.radius
     if ("name" in options) request_url += "&name=" + options.name;
