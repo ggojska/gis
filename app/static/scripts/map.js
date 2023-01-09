@@ -173,24 +173,22 @@ function endSearch() {
 
 function showHideAdvancedSearchBox() {
     if (document.getElementById("search-box").style.display === "none") {
-        // show adv search box
+        // show advanced search box
         document.getElementById("search-box").style.display = "";
         document.getElementById("advanced-search-button").innerHTML = "x";
         document.getElementsByName("gas_station_name")[0].disabled = true;
         document.getElementById("search-button").disabled = true;
-        // TODO: api call to get available fuels
-        // opcje trzeba dodawac odwrotnie, zeby byly w odpowiedniej kolejnosci
-        var select = document.getElementById("fuel-dropdown");
-        if (select.options.length < 1) {
-            for (var i = 1; i < 10; i++) {
-                var option = document.createElement('option');
-                option.text = option.value = i;
-                select.add(option, 0);
+        var request = new XMLHttpRequest();
+        request.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                document.getElementById("search-box").innerHTML = this.responseText;
             }
-        }
+        };
+        request.open('GET', "/searchbox");
+        request.send();
     }
     else {
-        // hide adv search box
+        // hide advanced search box
         document.getElementById("search-box").style.display = "none";
         document.getElementById("advanced-search-button").innerHTML = "...";
         document.getElementsByName("gas_station_name")[0].disabled = false;
