@@ -6,24 +6,24 @@
   </div>
   <div class="info-row">
     <label>Cena</label>
-    <input name="gs_price_min" type="number" step="0.5" placeholder="od">
-    <input name="gs_price_max" type="number" step="0.5" placeholder="do">
+    <input name="gs_price_min" type="number" step="0.5" min="0.0" max="20.0"placeholder="od">
+    <input name="gs_price_max" type="number" step="0.5" min="0.0" max="20.0"placeholder="do">
     <div style="clear: both;"></div>
   </div>
   <div class="info-row">
     <label>Paliwo</label>
     <select id="fuel-dropdown" name="gs_fuel">
-      <option disabled selected>wybierz rodzaj paliwa</option>
+      <option disabled selected value="">wybierz rodzaj paliwa</option>
       {% for fuel in fuels %}
-      <option>{{ fuel }}</option>
+      <option value="{{ fuel }}">{{ fuel }}</option>
       {% endfor %}
     </select>
     <div style="clear: both;"></div>
   </div>
   <div class="info-row">
     <label>Średnia ocena stacji</label>
-    <input name="gs_rate_min" type="number" step="0.5" placeholder="od">
-    <input name="gs_rate_max" type="number" step="0.5" placeholder="do">
+    <input name="gs_rate_min" type="number" step="0.5" min="1.0" max="5.0" placeholder="od">
+    <input name="gs_rate_max" type="number" step="0.5" min="1.0" max="5.0" placeholder="do">
     <div style="clear: both;"></div>
   </div>
   <div class="info-row">
