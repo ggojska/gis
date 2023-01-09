@@ -42,9 +42,7 @@
         <div id="cancel-search" style="display: none">
           <button type="button" class="cancel-search-button" onclick="endSearch()">anuluj wyszukiwanie</button>
         </div>
-        <div id="search-box" class="search-box" style="display: none">
-          {% if mapa %} {% include '_searchbox.html' %} {% endif %}
-        </div>
+        <div id="search-box" class="search-box" style="display: none"></div>
       </div>
       <div id="popup" class="ol-popup"></div>
     {% else %}
