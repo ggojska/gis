@@ -298,8 +298,8 @@ li {
 }
 
 .search-box {
-    width: 750px;
-    left: 844px;
+    width: 30%;
+    left: 33%;
     height: 230px;
     top: 75px;
 }
@@ -313,7 +313,7 @@ li {
 }
 
 .search-box select {
-    width: 155px !important;
+    width: 175px !important;
 }
 
 .search-box label {
@@ -321,6 +321,7 @@ li {
     float: left;
     width: 150px !important;
     margin-left: 5px !important;
+    margin-top: 5px;
 }
 
 .search-box button {
