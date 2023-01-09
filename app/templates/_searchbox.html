@@ -13,9 +13,9 @@
   <div class="info-row">
     <label>Paliwo</label>
     <select id="fuel-dropdown" name="gs_fuel">
-      <option disabled selected>wybierz rodzaj paliwa</option>
+      <option disabled selected value="">wybierz rodzaj paliwa</option>
       {% for fuel in fuels %}
-      <option>{{ fuel }}</option>
+      <option value="{{ fuel }}">{{ fuel }}</option>
       {% endfor %}
     </select>
     <div style="clear: both;"></div>
