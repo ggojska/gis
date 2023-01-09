@@ -101,3 +101,10 @@ def delete_comment(gas_station_id, comment_id):
     station = GasStation.query.get(station_id)
     flash('usunięto komentarz')
     return render_template('_gas_station_big_popup.html', station=station, form=CommentForm())
+
+
+@main.route('/searchbox', methods=['GET'])
+def get_searchbox():
+    fuels = db.session.execute(fuels_lookup).fetchall()
+    fuels = [f[0] for f in fuels]
+    return render_template('_searchbox.html', fuels=fuels)
