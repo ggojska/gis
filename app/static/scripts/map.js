@@ -181,14 +181,16 @@ function showHideAdvancedSearchBox() {
         document.getElementById("advanced-search-button").innerHTML = "x";
         document.getElementsByName("gas_station_name")[0].disabled = true;
         document.getElementById("search-button").disabled = true;
-        var request = new XMLHttpRequest();
-        request.onreadystatechange = function () {
-            if (this.readyState == 4 && this.status == 200) {
-                document.getElementById("search-box").innerHTML = this.responseText;
-            }
-        };
-        request.open('GET', "/searchbox");
-        request.send();
+        if (document.getElementById("search-box").innerHTML.length === 0){
+            var request = new XMLHttpRequest();
+            request.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    document.getElementById("search-box").innerHTML = this.responseText;
+                }
+            };
+            request.open('GET', "/searchbox");
+            request.send();
+        }
     }
     // chowa okienko wyszukiwania zaawansowanego
     else {
