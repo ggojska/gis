@@ -1,10 +1,9 @@
 from math import ceil
-from dataclasses import dataclass
 
 from flask import jsonify, request, url_for, current_app
 from sqlalchemy.sql import text, func, select, column
 
-from ..models import GasStation, Fuel, Comment, db
+from ..models import GasStation, Fuel, db
 from ..sql import sql
 from .errors import bad_request, not_found
 from . import api
