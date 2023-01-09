@@ -177,8 +177,8 @@ function advancedSearch() {
 function showHideAdvancedSearchBox() {
     // pokazuje okienko wyszukiwania zaawansowanego
     if (document.getElementById("search-box").style.display === "none") {
+        document.getElementById("advanced-search-button").innerHTML = "&#11205;";
         document.getElementById("search-box").style.display = "";
-        document.getElementById("advanced-search-button").innerHTML = "x";
         document.getElementsByName("gas_station_name")[0].disabled = true;
         document.getElementById("search-button").disabled = true;
         if (document.getElementById("search-box").innerHTML.length === 0){
@@ -195,7 +195,7 @@ function showHideAdvancedSearchBox() {
     // chowa okienko wyszukiwania zaawansowanego
     else {
         document.getElementById("search-box").style.display = "none";
-        document.getElementById("advanced-search-button").innerHTML = "...";
+        document.getElementById("advanced-search-button").innerHTML = "&#11206;";
         document.getElementsByName("gas_station_name")[0].disabled = false;
         document.getElementById("search-button").disabled = false;
     }
