@@ -3,47 +3,94 @@ from math import ceil
 from flask import jsonify, request, url_for, current_app
 from sqlalchemy.sql import text, func, select, column
 
-from ..models import GasStation, Fuel, Comment, db
+from ..models import GasStation, Fuel, db
 from ..sql import sql
 from .errors import bad_request, not_found
 from . import api
 
+class GasStationParams:
+    lat: float
+    lon: float
+    radius: float
+    page: int
+    per_page: int
+    name: str
+    fuel: str
+    min_price: float
+    max_price: float
+    min_rate: float
+    max_rate: float
+    sort_by: str
+    sort_direction: str
+
+    def __init__(self) -> None:
+        pass
+
+    def validate_request(self):
+        if self.radius and not self.lat and not self.lon:
+            return "when radius is given, lat and lon must be given"
+        if self.radius and not self.lat:
+            return "when radius is given, lat must be given"
+        if self.radius and not self.lon:
+            return "when radius is given, lon must be given"
+        if (self.lat or self.lon) and not self.radius:
+            return "when lat or lon are given, radius must be given"
+        if not self.fuel and (self.min_price or self. max_price):
+            return "fuel must be given if price is given"
+
+        if self.sort_by:
+            if not self.sort_by in ["distance", "price", "average_rate"]:
+                return f"not supported sort by field: {self.sort_by}"
+            elif self.sort_by == "distance" and (not self.lat or not self.lon or not self.radius):
+                return "in order to sort by distance, lat, lon and radius parameters must be given"
+            elif self.sort_by == "price" and not self.fuel:
+                return "cannot sort by price when fuel is not given"
+
+        if self.sort_direction:
+            if not self.sort_direction in ["asc", "desc"]:
+                return f"unknown sort direction: {self.sort_direction}"
+
+    def from_request(self, request):
+        self.page =request.get('page', 1, type=int)
+        self.lat =request.get('lat', type=float)
+        self.lon =request.get('lon', type=float)
+        self.radius =request.get('radius', type=int)
+        self.per_page =request.get('per_page', type=int)
+        if not self.per_page:
+            self.per_page = current_app.config['STATIONS_PER_PAGE']
+        self.name = request.get("name")
+        if self.name: self.name = f"%{self.name.lower()}%"
+        self.fuel = request.get("fuel")
+        if self.fuel: self.fuel = f"%{self.fuel.lower()}%"
+        self.min_price = request.get("min_price", type=float)
+        self.max_price = request.get("max_price", type=float)
+        self.min_rate = request.get("min_rate", type=float)
+        self.max_rate = request.get("max_rate", type=float)
+        self.sort_by = request.get("sort_by")
+        self.sort_direction = request.get("sort_direction")
+
 
 @api.route('/gas_stations/')
 def get_gas_stations():
-    page = request.args.get('page', 1, type=int)
-    lat = request.args.get('lat', type=float)
-    lon = request.args.get('lon', type=float)
-    radius = request.args.get('radius', type=int)
-    per_page = request.args.get('per_page', type=int)
-    if not per_page:
-        per_page = current_app.config['STATIONS_PER_PAGE']
-    next, prev = None, None
-    name, fuel, price_range, sort_by, sort_direction = None, None, None, None, None
-
-    validation_result = validate_request(lat, lon, radius, {})
+    params = GasStationParams()
+    params.from_request(request.args)
+    validation_result = params.validate_request()
     if validation_result: return bad_request(validation_result)
 
-    if request.content_type == "application/json":
-        search_params = request.get_json()
-        if search_params:
-            validation_result = validate_request(lat, lon, radius, search_params)
-            if validation_result: return bad_request(validation_result)
-            name, fuel, price_range, sort_by, sort_direction = get_search_params(search_params)
-
-    query, sort_by_column = build_query(lat, lon, radius, name, fuel, price_range)
-    if not get_sort_by_column(sort_by, sort_direction) is None:
-        sort_by_column = get_sort_by_column(sort_by, sort_direction)
+    query, sort_by_column = build_query(params)
+    if not get_sort_by_column(params.sort_by,params. sort_direction) is None:
+        sort_by_column = get_sort_by_column(params.sort_by, params.sort_direction)
     query_ordered = query.order_by(sort_by_column)
 
-    offset = per_page * (page-1)
-    stations = query_ordered.limit(per_page).offset(offset).distinct()
+    offset = params.per_page * (params.page-1)
+    stations = query_ordered.limit(params.per_page).offset(offset).distinct()
     total = query_ordered.distinct(GasStation.id).count()
 
-    if page > 1:
-        prev = url_for('api.get_gas_stations', page=page-1)
-    if ceil(total/per_page) > page:
-        next = url_for('api.get_gas_stations', page=page+1)
+    next, prev = None, None
+    if params.page > 1:
+        prev = url_for('api.get_gas_stations', page=params.page-1)
+    if ceil(total/params.per_page) > params.page:
+        next = url_for('api.get_gas_stations', page=params.page+1)
 
     stations_list = []
     if stations.count() > 0:
@@ -62,76 +109,41 @@ def get_gas_stations():
         'count': total
     })
 
-
-def validate_request(lat, lon, radius, search_params):
-    name = search_params.get("name")
-    fuel = search_params.get("fuel")
-    price_range = search_params.get("price_range")
-
-    if radius and not lat and not lon:
-        return "when radius is given, lat and lon must be given"
-    if radius and not lat:
-        return "when radius is given, lat must be given"
-    if radius and not lon:
-        return "when radius is given, lon must be given"
-    if (lat or lon) and not radius:
-        return "when lat or lon are given, radius must be given"
-
-    if price_range:
-        if len(price_range) > 2:
-            return "price range can contain up to two values"
-
-    if not fuel and price_range:
-        return "fuel must be given if price is given"
-
-    sort_by = search_params.get("sort_by")
-    if sort_by:
-        if not sort_by in ["distance", "price", "average_rate"]:
-            return f"not supported sort by field: {sort_by}"
-        elif sort_by == "distance" and (not lat or not lon or not radius):
-            return "in order to sort by distance, lat, lon and radius parameters must be given"
-        elif sort_by == "price" and not fuel:
-            return "cannot sort by price when fuel is not given"
-
-    sort_direction = search_params.get("sort_direction")
-    if sort_direction:
-        if not sort_direction in ["asc", "desc"]:
-            return f"unknown sort direction: {sort_direction}"
-
-def get_search_params(search_params):
-    name = search_params.get("name")
-    if name: name = f"%{name.lower()}%"
-    fuel = search_params.get("fuel")
-    if fuel: fuel = f"%{fuel.lower()}%"
-    price_range = search_params.get("price_range")
-    sort_by = search_params.get("sort_by")
-    sort_direction = search_params.get("sort_direction")
-    return name, fuel, price_range, sort_by, sort_direction
-
-def build_query(lat, lon, radius, name, fuel, price_range):
+def build_query(params):
     query = db.session.query(GasStation).outerjoin(GasStation.fuels)
     sort_by_column = GasStation.id
 
-    if name:
-        query = query.filter(func.lower(GasStation.name).like(name))
-    if fuel:
-        query = query.filter(func.lower(Fuel.name).like(fuel))
-    if price_range:
-        print(price_range)
-        if price_range[0] and not price_range[1]:
-            query = query.filter(Fuel.price >= price_range[0])
-        elif price_range[1] and not price_range[0]:
-            query = query.filter(Fuel.price <= price_range[1])
+    if params.name:
+        query = query.filter(func.lower(GasStation.name).like(params.name))
+    if params.fuel:
+        query = query.filter(func.lower(Fuel.name).like(params.fuel))
+
+    if (params.min_price or params.max_price):
+        if params. min_price and not params.max_price:
+            query = query.filter(Fuel.price >= params.min_price)
+        elif params.max_price and not params. min_price:
+            query = query.filter(Fuel.price <= params.max_price)
         else:
-            query = query.filter(Fuel.price >= price_range[0]).filter(Fuel.price <= price_range[1])
-    if lat and lon and radius:
-        text_sql = text(sql.select_gas_stations_with_distance.replace(":lon", str(lon))\
-            .replace(":lat", str(lat)))
+            query = query.filter(Fuel.price >= params.min_price).\
+                filter(Fuel.price <= params.max_price)
+
+    if (params.min_rate or params.max_rate):
+        if params.min_rate and not params.max_rate:
+            query = query.filter(GasStation.average_rate >= params.min_rate)
+        elif params.max_rate and not params.min_rate:
+            query = query.filter(GasStation.average_rate <= params.max_rate)
+        else:
+            query = query.filter(GasStation.average_rate >= params.min_rate).\
+                filter(GasStation.average_rate <= params.max_rate)
+
+    if params.lat and params.lon and params.radius:
+        text_sql = text(sql.select_gas_stations_with_distance.replace(":lon", str(params.lon))\
+            .replace(":lat", str(params.lat)))
         cte = select([column('id'), column('harvesine')], use_labels=True).select_from(text_sql)\
             .cte("cte")
         query = query.add_columns(column('harvesine').label("harvesine"))\
                 .join(cte, cte.columns["id"] == GasStation.id)\
-                .filter(column('harvesine') < radius)
+                .filter(column('harvesine') < params.radius)
         sort_by_column = column('harvesine').asc()
 
     return query, sort_by_column
