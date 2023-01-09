@@ -401,3 +401,18 @@ li {
     height: 150px;
     resize: none;
 }
+
+#cancel-search {
+    position: absolute;
+    z-index: 10000;
+    width: 7.5%;
+    height: 300px !important;
+    left: 45%;
+    top: 100px;
+}
+
+.cancel-search-button {
+    font-weight: bold;
+    border: 1px solid #111111;
+    border-radius: 5%;
+}
