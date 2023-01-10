@@ -57,7 +57,7 @@ def gas_station_search():
     prev, next, count = response.get("prev"), response.get("next"), response.get("count")
     stations = response.get("gas_stations")
     return render_template('_gas_station_search_result.html', stations=stations,\
-        count=count, prev=prev, next=next)
+        prev=prev, next=next, count=count)
 
 
 @main.route('/gas_stations/<int:id>/popup', methods=['GET'])
