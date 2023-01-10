@@ -48,6 +48,12 @@ def delete_car(id):
     return redirect(url_for('main.my_account'))
 
 
+@main.route('/gas_stations/', methods=['GET'])
+def gas_station_search():
+    stations = GasStation.query.paginate(page=1, per_page=100, error_out=False)
+    return render_template('_gas_station_search_result.html', stations=stations)
+
+
 @main.route('/gas_stations/<int:id>/popup', methods=['GET'])
 def gas_station_popup(id):
     station = GasStation.query.get(id)
