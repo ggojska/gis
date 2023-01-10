@@ -107,7 +107,7 @@ def get_gas_stations():
 
             d = station.to_json()
             d["distance"] = distance
-            if params.fuel_search:
+            if hasattr(params, 'fuel_search'):
                 for fuel in station.fuels:
                     if fuel.name.lower() == params.fuel:
                         d["fuel"] = fuel.to_json()
