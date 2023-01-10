@@ -2,27 +2,36 @@
 <div class="search-results">
   {% for station in stations %}
   <div class="search-result-item">
-    <p><strong><a href="" onclick="centerOnGasStation({{ station.id }});">{{ station.name }}</a></strong></p>
-    {% if station.distance %}
-    <p>{{ station.distance | round | int }} m.</p>
-    {% endif %}
-    <p class="rate"></p>
-    {% if station.average_rate %}
-      średnia ocena
-      <span class="yellow-stars">
-      {% for n in range(station.average_rate|int) %}&#9733{% endfor %}
+    <div class="search-result-item-element"><strong><a href="" class="search-result-link" onclick="centerOnGasStation({{ station.id }});">{{ station.name }}</a></strong></div>
+    <div class="search-result-item-element">
+      <span class="rate">
+        {% if station.average_rate %}
+        <span class="yellow-stars">
+          {% for n in range(station.average_rate|int) %}&#9733{% endfor %}
+        </span>
+        <span class="grey-stars">
+          {% for n in range(5 - station.average_rate|int) %}&#9733{% endfor %}
+        </span>
+        {{ station.average_rate }}
+        {% else %}
+        brak ocen
+        {% endif %}
       </span>
-      <span class="grey-stars">
-      {% for n in range(5 - station.average_rate|int) %}&#9733{% endfor %}
-      </span>
-    {{ station.average_rate }}
-    {% else %}
-      brak ocen
-    {% endif %}
-    </p>
-    {% if station.fuel %}
-    <p><strong>{{ station.fuel.name }}</strong> {{ station.fuel.price }}</p>
-    {% endif %}
+    </div>
+    <div style="clear:both;"></div>
+
+    <div class="search-result-item-element">
+      {% if station.distance %}
+      <span class="rate">{{ station.distance | round | int }} m.</span>
+      {% endif %}
+    </div>
+
+    <div class="search-result-item-element">
+      {% if station.fuel %}
+      <span class="rate"><strong>{{ station.fuel.name }}</strong> {{ station.fuel.price }}</span>
+      {% endif %}
+    </div>
+    <div style="clear:both;"></div>
   </div>
   {% endfor %}
 </div>
