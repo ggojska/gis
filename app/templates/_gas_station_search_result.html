@@ -5,7 +5,17 @@
   {% if not stations %}
   <p>Brak wyników</p>
   {% else %}
-  <!-- TODO: dodać możliwość sortowania -->
+  <label for="sort-dropdown">Sortuj</label>
+    <select id="sort-dropdown" name="gs_fuel" onchange="advancedSearch();">
+      <option value="distance;asc">wg odległości rosnąco</option>
+      <option value="distance;desc">wg odległości malejąco</option>
+      {% if stations[0].fuel %}
+      <option value="price;asc">wg ceny rosnąco</option>
+      <option value="price;desc">wg ceny malejąco</option>
+      {% endif %}
+      <option value="average_rate;asc">wg średniej oceny rosnąco</option>
+      <option value="average_rate;desc">wg średniej oceny malejąco</option>
+    </select>
   {% endif %}
   {% for station in stations %}
   <div class="search-result-item">
