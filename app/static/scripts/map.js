@@ -190,11 +190,10 @@ function advancedSearch() {
     var request = prepareRequest(options, "/gas_stations");
     request.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
-            document.getElementById("search-results-box") = "";
+            document.getElementById("search-results-box").style.display = "";
             document.getElementById("search-results-box").innerHTML = this.responseText;
         }
     };
-    request.open('GET', "/gas_stations/" + gasStationId + "/comments");
     request.send();
     searchActive = true;
     document.getElementById("cancel-search").style.display = "";
