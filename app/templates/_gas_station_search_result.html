@@ -1,0 +1,55 @@
+<!-- jakiś nagłówek: ile wyników itp. -->
+<button type="button" class="close-button" title="Zakończ wyszukiwanie" onclick="endSearch()">X</button>
+
+<div class="search-results">
+  {% if not stations %}
+  <p>Brak wyników</p>
+  {% else %}
+  <label for="sort-dropdown">Sortuj</label>
+    <select id="sort-dropdown" name="gs_fuel" onchange="advancedSearch();">
+      <option value="distance;asc">wg odległości rosnąco</option>
+      <option value="distance;desc">wg odległości malejąco</option>
+      {% if stations[0].fuel %}
+      <option value="price;asc">wg ceny rosnąco</option>
+      <option value="price;desc">wg ceny malejąco</option>
+      {% endif %}
+      <option value="average_rate;asc">wg średniej oceny rosnąco</option>
+      <option value="average_rate;desc">wg średniej oceny malejąco</option>
+    </select>
+  {% endif %}
+  {% for station in stations %}
+  <div class="search-result-item">
+    <div class="search-result-item-element"><strong><a href="about: blank" class="search-result-link" onclick="centerOnGasStation({{ station.id }});">{{ station.name }}</a></strong></div>
+    <div class="search-result-item-element">
+      <span class="rate">
+        {% if station.average_rate %}
+        <span class="yellow-stars">
+          {% for n in range(station.average_rate|int) %}&#9733{% endfor %}
+        </span>
+        <span class="grey-stars">
+          {% for n in range(5 - station.average_rate|int) %}&#9733{% endfor %}
+        </span>
+        {{ station.average_rate }}
+        {% else %}
+        brak ocen
+        {% endif %}
+      </span>
+    </div>
+    <div style="clear:both;"></div>
+
+    <div class="search-result-item-element">
+      {% if station.distance %}
+      <span class="rate">{{ station.distance | round | int }} m.</span>
+      {% endif %}
+    </div>
+
+    <div class="search-result-item-element">
+      {% if station.fuel %}
+      <span class="rate"><strong>{{ station.fuel.name }}</strong> {{ station.fuel.price }}</span>
+      {% endif %}
+    </div>
+    <div style="clear:both;"></div>
+  </div>
+  {% endfor %}
+</div>
+<!-- paginacja -->

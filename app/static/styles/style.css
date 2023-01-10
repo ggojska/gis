@@ -79,7 +79,7 @@ header {
 
 #mapa {
     width: 100%;
-    height: 92vh;
+    height: 91vh;
 }
 
 .fuel {
@@ -260,12 +260,12 @@ textarea:focus {
     background-color: #166da7;
 }
 
-li {
-    margin-top: 10px;
-}
-
 .cars>* {
     width: 100%;
+}
+
+.cars li {
+    margin-top: 10px;
 }
 
 .car-description {
@@ -279,7 +279,8 @@ li {
 }
 
 .big-popup,
-.search-box {
+.search-box,
+.search-results-box {
     position: absolute;
     background-color: #FFFFFF;
     z-index: 10000;
@@ -300,7 +301,6 @@ li {
 .search-box {
     width: 29%;
     left: 33.4%;
-    height: 230px;
     top: 75px;
 }
 
@@ -317,9 +317,10 @@ li {
 }
 
 .search-box label {
+    font-weight: normal;
     display: block;
     float: left;
-    width: 150px !important;
+    width: 155px !important;
     margin-left: 5px !important;
     margin-top: 5px;
 }
@@ -415,4 +416,40 @@ li {
     font-weight: bold;
     border: 1px solid #111111;
     border-radius: 5%;
+}
+
+.search-results-box {
+    right: 0;
+    top: 85px;
+    width: 15%;
+    max-height: 90%;
+    overflow-y:auto;
+}
+
+.search-result-item {
+    margin-top: 10px;
+}
+
+.search-result-item-element {
+    display: block;
+    float: left;
+    width: 50%;
+}
+
+.search-result-link {
+    text-decoration: none;
+    color:#000000;
+}
+
+.search-result-link:hover {
+    text-decoration: underline;
+}
+
+#sort-dropdown {
+    border: none;
+    display: inline;
+    font-family: inherit;
+    font-size: inherit;
+    padding: none;
+    width: auto;
 }

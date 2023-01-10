@@ -3,6 +3,7 @@ var popup;
 var queue = [];
 var stations = {};
 var searchActive = false;
+var sortBy;
 var markerSource;
 const ZOOM_THRESHOLD = 12;
 const SEND_REQ_DELAY = 2300;
@@ -71,7 +72,7 @@ function pushToRequestQueue(options = {}) {
     const left = ol.proj.toLonLat(ol.extent.getBottomLeft(extent));
     const right = ol.proj.toLonLat(ol.extent.getBottomRight(extent));
     const radius = Math.floor(ol.sphere.getDistance(left, right) / 2);
-    
+
     if (typeof options === 'undefined') options = {}
     options.lat = lat;
     options.lon = lon;
@@ -81,14 +82,31 @@ function pushToRequestQueue(options = {}) {
 
 function getNewMarkers() {
     if (queue.length) {
-        prepareAndSendRequest(queue.pop());
+        var request = prepareRequest(queue.pop(), api_url + "/gas_stations");
+        sendRequestAndSetNewMarkers(request);
         queue = [];
     };
 }
 
-function prepareAndSendRequest(options) {
+function prepareRequest(options, request_url) {
     var request;
     request = new XMLHttpRequest();
+    request_url = request_url + "?";
+    for (var key in options) {
+        if (options.hasOwnProperty(key)) {
+            if (request_url.slice(-1) === "?") {
+                request_url = request_url + key + "=" + options[key];
+            }
+            else {
+                request_url = request_url + "&" + key + "=" + options[key];
+            }
+        }
+    }
+    request.open('GET', request_url);
+    return request;
+}
+
+function sendRequestAndSetNewMarkers(request) {
     request.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
             setNewMarkers(this);
@@ -98,23 +116,16 @@ function prepareAndSendRequest(options) {
             alert("Nieprawidłowe zapytanie: " + resp.message);
         }
     };
-    request_url = api_url + "/gas_stations?lon=" + options.lon + "&lat=" + options.lat + "&radius=" + options.radius
-    if ("name" in options) request_url += "&name=" + options.name;
-    if ("fuel" in options) request_url += "&fuel=" + options.fuel;
-    if ("min_price" in options) request_url += "&min_price=" + options.min_price;
-    if ("max_price" in options) request_url += "&max_price=" + options.max_price;
-    if ("min_rate" in options) request_url += "&min_rate=" + options.min_rate;
-    if ("max_rate" in options) request_url += "&max_rate=" + options.max_rate;
-    request.open('GET', request_url);
     request.send();
 }
 
 function canSearch() {
     const name = document.getElementsByName("gas_station_name")[0].value;
-    return (name.length > 0)
+    return (name.length > 0);
 }
 
 function canSearchAdv() {
+    // Czy to potrzebne???
     const name = document.getElementsByName("gs_name")[0].value;
     const min_price = document.getElementsByName("gs_price_min")[0].value;
     const max_price = document.getElementsByName("gs_price_max")[0].value;
@@ -122,7 +133,7 @@ function canSearchAdv() {
     const min_rate = document.getElementsByName("gs_rate_min")[0].value;
     const max_rate = document.getElementsByName("gs_rate_max")[0].value;
     return ((fuel.length > 0) || (name.length > 0) || (min_price.length > 0) || (max_price.length > 0)
-        || (min_rate.length > 0) || (max_rate.length > 0))
+        || (min_rate.length > 0) || (max_rate.length > 0));
 }
 
 function searchStringChanged() {
@@ -144,13 +155,12 @@ function simpleSearch() {
     pushToRequestQueue(options);
     getNewMarkers();
     searchActive = true;
-    document.getElementById("cancel-search").style.display = "";
 }
 
 function endSearch() {
     document.getElementsByName("gas_station_name")[0].value = "";
     document.getElementById("close-search-button").style.display = "none";
-    document.getElementById("cancel-search").style.display = "none";
+    document.getElementById("search-results-box").style.display = "none";
 
     if (searchActive) {
         clearMarkers();
@@ -174,11 +184,30 @@ function advancedSearch() {
     if (min_rate.length > 0) options.min_rate = min_rate;
     const max_rate = document.getElementsByName("gs_rate_max")[0].value;
     if (max_rate.length > 0) options.max_rate = max_rate;
+    if (document.getElementById("sort-dropdown") !== null)
+    {
+        sortBy = document.getElementById("sort-dropdown").value;
+        const temp = sortBy.split(";");
+        options.sort_by = temp[0];
+        options.sort_direction = temp[1];
+    }
 
     pushToRequestQueue(options);
     getNewMarkers();
+
+    var request = prepareRequest(options, "/gas_stations");
+    request.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            document.getElementById("search-results-box").style.display = "";
+            document.getElementById("search-results-box").innerHTML = this.responseText;
+            if (sortBy.length>0)
+            {
+                document.getElementById("sort-dropdown").value = sortBy;
+            }
+        }
+    };
+    request.send();
     searchActive = true;
-    document.getElementById("cancel-search").style.display = "";
 }
 
 function showHideAdvancedSearchBox() {
@@ -188,7 +217,7 @@ function showHideAdvancedSearchBox() {
         document.getElementById("search-box").style.display = "";
         document.getElementsByName("gas_station_name")[0].disabled = true;
         document.getElementById("search-button").disabled = true;
-        if (document.getElementById("search-box").innerHTML.length === 0){
+        if (document.getElementById("search-box").innerHTML.length === 0) {
             var request = new XMLHttpRequest();
             request.onreadystatechange = function () {
                 if (this.readyState == 4 && this.status == 200) {
