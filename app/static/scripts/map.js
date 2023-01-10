@@ -71,7 +71,7 @@ function pushToRequestQueue(options = {}) {
     const left = ol.proj.toLonLat(ol.extent.getBottomLeft(extent));
     const right = ol.proj.toLonLat(ol.extent.getBottomRight(extent));
     const radius = Math.floor(ol.sphere.getDistance(left, right) / 2);
-    
+
     if (typeof options === 'undefined') options = {}
     options.lat = lat;
     options.lon = lon;
@@ -81,14 +81,31 @@ function pushToRequestQueue(options = {}) {
 
 function getNewMarkers() {
     if (queue.length) {
-        prepareAndSendRequest(queue.pop());
+        var request = prepareRequest(queue.pop(), api_url + "/gas_stations");
+        sendRequestAndSetNewMarkers(request);
         queue = [];
     };
 }
 
-function prepareAndSendRequest(options) {
+function prepareRequest(options, request_url) {
     var request;
     request = new XMLHttpRequest();
+    request_url = request_url + "?";
+    for (var key in options) {
+        if (options.hasOwnProperty(key)) {
+            if (request_url.slice(-1) === "?") {
+                request_url = request_url + key + "=" + options[key];
+            }
+            else {
+                request_url = request_url + "&" + key + "=" + options[key];
+            }
+        }
+    }
+    request.open('GET', request_url);
+    return request;
+}
+
+function sendRequestAndSetNewMarkers(request) {
     request.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
             setNewMarkers(this);
@@ -98,14 +115,6 @@ function prepareAndSendRequest(options) {
             alert("Nieprawidłowe zapytanie: " + resp.message);
         }
     };
-    request_url = api_url + "/gas_stations?lon=" + options.lon + "&lat=" + options.lat + "&radius=" + options.radius
-    if ("name" in options) request_url += "&name=" + options.name;
-    if ("fuel" in options) request_url += "&fuel=" + options.fuel;
-    if ("min_price" in options) request_url += "&min_price=" + options.min_price;
-    if ("max_price" in options) request_url += "&max_price=" + options.max_price;
-    if ("min_rate" in options) request_url += "&min_rate=" + options.min_rate;
-    if ("max_rate" in options) request_url += "&max_rate=" + options.max_rate;
-    request.open('GET', request_url);
     request.send();
 }
 
@@ -177,6 +186,16 @@ function advancedSearch() {
 
     pushToRequestQueue(options);
     getNewMarkers();
+
+    var request = prepareRequest(options, "/gas_stations");
+    request.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            document.getElementById("search-results-box") = "";
+            document.getElementById("search-results-box").innerHTML = this.responseText;
+        }
+    };
+    request.open('GET', "/gas_stations/" + gasStationId + "/comments");
+    request.send();
     searchActive = true;
     document.getElementById("cancel-search").style.display = "";
 }
@@ -188,7 +207,7 @@ function showHideAdvancedSearchBox() {
         document.getElementById("search-box").style.display = "";
         document.getElementsByName("gas_station_name")[0].disabled = true;
         document.getElementById("search-button").disabled = true;
-        if (document.getElementById("search-box").innerHTML.length === 0){
+        if (document.getElementById("search-box").innerHTML.length === 0) {
             var request = new XMLHttpRequest();
             request.onreadystatechange = function () {
                 if (this.readyState == 4 && this.status == 200) {
