@@ -59,9 +59,12 @@ class GasStationParams:
         if not self.per_page:
             self.per_page = current_app.config['STATIONS_PER_PAGE']
         self.name = request.get("name")
-        if self.name: self.name = f"%{self.name.lower()}%"
+        if self.name:
+            self.name = f"%{self.name.lower()}%"
         self.fuel = request.get("fuel")
-        if self.fuel: self.fuel = f"%{self.fuel.lower()}%"
+        if self.fuel:
+            self.fuel = self.fuel.lower()
+            self.fuel_search = f"%{self.fuel.lower()}%"
         self.min_price = request.get("min_price", type=float)
         self.max_price = request.get("max_price", type=float)
         self.min_rate = request.get("min_rate", type=float)
@@ -83,7 +86,7 @@ def get_gas_stations():
     query_ordered = query.order_by(sort_by_column)
 
     offset = params.per_page * (params.page-1)
-    stations = query_ordered.limit(params.per_page).offset(offset).distinct()
+    records = query_ordered.limit(params.per_page).offset(offset).distinct()
     total = query_ordered.distinct(GasStation.id).count()
 
     next, prev = None, None
@@ -93,14 +96,24 @@ def get_gas_stations():
         next = url_for('api.get_gas_stations', page=params.page+1)
 
     stations_list = []
-    if stations.count() > 0:
-        if type(stations[0]) == GasStation:
-            stations_list = [station.to_json() for station in stations]
-        else:
-            for station in stations:
-                d = station[0].to_json()
-                d["distance"] = station[1]
-                stations_list.append(d)
+    if records.count() > 0:
+        for record in records:
+            distance = None
+            if type(record) == GasStation:
+                station = record
+            else:
+                station = record[0]
+                distance = record[1]
+
+            d = station.to_json()
+            d["distance"] = distance
+            if params.fuel_search:
+                for fuel in station.fuels:
+                    if fuel.name.lower() == params.fuel:
+                        d["fuel"] = fuel.to_json()
+                        break
+
+            stations_list.append(d)
 
     return jsonify({
         'gas_stations': stations_list,
