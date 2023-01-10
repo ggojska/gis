@@ -3,6 +3,7 @@ var popup;
 var queue = [];
 var stations = {};
 var searchActive = false;
+var sortBy;
 var markerSource;
 const ZOOM_THRESHOLD = 12;
 const SEND_REQ_DELAY = 2300;
@@ -185,9 +186,10 @@ function advancedSearch() {
     if (max_rate.length > 0) options.max_rate = max_rate;
     if (document.getElementById("sort-dropdown") !== null)
     {
-        const sorting = document.getElementById("sort-dropdown").value.split(";");
-        options.sort_by = sorting[0];
-        options.sort_direction = sorting[1];
+        sortBy = document.getElementById("sort-dropdown").value;
+        const temp = sortBy.split(";");
+        options.sort_by = temp[0];
+        options.sort_direction = temp[1];
     }
 
     pushToRequestQueue(options);
@@ -198,6 +200,10 @@ function advancedSearch() {
         if (this.readyState == 4 && this.status == 200) {
             document.getElementById("search-results-box").style.display = "";
             document.getElementById("search-results-box").innerHTML = this.responseText;
+            if (sortBy.length>0)
+            {
+                document.getElementById("sort-dropdown").value = sortBy;
+            }
         }
     };
     request.send();
