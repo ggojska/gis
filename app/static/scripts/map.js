@@ -124,6 +124,7 @@ function canSearch() {
 }
 
 function canSearchAdv() {
+    // Czy to potrzebne???
     const name = document.getElementsByName("gs_name")[0].value;
     const min_price = document.getElementsByName("gs_price_min")[0].value;
     const max_price = document.getElementsByName("gs_price_max")[0].value;
@@ -182,6 +183,12 @@ function advancedSearch() {
     if (min_rate.length > 0) options.min_rate = min_rate;
     const max_rate = document.getElementsByName("gs_rate_max")[0].value;
     if (max_rate.length > 0) options.max_rate = max_rate;
+    if (document.getElementById("sort-dropdown") !== null)
+    {
+        const sorting = document.getElementById("sort-dropdown").value.split(";");
+        options.sort_by = sorting[0];
+        options.sort_direction = sorting[1];
+    }
 
     pushToRequestQueue(options);
     getNewMarkers();
