@@ -1,5 +1,29 @@
-<ul>
+<!-- jakiś nagłówek: ile wyników itp. -->
+<div class="search-result">
   {% for station in stations %}
-  <li>{{ station.name }}</li>
+  <div class="search-result-item">
+    <p><strong><a href="" onclick="centerOnGasStation({{ station.id }});">{{ station.name }}</a></strong></p>
+    {% if station.distance %}
+    <p>{{ station.distance | round | int }} m.</p>
+    {% endif %}
+    <p class="rate"></p>
+    {% if station.average_rate %}
+      średnia ocena
+      <span class="yellow-stars">
+      {% for n in range(station.average_rate|int) %}&#9733{% endfor %}
+      </span>
+      <span class="grey-stars">
+      {% for n in range(5 - station.average_rate|int) %}&#9733{% endfor %}
+      </span>
+    {{ station.average_rate }}
+    {% else %}
+      brak ocen
+    {% endif %}
+    </p>
+    {% if station.fuel %}
+    <p><strong>{{ station.fuel.name }}</strong> {{ station.fuel.price }}</p>
+    {% endif %}
+  </div>
   {% endfor %}
-</ul>
+</div>
+<!-- paginacja -->
