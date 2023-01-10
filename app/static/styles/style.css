@@ -260,12 +260,12 @@ textarea:focus {
     background-color: #166da7;
 }
 
-li {
-    margin-top: 10px;
-}
-
 .cars>* {
     width: 100%;
+}
+
+.cars li {
+    margin-top: 10px;
 }
 
 .car-description {
