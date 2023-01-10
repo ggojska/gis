@@ -2,6 +2,11 @@
 <button type="button" class="close-button" title="Zakończ wyszukiwanie" onclick="endSearch()">X</button>
 
 <div class="search-results">
+  {% if not stations %}
+  <p>Brak wyników</p>
+  {% else %}
+  <!-- TODO: dodać możliwość sortowania -->
+  {% endif %}
   {% for station in stations %}
   <div class="search-result-item">
     <div class="search-result-item-element"><strong><a href="about: blank" class="search-result-link" onclick="centerOnGasStation({{ station.id }});">{{ station.name }}</a></strong></div>
