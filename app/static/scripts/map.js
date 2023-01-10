@@ -160,6 +160,7 @@ function endSearch() {
     document.getElementsByName("gas_station_name")[0].value = "";
     document.getElementById("close-search-button").style.display = "none";
     document.getElementById("cancel-search").style.display = "none";
+    document.getElementById("search-results-box").style.display = "none";
 
     if (searchActive) {
         clearMarkers();
