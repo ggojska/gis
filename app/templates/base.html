@@ -31,24 +31,25 @@
     </header>
     
     {% for message in get_flashed_messages() %}
-      <div class="flash">
-        {{ message }}
-      </div>
+    <div class="flash">
+      {{ message }}
+    </div>
     {% endfor %}
     
     {% if mapa %}
-      <div id="mapa" style="z-index: 0">
-        <div id="big-popup" class="big-popup" style="display: none"></div>
-        <div id="cancel-search" style="display: none">
-          <button type="button" class="cancel-search-button" onclick="endSearch()">anuluj wyszukiwanie</button>
-        </div>
-        <div id="search-box" class="search-box" style="display: none"></div>
+    <div id="mapa" style="z-index: 0">
+      <div id="big-popup" class="big-popup" style="display: none"></div>
+      <div id="cancel-search" style="display: none">
+        <button type="button" class="cancel-search-button" onclick="endSearch()">anuluj wyszukiwanie</button>
       </div>
-      <div id="popup" class="ol-popup"></div>
+      <div id="search-box" class="search-box" style="display: none"></div>
+      <div id="search-results-box" class="search-results-box" style="display: none"></div>
+    </div>
+    <div id="popup" class="ol-popup"></div>
     {% else %}
-      <div id="content">
-        {% block content %}{% endblock %}
-      </div>
+    <div id="content">
+    {% block content %}{% endblock %}
+    </div>
     {% endif %}
   </section>
 
