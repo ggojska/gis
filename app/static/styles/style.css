@@ -444,3 +444,12 @@ textarea:focus {
 .search-result-link:hover {
     text-decoration: underline;
 }
+
+#sort-dropdown {
+    border: none;
+    display: inline;
+    font-family: inherit;
+    font-size: inherit;
+    padding: none;
+    width: auto;
+}
