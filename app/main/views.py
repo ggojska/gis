@@ -2,7 +2,7 @@ from datetime import datetime
 import requests
 import json
 
-from flask import render_template, redirect, url_for, flash, request
+from flask import render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_required, current_user
 
 from . import main
@@ -52,10 +52,9 @@ def delete_car(id):
 
 @main.route('/gas_stations/', methods=['GET'])
 def gas_station_search():
-    api_request = requests.get(request.url_root + url_for('api.get_gas_stations'))
+    api_request = requests.get(request.url_root + url_for('api.get_gas_stations'), params=request.args)
     response = json.loads(api_request.text)
-    prev, next = response.get("prev"), response.get("next")
-    count = response.get("count")
+    prev, next, count = response.get("prev"), response.get("next"), response.get("count")
     stations = response.get("gas_stations")
     return render_template('_gas_station_search_result.html', stations=stations,\
         count=count, prev=prev, next=next)
