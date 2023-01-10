@@ -1,4 +1,6 @@
 from datetime import datetime
+import requests
+import json
 
 from flask import render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
@@ -50,8 +52,13 @@ def delete_car(id):
 
 @main.route('/gas_stations/', methods=['GET'])
 def gas_station_search():
-    stations = GasStation.query.paginate(page=1, per_page=100, error_out=False)
-    return render_template('_gas_station_search_result.html', stations=stations)
+    api_request = requests.get(request.url_root + url_for('api.get_gas_stations'))
+    response = json.loads(api_request.text)
+    prev, next = response.get("prev"), response.get("next")
+    count = response.get("count")
+    stations = response.get("gas_stations")
+    return render_template('_gas_station_search_result.html', stations=stations,\
+        count=count, prev=prev, next=next)
 
 
 @main.route('/gas_stations/<int:id>/popup', methods=['GET'])
