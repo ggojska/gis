@@ -120,7 +120,7 @@ function sendRequestAndSetNewMarkers(request) {
 
 function canSearch() {
     const name = document.getElementsByName("gas_station_name")[0].value;
-    return (name.length > 0)
+    return (name.length > 0);
 }
 
 function canSearchAdv() {
@@ -131,7 +131,7 @@ function canSearchAdv() {
     const min_rate = document.getElementsByName("gs_rate_min")[0].value;
     const max_rate = document.getElementsByName("gs_rate_max")[0].value;
     return ((fuel.length > 0) || (name.length > 0) || (min_price.length > 0) || (max_price.length > 0)
-        || (min_rate.length > 0) || (max_rate.length > 0))
+        || (min_rate.length > 0) || (max_rate.length > 0));
 }
 
 function searchStringChanged() {
@@ -153,13 +153,11 @@ function simpleSearch() {
     pushToRequestQueue(options);
     getNewMarkers();
     searchActive = true;
-    document.getElementById("cancel-search").style.display = "";
 }
 
 function endSearch() {
     document.getElementsByName("gas_station_name")[0].value = "";
     document.getElementById("close-search-button").style.display = "none";
-    document.getElementById("cancel-search").style.display = "none";
     document.getElementById("search-results-box").style.display = "none";
 
     if (searchActive) {
@@ -197,7 +195,6 @@ function advancedSearch() {
     };
     request.send();
     searchActive = true;
-    document.getElementById("cancel-search").style.display = "";
 }
 
 function showHideAdvancedSearchBox() {
