@@ -264,7 +264,8 @@ textarea:focus {
     width: 100%;
 }
 
-.cars li {
+.cars li,
+.user li {
     margin-top: 10px;
 }
 
@@ -360,6 +361,10 @@ textarea:focus {
 .comment-row {
     display: block;
     width: 100%;
+}
+
+.info-row {
+    margin-top: 10px;
 }
 
 .comment {
