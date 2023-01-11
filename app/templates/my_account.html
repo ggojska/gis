@@ -24,14 +24,14 @@
         <span class="car-description">{{ car.make }} {{ car.model }}, spalanie: {{ car.combustion }}
           l/100km {{ car.fuel }} 
           <form action="{{ url_for('main.delete_car', id=car.id) }}" method="post" style="display: inline;">
-          (<button class="show-hide-button" type="submit" name="delete_car">Usuń</button>)
+          (<button class="button-as-link" type="submit" name="delete_car">Usuń</button>)
           </form>
         </span>
       </li>
       {% endfor %}
       <li>
-        <button class="show-hide-button" id="show-car-up" type="button" onclick="addCar()" style="display: none">Dodaj nowy samochód &#11205;</button>
-        <button class="show-hide-button" id="show-car-down" type="button" onclick="addCar()">Dodaj nowy samochód &#11206;</button>
+        <button class="button-as-link" id="show-car-up" type="button" onclick="addCar()" style="display: none">Dodaj nowy samochód &#11205;</button>
+        <button class="button-as-link" id="show-car-down" type="button" onclick="addCar()">Dodaj nowy samochód &#11206;</button>
         <form class="carform" style="display: none" method="POST">
           {{ form.csrf_token }}
           {{ render_field(form.make) }}
