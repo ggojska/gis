@@ -63,7 +63,7 @@ function init() {
     });
 };
 
-function pushToRequestQueue(options = {}) {
+function pushToRequestQueue(options = {}, radiusMultiplier = 1) {
     const center = view.getCenter();
     const coordsTransform = ol.proj.toLonLat(center);
     const lon = coordsTransform[0];
@@ -77,7 +77,7 @@ function pushToRequestQueue(options = {}) {
     if (typeof options === 'undefined') options = {}
     options.lat = lat;
     options.lon = lon;
-    options.radius = radius;
+    options.radius = radius * radiusMultiplier;
     queue.push(options);
 }
 
@@ -193,7 +193,7 @@ function advancedSearch() {
         options.sort_direction = temp[1];
     }
 
-    pushToRequestQueue(options);
+    pushToRequestQueue(options, 15);
     getNewMarkers();
 
     var request = prepareRequest(options, "/gas_stations");
