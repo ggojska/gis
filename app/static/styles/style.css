@@ -461,7 +461,7 @@ textarea:focus {
     width: auto;
 }
 
-.show-hide-button {
+.button-as-link {
     border: none;
     display: inline;
     font-family: inherit;
@@ -472,6 +472,6 @@ textarea:focus {
     font-weight: bold;
 }
 
-.show-hide-button:hover {
+.button-as-link:hover {
     text-decoration: underline;
 }
