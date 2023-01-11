@@ -19,7 +19,9 @@
   {% endif %}
   {% for station in stations %}
   <div class="search-result-item">
-    <div class="search-result-item-element"><strong><a href="about: blank" class="search-result-link" onclick="centerOnGasStation({{ station.id }});">{{ station.name }}</a></strong></div>
+    <div class="search-result-item-element">
+      <button class="button-as-link" type="button" onclick="centerOnGasStation({{ station.id }});">{{ station.name }}</button>
+    </div>
     <div class="search-result-item-element">
       <span class="rate">
         {% if station.average_rate %}
