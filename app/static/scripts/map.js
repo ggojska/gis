@@ -63,7 +63,7 @@ function init() {
     });
 };
 
-function pushToRequestQueue(options = {}, addRadius=true) {
+function pushToRequestQueue(options = {}) {
     const center = view.getCenter();
     const coordsTransform = ol.proj.toLonLat(center);
     const lon = coordsTransform[0];
@@ -75,12 +75,9 @@ function pushToRequestQueue(options = {}, addRadius=true) {
     const radius = Math.floor(ol.sphere.getDistance(left, right) / 2);
 
     if (typeof options === 'undefined') options = {}
-    if (addRadius)
-    {
-        options.lat = lat;
-        options.lon = lon;
-        options.radius = radius;
-    }
+    options.lat = lat;
+    options.lon = lon;
+    options.radius = radius;
     queue.push(options);
 }
 
@@ -196,7 +193,7 @@ function advancedSearch() {
         options.sort_direction = temp[1];
     }
 
-    pushToRequestQueue(options, false);
+    pushToRequestQueue(options);
     getNewMarkers();
 
     var request = prepareRequest(options, "/gas_stations");
