@@ -173,7 +173,8 @@ th {
     width: 10%;
 }
 
-.search-button {
+.search-button,
+input[type=submit] {
     background-color: #367fb0;
     border: none;
     font-weight: bold;
@@ -186,7 +187,13 @@ th {
     cursor: pointer;
 }
 
-.search-button:hover:not(:disabled) {
+.search-button:hover:not(:disabled),
+input[type=submit]:hover {
+    background-color: #166da7;
+}
+
+.search-button:focus:not(:disabled),
+input[type=submit]:focus {
     background-color: #166da7;
 }
 
@@ -270,13 +277,7 @@ textarea:focus {
 }
 
 .car-description {
-    width: 40%;
-}
-
-.car-description,
-.car-edit {
     display: block;
-    float: left;
 }
 
 .big-popup,
@@ -457,6 +458,20 @@ textarea:focus {
     display: inline;
     font-family: inherit;
     font-size: inherit;
-    padding: none;
     width: auto;
+}
+
+.show-hide-button {
+    border: none;
+    display: inline;
+    font-family: inherit;
+    font-size: inherit;
+    padding: 0!important;
+    background-color: inherit;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.show-hide-button:hover {
+    text-decoration: underline;
 }
