@@ -458,6 +458,7 @@ textarea:focus {
     display: inline;
     font-family: inherit;
     font-size: inherit;
+    background-color: inherit;
     width: auto;
 }
 
