@@ -6,6 +6,7 @@ var searchActive = false;
 var sortBy;
 var markerSource;
 const ZOOM_THRESHOLD = 12;
+const CENTER_ZOOM = 12;
 const SEND_REQ_DELAY = 2300;
 const api_url = "/api/v1";
 
@@ -364,6 +365,11 @@ function deleteComment(gasStationId, commentId) {
     };
     request.open('POST', "/gas_stations/" + gasStationId + "/comments/" + commentId + "/delete");
     request.send();
+}
+
+function centerOnGasStation(lon, lat) {
+    map.getView().setCenter(ol.proj.transform([lon, lat], 'EPSG:4326', 'EPSG:3857'));
+    map.getView().setZoom(CENTER_ZOOM);
 }
 
 function refreshGasStationInfo() {

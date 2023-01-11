@@ -20,7 +20,7 @@
   {% for station in stations %}
   <div class="search-result-item">
     <div class="search-result-item-element">
-      <button class="button-as-link" type="button" onclick="centerOnGasStation({{ station.id }});">{{ station.name }}</button>
+      <button class="button-as-link" type="button" onclick="centerOnGasStation({{ station.lon }}, {{ station.lat }});">{{ station.name }}</button>
     </div>
     <div class="search-result-item-element">
       <span class="rate">
