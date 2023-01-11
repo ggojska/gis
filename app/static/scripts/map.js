@@ -344,9 +344,13 @@ function isBigPopupDisplayed() {
 function showAddComment() {
     if (document.getElementsByClassName("comment-form")[0].style.display === 'none') {
         document.getElementsByClassName("comment-form")[0].style.display = '';
+        document.getElementById("show-comment-down").style.display = '';
+        document.getElementById("show-comment-up").style.display = 'none';
     }
     else {
         document.getElementsByClassName("comment-form")[0].style.display = 'none';
+        document.getElementById("show-comment-down").style.display = 'none';
+        document.getElementById("show-comment-up").style.display = '';
     }
 }
 
