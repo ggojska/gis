@@ -438,6 +438,11 @@ textarea:focus {
     margin-top: 10px;
 }
 
+.search-result-item-sort {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
 .search-result-item-element {
     display: block;
     float: left;

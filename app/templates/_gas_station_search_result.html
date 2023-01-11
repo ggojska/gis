@@ -10,11 +10,16 @@
   </div>
   <div class="search-result-item">
     <span class="rate">
-      <button class="button-as-link" type="button" {%if not prev %} disabled {% endif %} onclick="advancedSearch({{ page-1 }});">poprzednia strona</button>
-      <button class="button-as-link" type="button" {%if not next %} disabled {% endif %} onclick="advancedSearch( {{ page+1 }});">następna strona</button>
+      <div class="search-result-item-element">
+        <button class="button-as-link" type="button" {%if not prev %} disabled {% endif %} onclick="advancedSearch({{ page-1 }});">poprzednia strona</button>
+      </div>
+      <div class="search-result-item-element">
+        <button class="button-as-link" type="button" {%if not next %} disabled {% endif %} onclick="advancedSearch( {{ page+1 }});">następna strona</button>
+      </div>
     </span>
   </div>
-  <div class="search-result-item">
+  <div style="clear:both;"></div>
+  <div class="search-result-item-sort">
     {% if not stations %}
     <p>Brak wyników</p>
     {% else %}
