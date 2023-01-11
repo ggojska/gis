@@ -370,6 +370,7 @@ function refreshGasStationInfo() {
     if (document.getElementById("iframe").contentDocument.body.innerHTML.length > 0) {
         document.getElementById("big-popup").innerHTML = document.getElementById("iframe").contentDocument.body.innerHTML;
         document.getElementById("iframe").contentDocument.body.innerHTML = "";
-        document.getElementById("comment-form").reset();
+        document.getElementById("rate").value = "";
+        document.getElementById("comment").value = "";
     }
 }
