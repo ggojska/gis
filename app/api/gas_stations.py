@@ -110,9 +110,17 @@ def get_gas_stations():
 
     next, prev = None, None
     if params.page > 1:
-        prev = url_for('api.get_gas_stations', params=params.to_dict())
+        prev = url_for('api.get_gas_stations', page=params.page-1, per_page=params.per_page,\
+            name=params.name, lat=params.lat, lon=params.lon, radius=params.radius,\
+            fuel=params.fuel, min_price=params.min_price, max_price=params.max_price,\
+            min_rate=params.min_rate, max_rate=params.max_rate,\
+            sort_by=params.sort_by, sort_direction=params.sort_direction)
     if ceil(total/params.per_page) > params.page:
-        next = url_for('api.get_gas_stations', params=params.to_dict())
+        next = url_for('api.get_gas_stations', page=params.page+1, per_page=params.per_page,\
+            name=params.name, lat=params.lat, lon=params.lon, radius=params.radius,\
+            fuel=params.fuel, min_price=params.min_price, max_price=params.max_price,\
+            min_rate=params.min_rate, max_rate=params.max_rate,\
+            sort_by=params.sort_by, sort_direction=params.sort_direction)
 
     stations_list = []
     if records.count() > 0:
