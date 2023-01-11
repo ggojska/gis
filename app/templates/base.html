@@ -5,12 +5,17 @@
   {% block head %}
   <title>Mapa stacji benzynowych{% block title %}{% endblock %}</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+  <link rel="icon" type="image/x-icon" href="/static/assets/favicon.ico">
   {% endblock %}
 </head>
 
 <body>
   <nav>
-    <div id="start" class="nav"><h1><a href="{{ url_for('main.index') }}" title="Wróć do strony głównej">Mapa stacji benzynowych</a></h1></div>
+    <div id="start" class="nav">
+      <h1>
+        <a href="{{ url_for('main.index') }}" title="Wróć do strony głównej">Mapa stacji benzynowych</a>
+      </h1>
+    </div>
     <div id="center" class="nav">{% if mapa %} {% include '_searchbar.html' %} {% endif %}</div>
     <div id="end" class="nav">
       <ul>
