@@ -476,6 +476,7 @@ textarea:focus {
     background-color: inherit;
     cursor: pointer;
     font-weight: bold;
+    text-align: left;
 }
 
 .button-as-link:hover {
