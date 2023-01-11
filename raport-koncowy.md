@@ -1,44 +1,60 @@
 # Projekt na zaliczenie z przedmiotu Systemy informacji przestrzennych GIS
 
-## Skład osobowy - role w projekcie
+## Skład osobowy
 
-**Maciej Pacześny 187229 - kierownik zespołu, programista back-end**
-**Grzegorz Gojska 174173 - programista back-end**
-**Jakub Konkel 187207 - programista front-end**
+**Maciej Pacześny 187229**
+**Grzegorz Gojska 174173* **
+**Jakub Konkel 187207* **
 
-## Opis zadania
+* Jakub i Grzegorz byli odpowiedzialni za implementację algorytmu wyszukwiania "najtańszej" drogi.
 
-W ogólnym zarysie zadanie obejmuje stworzenie serwisu, który pokazuje na mapie stacje benzynowe różnych sieci.
+## Wstęp
 
-### Przewidywane przypadki użycia
+Projekt obejmował stworzenie serwisu, który pokazuje na mapie stacje benzynowych różnych sieci, z funkcjonalnością m.in. przeglądania stacji na mapie, wyszukiwania stacji według różnych kryteriów, dodawanie ocen i/lub komentarzy do stacji.
+
+### Zaimplementowane przypadki użycia wraz z krótkim opisem
+
+Zrealizowano następujące przypadki użycia:
 
 * przeglądanie stacji benzynowych na mapie
+
+Markery odpowiadające stacjom benzynowym pojawiają się przy odpowiednim zbliżeniu mapy. Po oddaleniu markery znikają.
+
 * podgląd cen dla wybranej stacji benzynowej
+
+Można najechać kursorem na marker odpowiadający stacji benzynowej, żeby zobaczyć skrócony opis dla danej stacji: nazwę, ceny paliw oraz średnią ocenę użytkowników.
+
 * wyszukiwanie stacji benzynowych:
   * według nazwy
   * według ceny
   * według paliwa sprzedawanego na stacji
   * najbliższe w stosunku do danego punktu
   * sortowanie wyników np. po cenie
-* wyszukianie "najtańszej" drogi pomiędzy dwoma punktami, tzn. droga która jest najtańsza biorąc pod uwagę spalanie paliwa (podanego przez użytkownika) oraz cenę paliwa na stacjach benzynowych po drodze
-  * alternatywny przypadek użycia, gdyby powyższy był zbyt trudny do implementacji: wyszukiwanie najkrótszej drogi pomiędzy punktami i podanie całkowitego kosztu przejazdu, uwzględniając cenę paliwa na stacjach na wyszukanej drodze i spalanie samochodu
+
+Istnieją dwa sposoby wyszukiwania: prosty i zaawansowany. Prosty sposób pozwala na wyszukanie stacji po nazwie stacji i zwraca jedynie markery na mapie, bez listy wyszukanych stacji. Wyszukiwanie proste obejmuje tylko widoczny obszar + niewielki margines. Jeżeli wyszukiwanie jest aktywne, wtedy oddalanie/ przybliżanie mapy nie wpływa na znaczniki stacji na mapie.
+
+Przy wyszukiwaniu zaawansowanym można wyszukać po nazwie, cenie wybranego paliwa oraz średniej ocenie stacji benzynowej. Wyniki są zwrócone jako markery na mapie oraz jako lista z prawej strony ekranu. Lista zawiera skrócone informacje o stacji: nazwę stacji, średnią ocenę, odległość od środka mapy w momencie wyszukiwania oraz cenę paliwa (jeżeli typ paliwa był podany jako parametr wyszukiwania). Lista umożliwa również sortowanie po cenie, odległości oraz średniej ocenie. Lista zawiera co najwyżej 100 pierwszych wyników, na kolejne strony można przechodzić kilkając odpowiednie odnośniki.
+
 * dodawanie ocen i komentarzy do stacji benzynowych (zalogowany użytkownik)
+
+Zalogowany użytkownik może dodać ocenę i/lub komentarz do wybranej stacji benzynowej. Po kliknięciu na marker stacji pojawia się okno komentarzy gdzie można dodać komentarz i/lub ocenę - tzn. komentarz lub ocena nie mogą być puste. Użytkownik może usunąć komentarz dodany przez siebie. W oknie komentarzy można przeglądać równiez komentarze i oceny innych użytkowników
+
 * zapisywanie danych o swoim samochodzie (model, spalanie) (zalogowany użytkownik)
 
-Na realizację zadania składają się:
+Zalogowany użytkownik na swoim koncie może dodawać dane o swoich samochodach: markę, model, typ paliwa oraz spalanie. Użytkownik może również usuwać swoje samochody.
 
-* strona www (front-end)
-* back-end do przetwarzania i odpowiedzi na zapytania ze strony www
+### Techniczna realizacja projektu
 
-### Technologie
+Na projekt składają się: strona www (front-end) oraz back-end do przetwarzania i odpowiedzi na zapytania ze strony www. Front-end został zrealizowany z wykorzystaniem HTML, CSS i JavaScript, bez żadnych dodatkowych bibliotek, z wyjątkiem biblioteki JavaScript i CSS OpenLayers. Back-end został zrealizowany w Pythonie z użyciem frameworka webowego Flask. Jako bazę danych wykorzystano Sqlite, a do komunikacji z bazą użyto frameworka ORM SqlAlchemy.
 
-* front-end:
-  * HTML, CSS, JS
-  * biblioteki/ frameworki specyficzne dla GIS (OpenLayers)
-* back-end:
-  * dowolny serwer WWW
-  * Python + Flask
-  * baza danych Sqlite
+Back-end zrealizowano według wzorca MVC, ale z nieco odmienną terminologią, przyjętą we frameworku Flask - Model-View-Template:
+
+* model - model to klasa reprezentująca pewien byt w domenie biznesowej. W tym projekcie domeną są stacje benzynowe, a modelami: użytkownik, stacja benzynowa, paliwo z ceną, komentarz z oceną. Jest to główna jednostka informacji w projekcie. Odpowiada modelowi z MVC.
+* view - do widoku trafiają żądania użytkownika. Widok odpowiada za przetwarzanie i odpowiedź na żądania użytkownika. W toku przetwarzania pobiera model i przekazuje pobrany model do szablonu (template), żeby wyrenderować odpowiedź - jeżeli odpowiedź powinna zostać zwrócona jako strona HTML. W tym projekcie zaimplementowano również niewielkie REST API, które zwraca odpowiedź w formacie JSON, w takim przypadku szablon nie jest renderowany. Jest to odpowiednik kontrolera z MVC.
+* template - szablon strony HTML, ta część wzorca jest odpowiedzialna za renderowanie stron WWW z wykorzystaniem szablonów oraz przekazanych przez kontroler danych, i zwrócenie wyrenderowanego szablonu. Jest to odpowiednik widoku z MVC.
+
+
+
 
 ### Narzędzia
 
