@@ -6,10 +6,19 @@
     <strong>Znaleziono {{ count }} stacji</strong>
   </div>
   <div class="search-result-item">
+    <span class="rate">strona {{ page }} z {{ page_count }}</span>
+  </div>
+  <div class="search-result-item">
+    <span class="rate">
+      <button class="button-as-link" type="button" {%if not prev %} disabled {% endif %} onclick="advancedSearch({{ page-1 }});">poprzednia strona</button>
+      <button class="button-as-link" type="button" {%if not next %} disabled {% endif %} onclick="advancedSearch( {{ page+1 }});">następna strona</button>
+    </span>
+  </div>
+  <div class="search-result-item">
     {% if not stations %}
     <p>Brak wyników</p>
     {% else %}
-    <label for="sort-dropdown">Sortuj</label>
+    <label for="sort-dropdown">sortuj</label>
       <select id="sort-dropdown" name="gs_fuel" onchange="advancedSearch();">
         <option value="distance;asc">wg odległości rosnąco</option>
         <option value="distance;desc">wg odległości malejąco</option>
@@ -59,4 +68,4 @@
   </div>
   {% endfor %}
 </div>
-<!-- paginacja -->
+  

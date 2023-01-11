@@ -169,10 +169,11 @@ function endSearch() {
     }
 }
 
-function advancedSearch() {
+function advancedSearch(page=1) {
     clearMarkers();
 
     options = {}
+    options.page = page;
     const name2 = document.getElementsByName("gs_name")[0].value;
     if (name2.length > 0) options.name = name2;
     const min_price = document.getElementsByName("gs_price_min")[0].value;
@@ -201,10 +202,7 @@ function advancedSearch() {
         if (this.readyState == 4 && this.status == 200) {
             document.getElementById("search-results-box").style.display = "";
             document.getElementById("search-results-box").innerHTML = this.responseText;
-            if (sortBy.length>0)
-            {
-                document.getElementById("sort-dropdown").value = sortBy;
-            }
+            if (sortBy.length > 0) document.getElementById("sort-dropdown").value = sortBy;
         }
     };
     request.send();

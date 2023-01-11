@@ -107,6 +107,7 @@ def get_gas_stations():
     offset = params.per_page * (params.page-1)
     records = query_ordered.limit(params.per_page).offset(offset).distinct()
     total = query_ordered.distinct(GasStation.id).count()
+    page_count = ceil(total/params.per_page)
 
     next, prev = None, None
     if params.page > 1:
@@ -146,6 +147,7 @@ def get_gas_stations():
         'gas_stations': stations_list,
         'prev': prev,
         'next': next,
+        'page_count': page_count,
         'count': total
     })
 
