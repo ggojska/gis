@@ -264,7 +264,8 @@ textarea:focus {
     width: 100%;
 }
 
-.cars li {
+.cars li,
+.user li {
     margin-top: 10px;
 }
 
@@ -309,7 +310,7 @@ textarea:focus {
 }
 
 .search-box input[type=text] {
-    width: 550px !important;
+    width: 75% !important;
 }
 
 .search-box select {
@@ -360,12 +361,16 @@ textarea:focus {
 .comment-row {
     display: block;
     width: 100%;
-    margin-top: 10px;
+}
+
+.info-row {
+    margin-top: 15px;
 }
 
 .comment {
-    margin-top: 10px;
-    background-color: rgba(245, 245, 245, 0.8);
+    padding: 5px;
+    margin-top: 5px;
+    background-color: rgba(245, 245, 245, 0.95);
 }
 
 .my-comment {
@@ -399,8 +404,10 @@ textarea:focus {
 
 .comment-form textarea {
     width: 100%;
-    height: 150px;
+    height: 100px;
     resize: none;
+    font-family: inherit;
+    font-size: inherit;
 }
 
 #cancel-search {

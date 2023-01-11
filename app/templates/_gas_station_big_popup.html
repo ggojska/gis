@@ -2,7 +2,7 @@
 
 <button type="button" class="close-button" title="Zamknij" onclick="hideGasStationInfo()">X</button>
 
-<iframe name="blank-iframe" id="iframe" style="display: none" onload="refreshGasStationInfo()"></iframe>
+<iframe name="blank-iframe" id="iframe" style="display: none" onload="refreshGasStationInfo();"></iframe>
 
 <div class="station-info">
   {% for message in get_flashed_messages() %}
@@ -12,22 +12,19 @@
   {% endfor %}
   <div class="info-row">Stacja <strong>{{ station.name }}</strong></div>
   <div class="info-row">
-    <p class="rate">
-    {% if station.average_rate %}
-    średnia ocena {{ station.average_rate }}
-    {% else %}
-    brak ocen
-    {% endif %}
-    </p>
+    {% include '_average_rate.html' %}
   </div>
   {% if current_user.is_authenticated %}
-  <button class="car-button" type="button" onclick="showAddComment()">Dodaj nowy komentarz</button>
-  <form class="comment-form" id="comment-form" action="{{ url_for('main.add_comment', id=station.id) }}" method="POST" target="blank-iframe" style="display: none">
-  {{ form.csrf_token }}
-  {{ render_field(form.rate) }}
-  {{ render_field(form.comment) }}
-  {{ render_field(form.submit) }}
-  </form>
+  <div class="info-row">
+    <button class="car-button" id="show-comment-down" type="button" onclick="showAddComment()"  style="display: none">Dodaj nowy komentarz &#11205;</button>
+    <button class="car-button" id="show-comment-up" type="button" onclick="showAddComment()">Dodaj nowy komentarz &#11206;</button>
+    <form class="comment-form" id="comment-form" action="{{ url_for('main.add_comment', id=station.id) }}" method="POST" target="blank-iframe" style="display: none">
+    {{ form.csrf_token }}
+    {{ render_field(form.rate) }}
+    {{ render_field(form.comment) }}
+    {{ render_field(form.submit) }}
+    </form>
+  </div>
   {% endif %}
   <div class="info-row">
     {% for comment in station.comments %}

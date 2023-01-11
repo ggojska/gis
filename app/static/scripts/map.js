@@ -344,9 +344,13 @@ function isBigPopupDisplayed() {
 function showAddComment() {
     if (document.getElementsByClassName("comment-form")[0].style.display === 'none') {
         document.getElementsByClassName("comment-form")[0].style.display = '';
+        document.getElementById("show-comment-down").style.display = '';
+        document.getElementById("show-comment-up").style.display = 'none';
     }
     else {
         document.getElementsByClassName("comment-form")[0].style.display = 'none';
+        document.getElementById("show-comment-down").style.display = 'none';
+        document.getElementById("show-comment-up").style.display = '';
     }
 }
 
@@ -363,8 +367,9 @@ function deleteComment(gasStationId, commentId) {
 }
 
 function refreshGasStationInfo() {
-    console.log("refreshGasStationInfo");
-    if (document.getElementById("iframe").innerHTML.length > 0) {
-        document.getElementById("big-popup").innerHTML = document.getElementById("iframe").innerHTML;
+    if (document.getElementById("iframe").contentDocument.body.innerHTML.length > 0) {
+        document.getElementById("big-popup").innerHTML = document.getElementById("iframe").contentDocument.body.innerHTML;
+        document.getElementById("iframe").contentDocument.body.innerHTML = "";
+        document.getElementById("comment-form").reset();
     }
 }
