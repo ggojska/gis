@@ -1,5 +1,6 @@
-{% if station.average_rate %}
-<span class="rate">średnia ocena
+<span class="rate">
+    {% if station.average_rate %}
+    średnia ocena
     <span class="yellow-stars">
     {% for n in range(station.average_rate | int) %}&#9733{% endfor %}
     </span>
@@ -7,7 +8,7 @@
     {% for n in range(5 - station.average_rate | int) %}&#9733{% endfor %}
     </span>
     {{ station.average_rate }}
+    {% else %}
+    brak ocen
+    {% endif %}
 </span>
-{% else %}
-<span class="rate">brak ocen</span>
-{% endif %}
