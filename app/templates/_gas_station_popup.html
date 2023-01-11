@@ -1,17 +1,5 @@
 <p>Stacja <strong>{{ station.name }}</strong></p>
-{% if station.average_rate %}
-<p class="rate">średnia ocena
-  <span class="yellow-stars">
-  {% for n in range(station.average_rate|int) %}&#9733{% endfor %}
-  </span>
-  <span class="grey-stars">
-  {% for n in range(5 - station.average_rate|int) %}&#9733{% endfor %}
-  </span>
-  {{ station.average_rate }}
-</p>
-{% else %}
-<p class="rate">brak ocen</p>
-{% endif %}
+{% include '_average_rate.html' %}
 {% if station.fuels %}
 <table class="fuel">
   {% for fuel in station.fuels %}
