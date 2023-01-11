@@ -367,8 +367,9 @@ function deleteComment(gasStationId, commentId) {
 }
 
 function refreshGasStationInfo() {
-    console.log("refreshGasStationInfo");
-    if (document.getElementById("iframe").innerHTML.length > 0) {
-        document.getElementById("big-popup").innerHTML = document.getElementById("iframe").innerHTML;
+    if (document.getElementById("iframe").contentDocument.body.innerHTML.length > 0) {
+        document.getElementById("big-popup").innerHTML = document.getElementById("iframe").contentDocument.body.innerHTML;
+        document.getElementById("iframe").contentDocument.body.innerHTML = "";
+        document.getElementById("comment-form").reset();
     }
 }
