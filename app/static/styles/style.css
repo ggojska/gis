@@ -310,7 +310,7 @@ textarea:focus {
 }
 
 .search-box input[type=text] {
-    width: 550px !important;
+    width: 75% !important;
 }
 
 .search-box select {
