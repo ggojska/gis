@@ -360,12 +360,12 @@ textarea:focus {
 .comment-row {
     display: block;
     width: 100%;
-    margin-top: 10px;
 }
 
 .comment {
-    margin-top: 10px;
-    background-color: rgba(245, 245, 245, 0.8);
+    padding: 5px;
+    margin-top: 5px;
+    background-color: rgba(245, 245, 245, 0.95);
 }
 
 .my-comment {
