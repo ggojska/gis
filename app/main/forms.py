@@ -27,4 +27,3 @@ class CommentForm(FlaskForm):
             widget=TextArea())
     submit = SubmitField('Zapisz')
     submit.label = None
-
