@@ -7,7 +7,7 @@ var sortBy;
 var markerSource;
 const ZOOM_THRESHOLD = 12;
 const CENTER_ZOOM = 12;
-const SEND_REQ_DELAY = 2300;
+const SEND_REQ_DELAY = 1750;
 const api_url = "/api/v1";
 
 function init() {
