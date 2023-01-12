@@ -125,18 +125,6 @@ function canSearch() {
     return (name.length > 0);
 }
 
-function canSearchAdv() {
-    // Czy to potrzebne???
-    const name = document.getElementsByName("gs_name")[0].value;
-    const min_price = document.getElementsByName("gs_price_min")[0].value;
-    const max_price = document.getElementsByName("gs_price_max")[0].value;
-    const fuel = document.getElementsByName("gs_fuel")[0].value;
-    const min_rate = document.getElementsByName("gs_rate_min")[0].value;
-    const max_rate = document.getElementsByName("gs_rate_max")[0].value;
-    return ((fuel.length > 0) || (name.length > 0) || (min_price.length > 0) || (max_price.length > 0)
-        || (min_rate.length > 0) || (max_rate.length > 0));
-}
-
 function searchStringChanged() {
     if (canSearch()) {
         document.getElementById("close-search-button").style.display = "";
@@ -169,11 +157,10 @@ function endSearch() {
     }
 }
 
-function advancedSearch(page=1) {
+function advancedSearch() {
     clearMarkers();
 
     options = {}
-    options.page = page;
     const name2 = document.getElementsByName("gs_name")[0].value;
     if (name2.length > 0) options.name = name2;
     const min_price = document.getElementsByName("gs_price_min")[0].value;
@@ -207,6 +194,27 @@ function advancedSearch(page=1) {
     };
     request.send();
     searchActive = true;
+}
+
+function advancedSearchPageChange(request_url) {
+    var request = new XMLHttpRequest();
+    request.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) setNewMarkers(request);
+    };
+    request.open('GET', request_url);
+    request.send();
+
+    var request_url2 = request_url.replace(api_url, "");
+    var request2 = new XMLHttpRequest();
+    request2.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            document.getElementById("search-results-box").style.display = "";
+            document.getElementById("search-results-box").innerHTML = this.responseText;
+            if (sortBy.length > 0) document.getElementById("sort-dropdown").value = sortBy;
+        }
+    };
+    request2.open('GET', request_url2);
+    request2.send();
 }
 
 function showHideAdvancedSearchBox() {
