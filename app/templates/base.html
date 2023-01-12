@@ -1,12 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang=pl>
 
 <head>
   {% block head %}
   <meta charset="UTF-8">
   <title>Mapa stacji benzynowych{% block title %}{% endblock %}</title>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta http-equiv="Content-Language" content="pl"/>
   <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
   <link rel="icon" type="image/x-icon" href="/static/assets/favicon.ico">
   {% endblock %}
