@@ -59,14 +59,14 @@ Wzorzec MVC został użyty tutaj jako wzorzec architektoniczny, ponieważ defini
 
 ### Użyte rozwiązania geoprzestrzenne
 
-Wykorzystano...
+Poniżej opisano funkcje biblioteki OpenLayers, które wykorzystano do zaimplementowania poniższych rozwiązań geoprzestrzennych:
 
-* wyznaczanie punktu na mapie ze współrzednych geograficznych
-* umieszczanie markerów na mapie
-* markery interaktywne - po najechaniu na marker pojawia się popup, po kliknięciu pojawia się okienko
-* obliczanie promienia w metrach dla aktualnego przybliżenia mapy - szerokość mapy i jakieś obliczenia
+* wyznaczanie punktu na mapie ze współrzędnych geograficznych - do tego celu wykorzystano funkcję fromLonLat, która jako argumenty przyjmuje długość i szerokość geograficzną.
+* umieszczanie markerów na mapie - ze współrzednych geograficznych stacji benzynowej obliczono punkt na mapie, gdzie umieścić marker, następnie w tym miejscu umieszczano cechę (Feature), która zawierała punkt geograficzny (Point); cecha zawiera ikonę odpowiednią dla danej sieci stacji
+* wyznaczanie środka mapy - w celu wyznaczenia środka mapy wywołano funkcję getCenter dla aktualnego widoku (View) mapy, a następnie uzyskaną wartość zamieniono na współrzędne geograficzne za pomocą funkcji toLonLat.
+* wyznaczanie promienia - w celu wyznaczenia, które stacje benzynowe znajdują się w okręgu o promieniu N metrów od środka mapy, potrzebne jest wyznaczenie promienia. Żeby to zrobić, posłużono się funkcją calculateExtent, która oblicza zasięg (Extent) dla aktualnego widoku mapy. TODO: Zasięg to ... . Mając zasięg, można wybrać dwa punkty na mapie do obliczenia odległości pomiędzy nimi, np.  punkt w lewym, dolnym rogu i punkt w prawym, dolnym rogu - w ten sposób można wyznaczyć szerokość aktualnego widoku mapy. Szerokość obliczana jest za pomocą funkcji getDistance, następnie dzielona na dwa i zaokrąglana do najbliższej liczby całkowitej w dół, co w rezultacie daje promień.
 
-Pewnym problemem okazała się baza danych i obliczanie odległości pomiędzy dwoma punktami współrzędnych. Baza Sqlite nie zawiera żadnych funkcji geoprzestrzennych, a pisanie własnych funkcji do bazy jest trudne, ponieważ wymaga napisania własnego rozszerzenia do Sqlite z wykorzystaniem interfejsu bazy. Sama baza nie wspiera pisania funkcji w wysokopozmowym języku proceduralnym opartym o SQL, jak np. Oracle PL-SQL czy SqlServer T-SQL. Ostatecznie obliczanie odległości zrealizowano w czystym SQL, z wykorzystaniem wzoru Harvesine. W aplikacji obliczanie odległości wykorzystywane jest do wyznaczania, które stacje benzynowe znajdują się w promieniu N metrów od podanego punktu.
+Oprócz biblioteki OpenLayers, implementacje rozwiązań geoprzestrzennych znalazły swoje zastosowanie również w aplikacji, gdzie zaszła potrzeba obliczenia odległości pomiędzy dwoma punktami współrzędnych przy ustalaniu, które stacje benzynowe znajdują się w okręgu o promieniu N metrów od podanego punktu. Okazało się to problemem, ze względu na zastosowaną bazę danych - "czysta" baza Sqlite nie zawiera żadnych funkcji geoprzestrzennych. Pisanie własnych funkcji do bazy jest trudne, ponieważ wymaga napisania własnego rozszerzenia z wykorzystaniem interfejsu bazy; nie ma możliwości użycia wysokopoziomowego języka proceduralnego opartego o SQL, jak np. Oracle PL-SQL. Ostatecznie obliczanie odległości zrealizowano w czystym SQL, z użyciem wzoru Harvesine.
 
 ### Realizacja wymagań
 
