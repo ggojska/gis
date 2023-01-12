@@ -1,9 +1,12 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html>
 
 <head>
   {% block head %}
+  <meta charset="UTF-8">
   <title>Mapa stacji benzynowych{% block title %}{% endblock %}</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Content-Language" content="pl"/>
   <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
   <link rel="icon" type="image/x-icon" href="/static/assets/favicon.ico">
   {% endblock %}
@@ -30,31 +33,38 @@
     </div>
   </nav>
 
+  {% if not mapa %}
   <section class="content">
     <header>
       {% block header %}{% endblock %}
     </header>
-    
+
     {% for message in get_flashed_messages() %}
     <div class="flash">
       {{ message }}
     </div>
     {% endfor %}
-    
-    {% if mapa %}
-    <div id="mapa" style="z-index: 0">
-      <div id="big-popup" class="big-popup" style="display: none"></div>
-      <div id="search-box" class="search-box" style="display: none"></div>
-      <div id="search-results-box" class="search-results-box" style="display: none"></div>
-    </div>
-    <div id="popup" class="ol-popup"></div>
-    {% else %}
-    <div id="content">
-    {% block content %}{% endblock %}
-    </div>
-    {% endif %}
-  </section>
 
+    <div id="content">
+      {% block content %}{% endblock %}
+    </div>
+  </section>
+  {% else %}
+    <div class="content">
+      {% for message in get_flashed_messages() %}
+      <div class="flash">
+      {{ message }}
+      </div>
+      {% endfor %}
+
+      <div id="mapa" style="z-index: 0">
+        <div id="big-popup" class="big-popup" style="display: none"></div>
+        <div id="search-box" class="search-box" style="display: none"></div>
+        <div id="search-results-box" class="search-results-box" style="display: none"></div>
+      </div>
+      <div id="popup" class="ol-popup"></div>
+    </div>
+  {% endif %}
 </body>
 
 </html>
