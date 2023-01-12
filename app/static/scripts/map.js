@@ -89,7 +89,7 @@ function getNewMarkers() {
     };
 }
 
-function prepareRequest(options, request_url) {
+function prepareRequest(options, request_url, async=true) {
     var request;
     request = new XMLHttpRequest();
     request_url = request_url + "?";
@@ -103,7 +103,7 @@ function prepareRequest(options, request_url) {
             }
         }
     }
-    request.open('GET', request_url);
+    request.open('GET', request_url, async);
     return request;
 }
 
@@ -184,7 +184,7 @@ function advancedSearch() {
     pushToRequestQueue(options, 15);
     getNewMarkers();
 
-    var request = prepareRequest(options, "/gas_stations");
+    var request = prepareRequest(options, "/gas_stations", false);
     request.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
             document.getElementById("search-results-box").style.display = "";
@@ -213,7 +213,7 @@ function advancedSearchPageChange(request_url) {
             if (sortBy.length > 0) document.getElementById("sort-dropdown").value = sortBy;
         }
     };
-    request2.open('GET', request_url2);
+    request2.open('GET', request_url2, false);
     request2.send();
 }
 
