@@ -1,5 +1,7 @@
 # Projekt na zaliczenie z przedmiotu Systemy informacji przestrzennych GIS
 
+## Raport końcowy
+
 ## Skład osobowy
 
 **Maciej Pacześny 187229**
@@ -18,7 +20,7 @@ Zrealizowano następujące przypadki użycia:
 
 * przeglądanie stacji benzynowych na mapie
 
-Markery odpowiadające stacjom benzynowym pojawiają się przy odpowiednim zbliżeniu mapy. Po oddaleniu markery znikają.
+Markery odpowiadające stacjom benzynowym pojawiają się przy odpowiednim zbliżeniu mapy, i aktualizują się w trakcie przesuwania mapy. Po oddaleniu markery znikają.
 
 * podgląd cen dla wybranej stacji benzynowej
 
@@ -33,11 +35,11 @@ Można najechać kursorem na marker odpowiadający stacji benzynowej, żeby zoba
 
 Istnieją dwa sposoby wyszukiwania: prosty i zaawansowany. Prosty sposób pozwala na wyszukanie stacji po nazwie stacji i zwraca jedynie markery na mapie, bez listy wyszukanych stacji. Wyszukiwanie proste obejmuje tylko widoczny obszar + niewielki margines. Jeżeli wyszukiwanie jest aktywne, wtedy oddalanie/ przybliżanie mapy nie wpływa na znaczniki stacji na mapie.
 
-Przy wyszukiwaniu zaawansowanym można wyszukać po nazwie, cenie wybranego paliwa oraz średniej ocenie stacji benzynowej. Wyniki są zwrócone jako markery na mapie oraz jako lista z prawej strony ekranu. Lista zawiera skrócone informacje o stacji: nazwę stacji, średnią ocenę, odległość od środka mapy w momencie wyszukiwania oraz cenę paliwa (jeżeli typ paliwa był podany jako parametr wyszukiwania). Lista umożliwa również sortowanie po cenie, odległości oraz średniej ocenie. Lista zawiera co najwyżej 100 pierwszych wyników, na kolejne strony można przechodzić kilkając odpowiednie odnośniki.
+Przy wyszukiwaniu zaawansowanym można wyszukać po nazwie, cenie wybranego paliwa oraz średniej ocenie stacji benzynowej. Wyniki są zwrócone jako markery na mapie oraz jako lista z prawej strony ekranu. Zarówno na liście, jak i na mapie zawartych jest co najwyżej 100 pierwszych wyników. Lista zawiera skrócone informacje o stacji: nazwę stacji, średnią ocenę, odległość od środka mapy w momencie wyszukiwania oraz cenę paliwa (jeżeli typ paliwa był podany jako parametr wyszukiwania). Lista umożliwa również sortowanie po cenie, odległości oraz średniej ocenie. Na kolejne strony wyników można przechodzić kilkając odpowiednie odnośniki - spowoduje to nie tylko pojawienie się kolejnych wyników na liście, ale również odpowiadających im markerów na mapie. Wyszukiwanie zaawansowane wyszukuje w dużo większym obszarze, niż jest widoczny.
 
 * dodawanie ocen i komentarzy do stacji benzynowych (zalogowany użytkownik)
 
-Zalogowany użytkownik może dodać ocenę i/lub komentarz do wybranej stacji benzynowej. Po kliknięciu na marker stacji pojawia się okno komentarzy, gdzie można dodać komentarz i/lub ocenę - tzn. komentarz lub ocena nie mogą być puste. Użytkownik może usunąć komentarz dodany przez siebie. W oknie komentarzy można przeglądać równiez komentarze i oceny innych użytkowników.
+Zalogowany użytkownik może dodać ocenę i/lub komentarz do wybranej stacji benzynowej. Po kliknięciu na marker stacji pojawia się okno komentarzy, gdzie można dodać komentarz i/lub ocenę - jedno z dwóch nie może być puste. Użytkownik może usunąć komentarz dodany przez siebie. W oknie komentarzy można przeglądać również komentarze i oceny innych użytkowników.
 
 * zapisywanie danych o swoim samochodzie (model, spalanie) (zalogowany użytkownik)
 
@@ -54,6 +56,17 @@ Back-end zrealizowano według wzorca MVC, ale z nieco odmienną terminologią, p
 * **template** - szablon strony HTML, ta część wzorca jest odpowiedzialna za renderowanie stron WWW z wykorzystaniem szablonów oraz przekazanych przez kontroler danych, i zwrócenie wyrenderowanego szablonu. Jest to odpowiednik widoku z MVC.
 
 Wzorzec MVC został użyty tutaj jako wzorzec architektoniczny, ponieważ definiuję architekturę projektu. Oprócz tego wzorca nie wykorzystano innych wzorców projektowych lub architektonicnych.
+
+### Użyte rozwiązania geoprzestrzenne
+
+Wykorzystano...
+
+* wyznaczanie punktu na mapie ze współrzednych geograficznych
+* umieszczanie markerów na mapie
+* markery interaktywne - po najechaniu na marker pojawia się popup, po kliknięciu pojawia się okienko
+* obliczanie promienia w metrach dla aktualnego przybliżenia mapy - szerokość mapy i jakieś obliczenia
+
+Pewnym problemem okazała się baza danych i obliczanie odległości pomiędzy dwoma punktami współrzędnych. Baza Sqlite nie zawiera żadnych funkcji geoprzestrzennych, a pisanie własnych funkcji do bazy jest trudne, ponieważ wymaga napisania własnego rozszerzenia do Sqlite z wykorzystaniem interfejsu bazy. Sama baza nie wspiera pisania funkcji w wysokopozmowym języku proceduralnym opartym o SQL, jak np. Oracle PL-SQL czy SqlServer T-SQL. Ostatecznie obliczanie odległości zrealizowano w czystym SQL, z wykorzystaniem wzoru Harvesine. W aplikacji obliczanie odległości wykorzystywane jest do wyznaczania, które stacje benzynowe znajdują się w promieniu N metrów od podanego punktu.
 
 ### Realizacja wymagań
 
