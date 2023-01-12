@@ -37,11 +37,11 @@ Przy wyszukiwaniu zaawansowanym można wyszukać po nazwie, cenie wybranego pali
 
 * dodawanie ocen i komentarzy do stacji benzynowych (zalogowany użytkownik)
 
-Zalogowany użytkownik może dodać ocenę i/lub komentarz do wybranej stacji benzynowej. Po kliknięciu na marker stacji pojawia się okno komentarzy gdzie można dodać komentarz i/lub ocenę - tzn. komentarz lub ocena nie mogą być puste. Użytkownik może usunąć komentarz dodany przez siebie. W oknie komentarzy można przeglądać równiez komentarze i oceny innych użytkowników
+Zalogowany użytkownik może dodać ocenę i/lub komentarz do wybranej stacji benzynowej. Po kliknięciu na marker stacji pojawia się okno komentarzy, gdzie można dodać komentarz i/lub ocenę - tzn. komentarz lub ocena nie mogą być puste. Użytkownik może usunąć komentarz dodany przez siebie. W oknie komentarzy można przeglądać równiez komentarze i oceny innych użytkowników.
 
 * zapisywanie danych o swoim samochodzie (model, spalanie) (zalogowany użytkownik)
 
-Zalogowany użytkownik na swoim koncie może dodawać dane o swoich samochodach: markę, model, typ paliwa oraz spalanie. Użytkownik może również usuwać swoje samochody.
+Zalogowany użytkownik na swoim koncie może dodawać dane o swoich samochodach: markę, model, typ paliwa oraz spalanie. Użytkownik może również usuwać dane o swoich samochodach.
 
 ### Techniczna realizacja projektu
 
@@ -50,24 +50,24 @@ Na projekt składają się: strona www (front-end) oraz back-end do przetwarzani
 Back-end zrealizowano według wzorca MVC, ale z nieco odmienną terminologią, przyjętą we frameworku Flask - Model-View-Template:
 
 * model - model to klasa reprezentująca pewien byt w domenie biznesowej. W tym projekcie domeną są stacje benzynowe, a modelami: użytkownik, stacja benzynowa, paliwo z ceną, komentarz z oceną. Jest to główna jednostka informacji w projekcie. Odpowiada modelowi z MVC.
-* view - do widoku trafiają żądania użytkownika. Widok odpowiada za przetwarzanie i odpowiedź na żądania użytkownika. W toku przetwarzania pobiera model i przekazuje pobrany model do szablonu (template), żeby wyrenderować odpowiedź - jeżeli odpowiedź powinna zostać zwrócona jako strona HTML. W tym projekcie zaimplementowano również niewielkie REST API, które zwraca odpowiedź w formacie JSON, w takim przypadku szablon nie jest renderowany. Jest to odpowiednik kontrolera z MVC.
+* view - tutaj trafiają żądania użytkownika. Widok odpowiada za przetwarzanie i odpowiedź na żądania użytkownika. W toku przetwarzania pobiera model i przekazuje pobrany model do szablonu (template), żeby wyrenderować odpowiedź - jeżeli odpowiedź powinna zostać zwrócona jako strona HTML. Niekiedy widoki używają również formularzy - są to klasy służące do opisania formularzy wykorzystwanych na stronie do wprowadzenia danych. Odpowiadają za logikę formularza - m.in. za jego walidację. Formularze przekazane do szablonu renderowane są jako formularze HTML. W tym projekcie zaimplementowano również niewielkie REST API, które zwraca odpowiedź w formacie JSON, w takim przypadku szablon nie jest renderowany. Widok jest odpowiednikiem kontrolera z MVC.
 * template - szablon strony HTML, ta część wzorca jest odpowiedzialna za renderowanie stron WWW z wykorzystaniem szablonów oraz przekazanych przez kontroler danych, i zwrócenie wyrenderowanego szablonu. Jest to odpowiednik widoku z MVC.
 
+Wzorzec MVC został użyty tutaj jako wzorzec architektoniczny, ponieważ definiuję architekturę projektu. Oprócz tego wzorca nie wykorzystano innych wzorców projektowych lub architektonicnych.
 
+### Realizacja wymagań
 
-
-### Narzędzia
-
-* dowolne środowisko developerske (np. vscode, pycharm)
-* repozytorium git na platformie Gitlab
-* komunikator Discord
-
-## Specyfikacja wymagań
+W projekcie postawiono i zrealizowano następujące wymagania:
 
 * strona www wyświetla się poprawnie na dowolnej, nowoczesnej przeglądarce internetowej na komputerze osobistym (dostosowanie wyglądu do obsługi urządzeń przenośnych nie jest przewidziane)
 * strona www zgodna ze standardami HTML/XHTML, CSS konsorcjum W3
 * back-end stworzony w oparciu o wzorzec MVC
-* bezpieczne uwierzytelnianie użytkownika (oparte na tokenie)
 * hasła użytkowników przechowywane w bazie danych w bezpieczny sposób (hash + salt)
 * baza danych zabezpieczona przed atakami SQL Injection
 * zróżnicowanie widoku graficznego markera na mapie w zależności sieci, do której należy dana stacja benzynowa
+
+Jedno postawione wymaganie nie zostało zrealizowane:
+
+* bezpieczne uwierzytelnianie użytkownika (oparte na tokenie)
+
+Zamiast uwierzytelniania opartego na tokenie zaimplementowano podstawowe uwierzytelnianie HTTP: po udanym zalogowaniu użytkownik otrzymuje informacje o ID swojej sesji w formie ciastczeka, i w następnych żądaniach do strony posługuje się ID sesji w celu uwierzytelnienia. Uwierzytelnianie oparte na tokenie jest szczególnie użyteczne w przypadku REST API, które nie obsługuje ciasteczek, a informacje uwierzytelniające muszą być przesyłane w każdym żądaniu, o ile dany endpoint API wymaga uwierzytelnienia. W tym projekcie jest tylko jeden endpoint REST API, który służy do pobierania informacji o stacjach benzynowych, i nie wymagaa uwierzytlenienia. Z tego powodu nie zaimplementowano uwierzytelniania opartego na tokenie.
