@@ -20,18 +20,13 @@ Zrealizowano następujące przypadki użycia:
 
 * przeglądanie stacji benzynowych na mapie
 
-Markery odpowiadające stacjom benzynowym pojawiają się przy odpowiednim zbliżeniu mapy, i aktualizują się w trakcie przesuwania mapy. Po oddaleniu markery znikają.
+Na mapie umieszczane są odpowiednie kursory, odpowiadające stacjmo benzynowym. Kursor jest zróżnicowany, w zależności od stacji, do której należy dana sieć. Kursory umieszczane są po odpowiednim zbliżeniu mapy, oraz są aktualizowane w trakcie przewijania mapy (pod warunkiem odpowiedniego zbliżenia). Po oddaleniu markery są usuwane.
 
 * podgląd cen dla wybranej stacji benzynowej
 
-Można najechać kursorem na marker odpowiadający stacji benzynowej, żeby zobaczyć skrócony opis dla danej stacji: nazwę, ceny paliw oraz średnią ocenę użytkowników.
+Po najechaniu kursorem na marker odpowiadający stacji benzynowej pokazuje się wyskakujący "dymek" (pop-up) ze skróconymi informacjami o danej stacji benzynowej, które zawierają nazwę, ceny paliw oraz średnią ocenę użytkowników.
 
-* wyszukiwanie stacji benzynowych:
-  * według nazwy
-  * według ceny
-  * według paliwa sprzedawanego na stacji
-  * najbliższe w stosunku do danego punktu
-  * sortowanie wyników np. po cenie
+* wyszukiwanie stacji benzynowych
 
 Istnieją dwa sposoby wyszukiwania: prosty i zaawansowany. Prosty sposób pozwala na wyszukanie stacji po nazwie stacji i zwraca jedynie markery na mapie, bez listy wyszukanych stacji. Wyszukiwanie proste obejmuje tylko widoczny obszar + niewielki margines. Jeżeli wyszukiwanie jest aktywne, wtedy oddalanie/ przybliżanie mapy nie wpływa na znaczniki stacji na mapie.
 
@@ -39,23 +34,27 @@ Przy wyszukiwaniu zaawansowanym można wyszukać po nazwie, cenie wybranego pali
 
 * dodawanie ocen i komentarzy do stacji benzynowych (zalogowany użytkownik)
 
-Zalogowany użytkownik może dodać ocenę i/lub komentarz do wybranej stacji benzynowej. Po kliknięciu na marker stacji pojawia się okno komentarzy, gdzie można dodać komentarz i/lub ocenę - jedno z dwóch nie może być puste. Użytkownik może usunąć komentarz dodany przez siebie. W oknie komentarzy można przeglądać również komentarze i oceny innych użytkowników.
+Zalogowany użytkownik może dodać ocenę i/lub komentarz do wybranej stacji benzynowej. Po kliknięciu na marker stacji pojawia się okno komentarzy, gdzie można przeglądać komentarze i oceny innych użytkowników oraz dodać swój komentarz i/lub ocenę (jedno z dwóch nie może być puste). Istnieje też możliwość usunięcia komentarza dodanego przez siebie.
 
 * zapisywanie danych o swoim samochodzie (model, spalanie) (zalogowany użytkownik)
 
-Zalogowany użytkownik na swoim koncie może dodawać dane o swoich samochodach: markę, model, typ paliwa oraz spalanie. Użytkownik może również usuwać dane o swoich samochodach.
+Zalogowany użytkownik może przejść do swojego konta, gdzie zawarte są informacje o nim samym (np. nazwa użytkownika i adres email), oraz dane dodanych przez niego samochodach (marka, model, , typ paliwa, spalanie). Użytkownik może dodać nowe samochody, lub usunąć istniejące.
 
 ### Techniczna realizacja projektu
 
 Na projekt składają się: strona www (front-end) oraz back-end do przetwarzania i odpowiedzi na zapytania ze strony www. Front-end został zrealizowany z wykorzystaniem HTML, CSS i JavaScript, bez żadnych dodatkowych bibliotek, z wyjątkiem biblioteki JavaScript i CSS OpenLayers. Back-end został zrealizowany w Pythonie z użyciem frameworka webowego Flask. Jako bazę danych wykorzystano Sqlite, a do komunikacji z bazą użyto frameworka ORM SqlAlchemy.
 
-Back-end zrealizowano według wzorca MVC, ale z nieco odmienną terminologią, przyjętą we frameworku Flask - Model-View-Template:
+Back-end zrealizowano według wzorca architektonicznego MVC, ale z nieco odmienną terminologią, przyjętą we frameworku Flask - Model-View-Template:
 
 * **model** - model to klasa reprezentująca pewien byt w domenie biznesowej. W tym projekcie domeną są stacje benzynowe, a modelami: użytkownik, stacja benzynowa, paliwo z ceną, komentarz z oceną. Jest to główna jednostka informacji w projekcie. Odpowiada modelowi z MVC.
 * **view** - tutaj trafiają żądania użytkownika. Widok odpowiada za przetwarzanie i odpowiedź na żądania użytkownika. W toku przetwarzania pobiera model i przekazuje pobrany model do szablonu (template), żeby wyrenderować odpowiedź - jeżeli odpowiedź powinna zostać zwrócona jako strona HTML. Niekiedy widoki używają również formularzy - są to klasy służące do opisania formularzy wykorzystwanych na stronie do wprowadzenia danych. Odpowiadają za logikę formularza - m.in. za jego walidację. Formularze przekazane do szablonu renderowane są jako formularze HTML. W tym projekcie zaimplementowano również niewielkie REST API, które zwraca odpowiedź w formacie JSON, w takim przypadku szablon nie jest renderowany. Widok jest odpowiednikiem kontrolera z MVC.
 * **template** - szablon strony HTML, ta część wzorca jest odpowiedzialna za renderowanie stron WWW z wykorzystaniem szablonów oraz przekazanych przez kontroler danych, i zwrócenie wyrenderowanego szablonu. Jest to odpowiednik widoku z MVC.
 
-Wzorzec MVC został użyty tutaj jako wzorzec architektoniczny, ponieważ definiuję architekturę projektu. Oprócz tego wzorca nie wykorzystano innych wzorców projektowych lub architektonicnych.
+Oprócz MVC nie wykorzystano innych wzorców projektowych lub architektonicnych.
+
+Tam, gdzie było to możliwe zastosowano klasyczne rozwiązanie renderowania szablonu po stronie serwera i przesyłania gotowej strony do klienta. Takie rozwiązanie jednak ma jedną dużą wadę - cała strona ulega odświeżeniu. Z tego powodu zastosowano to tylko tam, gdzie można było na to pozwolić - na podstronie rejestracji, logowania czy na podstronie konta użytklownika. Na głównej stronie, która zawiera mapę i markery, odświeżenie strony spowoduje odświeżenie również mapy i usunięcie wszystkich markerów. Dlatego na głównej stronie koniecznym było odświeżenie wybranych elementów strony, ale bez odświeżania całej strony. Zrobiono to w ten sposób, że zapytania pod niektóre adresy zwracają jedynie tę część HTMLa, która ma np. zostać umieszczona w wybranym divie. Dla takich elementów kod po stronie Javascript wysyła odpowiednie żądanie do serwera, a zwróconą odpowiedź umieszcza w odpowiednim divie - w ten sposób div został odświeżony bez odświeżenia całej strony. Takie rozwiązanie zastosowano dla wyskakujących dymków (pop-up), okna komentarzy, okna wyszukiwania zaawansowanego i okna wyników wyszukiwania zaawansowanego.
+
+
 
 ### Użyte rozwiązania geoprzestrzenne
 
