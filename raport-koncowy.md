@@ -5,10 +5,6 @@
 ## Skład osobowy
 
 **Maciej Pacześny 187229**
-**Grzegorz Gojska 174173* **
-**Jakub Konkel 187207* **
-
-* Jakub i Grzegorz byli odpowiedzialni za implementację algorytmu wyszukwiania "najtańszej" drogi.
 
 ## Wstęp
 
@@ -20,11 +16,11 @@ Zrealizowano następujące przypadki użycia:
 
 * przeglądanie stacji benzynowych na mapie
 
-Na mapie umieszczane są odpowiednie kursory, odpowiadające stacjmo benzynowym. Kursor jest zróżnicowany, w zależności od stacji, do której należy dana sieć. Kursory umieszczane są po odpowiednim zbliżeniu mapy, oraz są aktualizowane w trakcie przewijania mapy (pod warunkiem odpowiedniego zbliżenia). Po oddaleniu markery są usuwane.
+Na mapie umieszczane są odpowiednie kursory, odpowiadające stacjom benzynowym. Kursor jest zróżnicowany, w zależności od stacji, do której należy dana sieć. Kursory umieszczane są po odpowiednim zbliżeniu mapy, oraz są aktualizowane w trakcie przewijania mapy (pod warunkiem odpowiedniego zbliżenia). Po oddaleniu markery są usuwane.
 
 * podgląd cen dla wybranej stacji benzynowej
 
-Po najechaniu kursorem na marker odpowiadający stacji benzynowej pokazuje się wyskakujący "dymek" (pop-up) ze skróconymi informacjami o danej stacji benzynowej, które zawierają nazwę, ceny paliw oraz średnią ocenę użytkowników.
+Po najechaniu kursorem na marker odpowiadający stacji benzynowej pokazuje się wyskakujący "dymek" (pop-up), ze skróconymi informacjami o danej stacji benzynowej, które zawierają nazwę, ceny paliw oraz średnią ocenę użytkowników.
 
 * wyszukiwanie stacji benzynowych
 
@@ -38,13 +34,13 @@ Zalogowany użytkownik może dodać ocenę i/lub komentarz do wybranej stacji be
 
 * zapisywanie danych o swoim samochodzie (model, spalanie) (zalogowany użytkownik)
 
-Zalogowany użytkownik może przejść do swojego konta, gdzie zawarte są informacje o nim samym (np. nazwa użytkownika i adres email), oraz dane dodanych przez niego samochodach (marka, model, , typ paliwa, spalanie). Użytkownik może dodać nowe samochody, lub usunąć istniejące.
+Zalogowany użytkownik może przejść do swojego konta, gdzie zawarte są informacje o jego koncie (np. nazwa użytkownika i adres email), oraz dane dodanych przez niego samochodów (marka, model, typ paliwa, spalanie). Użytkownik może dodać nowe samochody, lub usunąć istniejące.
 
 ### Techniczna realizacja projektu
 
 Na projekt składają się: strona www (front-end) oraz back-end do przetwarzania i odpowiedzi na zapytania ze strony www. Front-end został zrealizowany z wykorzystaniem HTML, CSS i JavaScript, bez żadnych dodatkowych bibliotek, z wyjątkiem biblioteki JavaScript i CSS OpenLayers. Back-end został zrealizowany w Pythonie z użyciem frameworka webowego Flask. Jako bazę danych wykorzystano Sqlite, a do komunikacji z bazą użyto frameworka ORM SqlAlchemy.
 
-Back-end zrealizowano według wzorca architektonicznego MVC, ale z nieco odmienną terminologią, przyjętą we frameworku Flask - Model-View-Template:
+Back-end zrealizowano według wzorca architektonicznego Model-View-Controller, ale z nieco odmienną terminologią, przyjętą we frameworku Flask - Model-View-Template:
 
 * **model** - model to klasa reprezentująca pewien byt w domenie biznesowej. W tym projekcie domeną są stacje benzynowe, a modelami: użytkownik, stacja benzynowa, paliwo z ceną, komentarz z oceną. Jest to główna jednostka informacji w projekcie. Odpowiada modelowi z MVC.
 * **view** - tutaj trafiają żądania użytkownika. Widok odpowiada za przetwarzanie i odpowiedź na żądania użytkownika. W toku przetwarzania pobiera model i przekazuje pobrany model do szablonu (template), żeby wyrenderować odpowiedź - jeżeli odpowiedź powinna zostać zwrócona jako strona HTML. Niekiedy widoki używają również formularzy - są to klasy służące do opisania formularzy wykorzystwanych na stronie do wprowadzenia danych. Odpowiadają za logikę formularza - m.in. za jego walidację. Formularze przekazane do szablonu renderowane są jako formularze HTML. W tym projekcie zaimplementowano również niewielkie REST API, które zwraca odpowiedź w formacie JSON, w takim przypadku szablon nie jest renderowany. Widok jest odpowiednikiem kontrolera z MVC.
@@ -52,9 +48,9 @@ Back-end zrealizowano według wzorca architektonicznego MVC, ale z nieco odmienn
 
 Oprócz MVC nie wykorzystano innych wzorców projektowych lub architektonicnych.
 
-Tam, gdzie było to możliwe zastosowano klasyczne rozwiązanie renderowania szablonu po stronie serwera i przesyłania gotowej strony do klienta. Takie rozwiązanie jednak ma jedną dużą wadę - cała strona ulega odświeżeniu. Z tego powodu zastosowano to tylko tam, gdzie można było na to pozwolić - na podstronie rejestracji, logowania czy na podstronie konta użytklownika. Na głównej stronie, która zawiera mapę i markery, odświeżenie strony spowoduje odświeżenie również mapy i usunięcie wszystkich markerów. Dlatego na głównej stronie koniecznym było odświeżenie wybranych elementów strony, ale bez odświeżania całej strony. Zrobiono to w ten sposób, że zapytania pod niektóre adresy zwracają jedynie tę część HTMLa, która ma np. zostać umieszczona w wybranym divie. Dla takich elementów kod po stronie Javascript wysyła odpowiednie żądanie do serwera, a zwróconą odpowiedź umieszcza w odpowiednim divie - w ten sposób div został odświeżony bez odświeżenia całej strony. Takie rozwiązanie zastosowano dla wyskakujących dymków (pop-up), okna komentarzy, okna wyszukiwania zaawansowanego i okna wyników wyszukiwania zaawansowanego. 
+Tam, gdzie było to możliwe zastosowano klasyczne rozwiązanie renderowania szablonu po stronie serwera i przesyłania gotowej strony do klienta. Takie rozwiązanie jednak ma jedną dużą wadę - cała strona ulega odświeżeniu. Z tego powodu zastosowano to tylko tam, gdzie można było na to pozwolić - na podstronie rejestracji, logowania czy na podstronie konta użytklownika. Na głównej stronie, która zawiera mapę i markery, odświeżenie strony spowoduje odświeżenie całej mapy i usunięcie wszystkich markerów. Dlatego na głównej stronie koniecznym było odświeżenie wybranych elementów strony, ale bez odświeżania całej strony. Zrobiono to w ten sposób, że zapytania pod niektóre adresy zwracają jedynie część HTMLa, która ma zostać umieszczona w wybranym divie. Dla takich elementów kod po stronie Javascript wysyła odpowiednie żądanie do serwera, a zwróconą odpowiedź umieszcza w odpowiednim divie - w ten sposób div zostanie odświeżony bez odświeżenia całej strony. Takie rozwiązanie zastosowano dla wyskakujących dymków (pop-up), okna komentarzy, okna wyszukiwania zaawansowanego i okna wyników wyszukiwania zaawansowanego.
 
-Największym problemem okazało się dodawanie komentarzy tak, żeby strone nie uległa odświeżeniu a jednocześnie użytkownik zobaczył komentarz dodany przez siebie. Zrobiono to w ten sposób, że formularz wysyła komentarz na serwer, a odpowiedź (którą sa komentarze, łącznie z nowo dodanym nowym komentarzem) umieszcza w znaczniku iframe, który jest ukryty. Funkcja po stronie Javascript pobiera kod z iframe i wstawia do diva, w którym są komentarze.
+Największym problemem okazało się dodawanie komentarzy tak, żeby strona nie uległa odświeżeniu, a jednocześnie użytkownik zobaczył komentarz dodany przez siebie. Rozwiązano to tak, że formularz wysyła komentarz na serwer, a odpowiedź (komentarze, łącznie z nowym komentarzem) umieszcza w znaczniku iframe, który jest ukryty. Funkcja po stronie Javascript pobiera kod z iframe i wstawia do diva, w którym są komentarze.
 
 ### Użyte rozwiązania geoprzestrzenne
 
@@ -63,9 +59,9 @@ Poniżej opisano użyte rozwiązania geoprzestrzenne oraz funkcje biblioteki Ope
 * wyznaczanie punktu na mapie ze współrzędnych geograficznych - do tego celu wykorzystano funkcję fromLonLat, która jako argumenty przyjmuje długość i szerokość geograficzną.
 * umieszczanie markerów na mapie - ze współrzednych geograficznych stacji benzynowej obliczono punkt na mapie, w którym należy umieścić marker. Następnie w tym miejscu umieszczano cechę (Feature), która zawiera punkt (Point); cecha zawiera ikonę odpowiednią dla stacji danej sieci
 * wyznaczanie środka mapy - w celu wyznaczenia środka mapy wywołano funkcję getCenter dla aktualnego widoku (View) mapy, a następnie uzyskaną wartość zamieniono na współrzędne geograficzne za pomocą funkcji toLonLat.
-* wyznaczanie promienia mapy - w celu wyznaczenia, które stacje benzynowe znajdują się w okręgu o promieniu N metrów od środka mapy, potrzebne jest wyznaczenie promienia. Żeby to zrobić, posłużono się funkcją calculateExtent, która oblicza zasięg (Extent) dla aktualnego widoku mapy. TODO: Zasięg to ... . Mając zasięg, można wybrać dwa punkty na mapie do obliczenia odległości pomiędzy nimi, np. punkt w lewym, dolnym rogu i punkt w prawym, dolnym rogu, żeby wyznaczyć szerokość aktualnego widoku mapy. Szerokość obliczana jest za pomocą funkcji getDistance, następnie dzielona na dwa i zaokrąglana do najbliższej liczby całkowitej w dół. Tak obliczona wartość jest przyjmowana jako promień.
+* wyznaczanie promienia mapy - w celu wyznaczenia, które stacje benzynowe znajdują się w okręgu o promieniu N metrów od środka mapy, potrzebne jest wyznaczenie promienia. Żeby to zrobić, posłużono się funkcją calculateExtent, która oblicza zasięg (Extent) dla aktualnego widoku mapy. W OpenLayers klasa Extent reprezentuje prostokątny obszar mapy, określony przez jego współrzędne lewego górnego i prawego dolnego rogu. Jest to zazwyczaj używane do określenia widocznego obszaru mapy lub obszaru granicznego dla cechy lub warstwy. Mając zasięg, można wybrać dwa punkty na mapie do obliczenia odległości pomiędzy nimi (np. punkt w lewym, dolnym rogu i punkt w prawym, dolnym rogu), żeby wyznaczyć szerokość aktualnego widoku mapy. Szerokość obliczana jest za pomocą funkcji getDistance, następnie dzielona na dwa i zaokrąglana do najbliższej liczby całkowitej w dół. Tak obliczona wartość jest przyjmowana jako promień.
 
-Oprócz biblioteki OpenLayers, implementacje rozwiązań geoprzestrzennych znalazły swoje zastosowanie również w aplikacji, gdzie zaszła potrzeba obliczenia odległości pomiędzy dwoma punktami współrzędnych przy ustalaniu, które stacje benzynowe znajdują się w okręgu o promieniu N metrów od podanego punktu. Okazało się to problemem ze względu na zastosowaną bazę danych - sama baza Sqlite nie zawiera funkcji geoprzestrzennych. Ostatecznie obliczanie odległości zrealizowano w czystym SQL, z użyciem wzoru Harvesine.
+Oprócz biblioteki OpenLayers, implementacje rozwiązań geoprzestrzennych znalazły swoje zastosowanie również po stronie serwera, gdzie zaszła potrzeba obliczenia odległości pomiędzy dwoma punktami współrzędnych przy ustalaniu, które stacje benzynowe znajdują się w okręgu o promieniu N metrów od podanego punktu. Okazało się to problemem ze względu na zastosowaną bazę danych - baza Sqlite nie zawiera funkcji geoprzestrzennych. Ostatecznie obliczanie odległości zrealizowano w czystym SQL, z użyciem wzoru Harvesine.
 
 ### Realizacja wymagań
 
@@ -76,7 +72,7 @@ W projekcie postawiono i zrealizowano następujące wymagania:
 * back-end stworzony w oparciu o wzorzec MVC
 * hasła użytkowników przechowywane w bazie danych w bezpieczny sposób (hash + salt)
 * baza danych zabezpieczona przed atakami SQL Injection
-* zróżnicowanie widoku graficznego markera na mapie w zależności sieci, do której należy dana stacja benzynowa
+* zróżnicowanie widoku graficznego markera na mapie w zależności od sieci, do której należy dana stacja benzynowa
 
 Jedno postawione wymaganie nie zostało zrealizowane:
 
