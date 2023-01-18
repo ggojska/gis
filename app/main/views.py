@@ -31,6 +31,7 @@ def my_account():
                     user=current_user)
         db.session.add(car)
         db.session.commit()
+        return redirect(url_for('main.my_account'))
     return render_template('my_account.html', form=form)
 
 
