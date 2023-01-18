@@ -1,16 +1,22 @@
 <!DOCTYPE html>
-<html>
+<html lang=pl>
 
 <head>
   {% block head %}
+  <meta charset="UTF-8">
   <title>Mapa stacji benzynowych{% block title %}{% endblock %}</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+  <link rel="icon" type="image/x-icon" href="/static/assets/favicon.ico">
   {% endblock %}
 </head>
 
 <body>
   <nav>
-    <div id="start" class="nav"><h1><a href="{{ url_for('main.index') }}" title="Wróć do strony głównej">Mapa stacji benzynowych</a></h1></div>
+    <div id="start" class="nav">
+      <h1>
+        <a href="{{ url_for('main.index') }}" title="Wróć do strony głównej">Mapa stacji benzynowych</a>
+      </h1>
+    </div>
     <div id="center" class="nav">{% if mapa %} {% include '_searchbar.html' %} {% endif %}</div>
     <div id="end" class="nav">
       <ul>
@@ -25,31 +31,38 @@
     </div>
   </nav>
 
+  {% if not mapa %}
   <section class="content">
     <header>
       {% block header %}{% endblock %}
     </header>
-    
+
     {% for message in get_flashed_messages() %}
     <div class="flash">
       {{ message }}
     </div>
     {% endfor %}
-    
-    {% if mapa %}
-    <div id="mapa" style="z-index: 0">
-      <div id="big-popup" class="big-popup" style="display: none"></div>
-      <div id="search-box" class="search-box" style="display: none"></div>
-      <div id="search-results-box" class="search-results-box" style="display: none"></div>
-    </div>
-    <div id="popup" class="ol-popup"></div>
-    {% else %}
-    <div id="content">
-    {% block content %}{% endblock %}
-    </div>
-    {% endif %}
-  </section>
 
+    <div id="content">
+      {% block content %}{% endblock %}
+    </div>
+  </section>
+  {% else %}
+    <div class="content">
+      {% for message in get_flashed_messages() %}
+      <div class="flash">
+      {{ message }}
+      </div>
+      {% endfor %}
+
+      <div id="mapa" style="z-index: 0">
+        <div id="big-popup" class="big-popup" style="display: none"></div>
+        <div id="search-box" class="search-box" style="display: none"></div>
+        <div id="search-results-box" class="search-results-box" style="display: none"></div>
+      </div>
+      <div id="popup" class="ol-popup"></div>
+    </div>
+  {% endif %}
 </body>
 
 </html>

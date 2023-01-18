@@ -2,24 +2,45 @@
 <button type="button" class="close-button" title="Zakończ wyszukiwanie" onclick="endSearch()">X</button>
 
 <div class="search-results">
-  {% if not stations %}
-  <p>Brak wyników</p>
-  {% else %}
-  <label for="sort-dropdown">Sortuj</label>
-    <select id="sort-dropdown" name="gs_fuel" onchange="advancedSearch();">
-      <option value="distance;asc">wg odległości rosnąco</option>
-      <option value="distance;desc">wg odległości malejąco</option>
-      {% if stations[0].fuel %}
-      <option value="price;asc">wg ceny rosnąco</option>
-      <option value="price;desc">wg ceny malejąco</option>
-      {% endif %}
-      <option value="average_rate;asc">wg średniej oceny rosnąco</option>
-      <option value="average_rate;desc">wg średniej oceny malejąco</option>
-    </select>
-  {% endif %}
+  <div class="search-result-item">
+    <strong>Znaleziono {{ count }} stacji</strong>
+  </div>
+  <div class="search-result-item">
+    <span class="rate">strona {{ page }} z {{ page_count }}</span>
+  </div>
+  <div class="search-result-item">
+    <span class="rate">
+      <div class="search-result-item-element">
+        <button class="button-as-link" type="button" {%if not prev %} disabled {% endif %} onclick="advancedSearchPageChange('{{ prev }}');">poprzednia strona</button>
+      </div>
+      <div class="search-result-item-element">
+        <button class="button-as-link" type="button" {%if not next %} disabled {% endif %} onclick="advancedSearchPageChange('{{ next }}');">następna strona</button>
+      </div>
+    </span>
+  </div>
+  <div style="clear:both;"></div>
+  <div class="search-result-item-sort">
+    {% if not stations %}
+    <p>Brak wyników</p>
+    {% else %}
+    <label for="sort-dropdown">sortuj</label>
+      <select id="sort-dropdown" name="gs_fuel" onchange="advancedSearch();">
+        <option value="distance;asc">wg odległości rosnąco</option>
+        <option value="distance;desc">wg odległości malejąco</option>
+        {% if stations[0].fuel %}
+        <option value="price;asc">wg ceny rosnąco</option>
+        <option value="price;desc">wg ceny malejąco</option>
+        {% endif %}
+        <option value="average_rate;asc">wg średniej oceny rosnąco</option>
+        <option value="average_rate;desc">wg średniej oceny malejąco</option>
+      </select>
+    {% endif %}
+  </div>
   {% for station in stations %}
   <div class="search-result-item">
-    <div class="search-result-item-element"><strong><a href="about: blank" class="search-result-link" onclick="centerOnGasStation({{ station.id }});">{{ station.name }}</a></strong></div>
+    <div class="search-result-item-element">
+      <button class="button-as-link" type="button" onclick="centerOnGasStation({{ station.lon }}, {{ station.lat }});">{{ station.name }}</button>
+    </div>
     <div class="search-result-item-element">
       <span class="rate">
         {% if station.average_rate %}
@@ -52,4 +73,4 @@
   </div>
   {% endfor %}
 </div>
-<!-- paginacja -->
+  

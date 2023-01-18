@@ -31,6 +31,7 @@ def my_account():
                     user=current_user)
         db.session.add(car)
         db.session.commit()
+        return redirect(url_for('main.my_account'))
     return render_template('my_account.html', form=form)
 
 
@@ -54,10 +55,17 @@ def delete_car(id):
 def gas_station_search():
     api_request = requests.get(request.url_root + url_for('api.get_gas_stations'), params=request.args)
     response = json.loads(api_request.text)
-    prev, next, count = response.get("prev"), response.get("next"), response.get("count")
+    prev, next = response.get("prev"), response.get("next")
+    count = response.get("count")
+    page = request.args.get("page")
+    if page:
+        page = int(page)
+    else:
+        page = 1
     stations = response.get("gas_stations")
+    page_count = response.get("page_count")
     return render_template('_gas_station_search_result.html', stations=stations,\
-        prev=prev, next=next, count=count)
+        prev=prev, next=next, page=page, count=count, page_count=page_count)
 
 
 @main.route('/gas_stations/<int:id>/popup', methods=['GET'])

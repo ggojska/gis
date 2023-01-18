@@ -60,7 +60,8 @@ class GasStationParams:
             self.per_page = current_app.config['STATIONS_PER_PAGE']
         self.name = request.get("name")
         if self.name:
-            self.name = f"%{self.name.lower()}%"
+            self.name = self.name.lower()
+            self.name_search = f"%{self.name.lower()}%"
         self.fuel = request.get("fuel")
         if self.fuel:
             self.fuel = self.fuel.lower()
@@ -71,6 +72,24 @@ class GasStationParams:
         self.max_rate = request.get("max_rate", type=float)
         self.sort_by = request.get("sort_by")
         self.sort_direction = request.get("sort_direction")
+
+    def to_dict(self):
+        dict = {
+            "page": self.page,
+            "lat": self.lat,
+            "lon": self.lon,
+            "radius": self.radius,
+            "page": self.per_page,
+            "name": self.name,
+            "fuel": self.fuel,
+            "min_price": self.min_price,
+            "max_price": self.max_price,
+            "min_rate": self.min_rate,
+            "max_rate": self.max_rate,
+            "sort_by": self.sort_by,
+            "sort_direction": self.sort_direction
+        }
+        return dict
 
 
 @api.route('/gas_stations/')
@@ -88,6 +107,7 @@ def get_gas_stations():
     offset = params.per_page * (params.page-1)
     records = query_ordered.limit(params.per_page).offset(offset).distinct()
     total = query_ordered.distinct(GasStation.id).count()
+    page_count = ceil(total/params.per_page)
 
     next, prev = None, None
     if params.page > 1:
@@ -127,6 +147,7 @@ def get_gas_stations():
         'gas_stations': stations_list,
         'prev': prev,
         'next': next,
+        'page_count': page_count,
         'count': total
     })
 
@@ -135,9 +156,9 @@ def build_query(params):
     sort_by_column = GasStation.id
 
     if params.name:
-        query = query.filter(func.lower(GasStation.name).like(params.name))
+        query = query.filter(func.lower(GasStation.name).like(params.name_search))
     if params.fuel:
-        query = query.filter(func.lower(Fuel.name).like(params.fuel))
+        query = query.filter(func.lower(Fuel.name).like(params.fuel_search))
 
     if (params.min_price or params.max_price):
         if params. min_price and not params.max_price:

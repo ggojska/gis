@@ -16,8 +16,8 @@
   </div>
   {% if current_user.is_authenticated %}
   <div class="info-row">
-    <button class="car-button" id="show-comment-down" type="button" onclick="showAddComment()"  style="display: none">Dodaj nowy komentarz &#11205;</button>
-    <button class="car-button" id="show-comment-up" type="button" onclick="showAddComment()">Dodaj nowy komentarz &#11206;</button>
+    <button class="button-as-link" id="show-comment-down" type="button" onclick="showAddComment()"  style="display: none">Dodaj nowy komentarz &#11205;</button>
+    <button class="button-as-link" id="show-comment-up" type="button" onclick="showAddComment()">Dodaj nowy komentarz &#11206;</button>
     <form class="comment-form" id="comment-form" action="{{ url_for('main.add_comment', id=station.id) }}" method="POST" target="blank-iframe" style="display: none">
     {{ form.csrf_token }}
     {{ render_field(form.rate) }}

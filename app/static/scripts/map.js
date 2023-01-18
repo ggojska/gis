@@ -6,7 +6,8 @@ var searchActive = false;
 var sortBy;
 var markerSource;
 const ZOOM_THRESHOLD = 12;
-const SEND_REQ_DELAY = 2300;
+const CENTER_ZOOM = 12;
+const SEND_REQ_DELAY = 1750;
 const api_url = "/api/v1";
 
 function init() {
@@ -62,7 +63,7 @@ function init() {
     });
 };
 
-function pushToRequestQueue(options = {}) {
+function pushToRequestQueue(options = {}, radiusMultiplier = 1) {
     const center = view.getCenter();
     const coordsTransform = ol.proj.toLonLat(center);
     const lon = coordsTransform[0];
@@ -76,7 +77,7 @@ function pushToRequestQueue(options = {}) {
     if (typeof options === 'undefined') options = {}
     options.lat = lat;
     options.lon = lon;
-    options.radius = radius;
+    options.radius = radius * radiusMultiplier;
     queue.push(options);
 }
 
@@ -88,7 +89,7 @@ function getNewMarkers() {
     };
 }
 
-function prepareRequest(options, request_url) {
+function prepareRequest(options, request_url, async=true) {
     var request;
     request = new XMLHttpRequest();
     request_url = request_url + "?";
@@ -102,7 +103,7 @@ function prepareRequest(options, request_url) {
             }
         }
     }
-    request.open('GET', request_url);
+    request.open('GET', request_url, async);
     return request;
 }
 
@@ -122,18 +123,6 @@ function sendRequestAndSetNewMarkers(request) {
 function canSearch() {
     const name = document.getElementsByName("gas_station_name")[0].value;
     return (name.length > 0);
-}
-
-function canSearchAdv() {
-    // Czy to potrzebne???
-    const name = document.getElementsByName("gs_name")[0].value;
-    const min_price = document.getElementsByName("gs_price_min")[0].value;
-    const max_price = document.getElementsByName("gs_price_max")[0].value;
-    const fuel = document.getElementsByName("gs_fuel")[0].value;
-    const min_rate = document.getElementsByName("gs_rate_min")[0].value;
-    const max_rate = document.getElementsByName("gs_rate_max")[0].value;
-    return ((fuel.length > 0) || (name.length > 0) || (min_price.length > 0) || (max_price.length > 0)
-        || (min_rate.length > 0) || (max_rate.length > 0));
 }
 
 function searchStringChanged() {
@@ -192,22 +181,40 @@ function advancedSearch() {
         options.sort_direction = temp[1];
     }
 
-    pushToRequestQueue(options);
+    pushToRequestQueue(options, 15);
     getNewMarkers();
 
-    var request = prepareRequest(options, "/gas_stations");
+    var request = prepareRequest(options, "/gas_stations", false);
     request.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
             document.getElementById("search-results-box").style.display = "";
             document.getElementById("search-results-box").innerHTML = this.responseText;
-            if (sortBy.length>0)
-            {
-                document.getElementById("sort-dropdown").value = sortBy;
-            }
+            if (sortBy.length > 0) document.getElementById("sort-dropdown").value = sortBy;
         }
     };
     request.send();
     searchActive = true;
+}
+
+function advancedSearchPageChange(request_url) {
+    var request = new XMLHttpRequest();
+    request.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) setNewMarkers(request);
+    };
+    request.open('GET', request_url);
+    request.send();
+
+    var request_url2 = request_url.replace(api_url, "");
+    var request2 = new XMLHttpRequest();
+    request2.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            document.getElementById("search-results-box").style.display = "";
+            document.getElementById("search-results-box").innerHTML = this.responseText;
+            if (sortBy.length > 0) document.getElementById("sort-dropdown").value = sortBy;
+        }
+    };
+    request2.open('GET', request_url2, false);
+    request2.send();
 }
 
 function showHideAdvancedSearchBox() {
@@ -366,10 +373,16 @@ function deleteComment(gasStationId, commentId) {
     request.send();
 }
 
+function centerOnGasStation(lon, lat) {
+    map.getView().setCenter(ol.proj.transform([lon, lat], 'EPSG:4326', 'EPSG:3857'));
+    map.getView().setZoom(CENTER_ZOOM);
+}
+
 function refreshGasStationInfo() {
     if (document.getElementById("iframe").contentDocument.body.innerHTML.length > 0) {
         document.getElementById("big-popup").innerHTML = document.getElementById("iframe").contentDocument.body.innerHTML;
         document.getElementById("iframe").contentDocument.body.innerHTML = "";
-        document.getElementById("comment-form").reset();
+        document.getElementById("rate").value = "";
+        document.getElementById("comment").value = "";
     }
 }
