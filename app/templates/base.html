@@ -23,6 +23,58 @@
         {% endif %}
       </ul>
     </div>
+    <script>
+      var map;
+      var marker1, marker2, marker3, marker4;
+      document.addEventListener('cercalia-ready', function() {
+        map = new cercalia.Map({
+          target: 'map'
+        });
+
+        marker1 = new cercalia.Marker({
+          position: new cercalia.LonLat(2.343282368, 48.863520470)
+        });
+
+        marker2 = new cercalia.Marker({
+          position: new cercalia.LonLat(2.096506176, 48.903060528)
+        });
+
+        marker3 = new cercalia.Marker({
+          position: new cercalia.LonLat(2.491881682, 49.280591541)
+        });
+
+        marker4 = new cercalia.Marker({
+          position: new cercalia.LonLat(3.086072327, 49.243881734)
+        });
+
+        map.addMarkers([marker1, marker2, marker3, marker4]);
+
+
+        var routingService = new cercalia.service.Routing({
+          origin: marker1.getPosition(),
+          steps: [
+            marker2.getPosition(),
+            marker3.getPosition()
+          ],
+          destination: marker4.getPosition()
+        });
+
+        routingService.calculateRoute(function(data) {
+          var stages = data.cercalia.route.stages.stage;
+          var features = [];
+          for (var i = 0; i < stages.length; i++) {
+            var wktStage = stages[i].wkt.value;
+            var feature = new cercalia.Feature({
+              wkt: wktStage
+            });
+            features.push(feature);
+          }
+          map.addFeatures(features);
+          map.centerToFeatures(features);
+        });
+
+      });
+    </script>
   </nav>
 
   <section class="content">

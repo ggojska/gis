@@ -7,6 +7,23 @@ var markerSource;
 const ZOOM_THRESHOLD = 12;
 const SEND_REQ_DELAY = 2300;
 const api_url = "/api/v1";
+const basemapId = "ArcGIS:Navigation";
+const apiKey = "AAPK456a42556512432bb3e96e0666ce3280EPnsoKrYftXZyA9Sx3Sr-htoFcbRlAbkZgt0oEfJHA34FlD4dpmazYT_apSD0CC5";
+var authentication;
+var basemapURL;
+
+var point = 0;
+var point2 = 0;
+var pointToSave = 1;
+var showRoute = false;
+
+let currentStep = "start";
+let startCoords, endCoords;
+
+const geojson = new ol.format.GeoJSON({
+    defaultDataProjection: "EPSG:4326",
+    featureProjection: "EPSG:3857"
+  });
 
 function init() {
 
@@ -19,11 +36,16 @@ function init() {
         })
     });
 
-    var osm = new ol.layer.Tile({
-        source: new ol.source.OSM()
-    });
+    authentication = arcgisRest.ApiKeyManager.fromKey(apiKey);
+    basemapURL = "https://basemaps-api.arcgis.com/arcgis/rest/services/styles/" + basemapId + "?type=style&token=" + apiKey;
 
-    map.getLayers().insertAt(0, osm);
+    olms(map, basemapURL)
+    .then(function (map) {
+        addCircleLayers();
+        addRouteLayer();
+        addMarkersLayer();
+      });
+
 
     var popupBody = document.getElementById('popup');
     popup = new ol.Overlay({
@@ -46,8 +68,52 @@ function init() {
     });
 
     map.on("click", function (evt) {
-        if (isBigPopupDisplayed()) {
+        if (isBigPopupDisplayed()) 
+        {
             document.getElementById("big-popup").style.display = "none";
+        }
+        else
+        {
+            const coordinates = ol.proj.transform(evt.coordinate, "EPSG:3857", "EPSG:4326");
+            const point = {
+                type: "Point",
+                coordinates
+            };
+
+            if (currentStep === "start") 
+            {
+                startLayer.setSource(
+                    new ol.source.Vector({
+                    features: geojson.readFeatures(point)
+                    })
+                );
+                startCoords = coordinates;
+                if (endCoords) {
+                    endCoords = null;
+                    endLayer.getSource().clear();
+        
+                  }
+
+                currentStep = "end";
+            } 
+
+            else 
+            {
+                endLayer.setSource(
+                    new ol.source.Vector({
+                    features: geojson.readFeatures(point)
+                    })
+                );
+                endCoords = coordinates;
+                currentStep = "start";
+                updateRoute(startCoords, endCoords);
+            }
+
+            if(showRoute)
+            {
+                setRouteMarkers();
+                updateRoute();
+            }
         }
     });
 
@@ -210,7 +276,6 @@ function showHideAdvancedSearchBox() {
 
 function setNewMarkers(request) {
     json = JSON.parse(request.response);
-
     clearMarkers();
     markers = [];
     json.gas_stations.forEach(element => {
@@ -284,7 +349,7 @@ function displayGasStationPopup(evt) {
             // pass
         };
     }
-};
+}
 
 function displayGasStationInfo(gasStationId) {
     if (!isBigPopupDisplayed()) {
@@ -338,4 +403,133 @@ function refreshGasStationInfo() {
     if (document.getElementById("iframe").innerHTML.length > 0) {
         document.getElementById("big-popup").innerHTML = document.getElementById("iframe").innerHTML;
     }
+}
+
+function findRoute() {
+    showRoute == false ? showRoute = true : showRoute = false
+}
+
+function updateRoute() {
+
+    const authentication = arcgisRest.ApiKeyManager.fromKey(apiKey);
+
+    arcgisRest
+
+      .solveRoute({
+        stops: [startCoords, endCoords],
+        authentication
+      })
+
+      .then((response) => {
+
+        routeLayer.setSource(
+          new ol.source.Vector({
+            features: geojson.readFeatures(response.routes.geoJson)
+          })
+        );
+
+      })
+
+      .catch((error) => {
+        alert("There was a problem using the geocoder. See the console for details.");
+        console.error(error);
+      });
+
+  }
+
+function setRouteMarkers() 
+{
+    markers = [];
+
+    var point1 = new ol.Feature({
+        geometry: new ol.geom.Point(ol.proj.fromLonLat([point.x, point.y])),
+        id: 1
+    });
+
+    var point2 = new ol.Feature({
+        geometry: new ol.geom.Point(ol.proj.fromLonLat([point2.x, point2.y])),
+        id: 2
+    });
+
+    markers.push(point1);
+    markers.push(point2);
+
+    if (typeof markerSource === 'undefined') markerSource = new ol.source.Vector();
+    markerSource.addFeatures(markers);
+
+    var markerLayer = new ol.layer.Vector({
+        source: markerSource,
+    });
+    map.addLayer(markerLayer);
+}
+
+function addRouteLayer() 
+{
+    routeLayer = new ol.layer.Vector({
+      style: new ol.style.Style({
+        stroke: new ol.style.Stroke({ color: "hsl(205, 100%, 50%)", width: 4, opacity: 0.6 })
+      })
+    });
+
+    map.addLayer(routeLayer);
+  }
+
+function addMarkersLayer()
+{
+    json = JSON.parse(request.response);
+    clearMarkers();
+    markers = [];
+    json.gas_stations.forEach(element => {
+        var point = new ol.Feature({
+            geometry: new ol.geom.Point(ol.proj.fromLonLat([element.lon, element.lat])),
+            id: element.id
+        });
+
+        point.setStyle(
+            new ol.style.Style({
+                image: new ol.style.Icon({
+                    src: element.icon,
+                    scale: 1
+                })
+            })
+        );
+
+        markers.push(point);
+    });
+
+    if (typeof markerSource === 'undefined') markerSource = new ol.source.Vector();
+    markerSource.addFeatures(markers);
+
+    var markerLayer = new ol.layer.Vector({
+        source: markerSource,
+    });
+    map.addLayer(markerLayer);
+}
+
+let startLayer, endLayer, routeLayer, markerLayer;
+function addCircleLayers() 
+{
+
+    startLayer = new ol.layer.Vector({
+      style: new ol.style.Style({
+        image: new ol.style.Circle({
+          radius: 6,
+          fill: new ol.style.Fill({ color: "white" }),
+          stroke: new ol.style.Stroke({ color: "black", width: 2 })
+        })
+      })
+    });
+    map.addLayer(startLayer);
+
+    endLayer = new ol.layer.Vector({
+      style: new ol.style.Style({
+        image: new ol.style.Circle({
+          radius: 7,
+          fill: new ol.style.Fill({ color: "black" }),
+          stroke: new ol.style.Stroke({ color: "white", width: 2 })
+        })
+      })
+    });
+
+    map.addLayer(endLayer);
 }
