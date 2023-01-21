@@ -43,7 +43,7 @@ function init() {
     .then(function (map) {
         addCircleLayers();
         addRouteLayer();
-        addMarkersLayer();
+        //addMarkersLayer();
       });
 
 
@@ -419,21 +419,27 @@ function updateRoute() {
         stops: [startCoords, endCoords],
         authentication
       })
-
       .then((response) => {
+          console.log(response.directions[0].summary.totalLength);
+          
+          routeLayer.setSource(
+              new ol.source.Vector({
+                  features: geojson.readFeatures(response.routes.geoJson)
+                })
+                );
+                
+            })
+            
+            .catch((error) => {
+                alert("There was a problem using the geocoder. See the console for details.");
+                console.error(error);
+            });
 
-        routeLayer.setSource(
-          new ol.source.Vector({
-            features: geojson.readFeatures(response.routes.geoJson)
-          })
-        );
 
-      })
-
-      .catch((error) => {
-        alert("There was a problem using the geocoder. See the console for details.");
-        console.error(error);
-      });
+            
+    const directionsHTML = response.directions[0].features.map((f) => f.attributes.text).join("<br/>");
+    document.getElementById("directions").innerHTML = directionsHTML;
+    document.getElementById("directions").style.display = "block";
 
   }
 
