@@ -458,6 +458,30 @@ li {
     border-radius: 5%;
 }
 
+#favDialog {
+    position: absolute;
+    display: none;
+    top: 50%; 
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#routeInfo {
+    position: absolute;
+    display: none;
+    bottom: 0;
+    left: 0;
+    width: 10vw;
+    height: 8vh;
+    padding: 1vh;
+    margin: 1vh;
+    background-color: white;
+    border: 1px black solid;
+    border-radius: 10%;
+}
+#routeInfoContent {
+    text-align: center;
+}
 #directions {
     position: absolute;
     width: 30%;
