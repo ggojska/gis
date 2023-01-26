@@ -82,6 +82,9 @@ function init() {
 
             if (currentStep === "start") 
             {
+                document.getElementById('routeInfo').style.display = 'none';
+                document.getElementById('routeInfoContent').innerHTML = '';
+
                 startLayer.setSource(
                     new ol.source.Vector({
                     features: geojson.readFeatures(point)
@@ -411,37 +414,37 @@ function findRoute() {
 
 function updateRoute() {
 
-    const authentication = arcgisRest.ApiKeyManager.fromKey(apiKey);
+const authentication = arcgisRest.ApiKeyManager.fromKey(apiKey);
 
-    arcgisRest
+arcgisRest
 
-      .solveRoute({
-        stops: [startCoords, endCoords],
-        authentication
-      })
-      .then((response) => {
-          console.log(response.directions[0].summary.totalLength);
-          
-          routeLayer.setSource(
-              new ol.source.Vector({
-                  features: geojson.readFeatures(response.routes.geoJson)
-                })
-                );
-                
+    .solveRoute({
+    stops: [startCoords, endCoords],
+    authentication
+    })
+    .then((response) => {
+        console.log(response.directions[0].summary.totalLength);
+        chooseCarAndCalculatecostOfFuel(response.directions[0].summary.totalLength);       
+
+        routeLayer.setSource(
+            new ol.source.Vector({
+                features: geojson.readFeatures(response.routes.geoJson)
             })
+            );
             
-            .catch((error) => {
-                alert("There was a problem using the geocoder. See the console for details.");
-                console.error(error);
-            });
+        })
+        
+        .catch((error) => {
+            alert("There was a problem using the geocoder. See the console for details.");
+            console.error(error);
+        });
 
 
-            
-    const directionsHTML = response.directions[0].features.map((f) => f.attributes.text).join("<br/>");
-    document.getElementById("directions").innerHTML = directionsHTML;
-    document.getElementById("directions").style.display = "block";
-
-  }
+        
+const directionsHTML = response.directions[0].features.map((f) => f.attributes.text).join("<br/>");
+document.getElementById("directions").innerHTML = directionsHTML;
+document.getElementById("directions").style.display = "block";
+}
 
 function setRouteMarkers() 
 {
@@ -539,3 +542,38 @@ function addCircleLayers()
 
     map.addLayer(endLayer);
 }
+
+function chooseCarAndCalculatecostOfFuel(routeLen) {
+    const favDialog = document.getElementById('favDialog');
+    const confirmBtn = favDialog.querySelector('#confirmBtn');
+    const selectEl = favDialog.querySelector('select');
+
+    
+    let routeLenInMiles = parseFloat(routeLen);
+    let routeLenInKm = routeLenInMiles * 1.609344;
+    let routeCombustion = 0;
+    let carCombustion;
+    
+    favDialog.style.display = 'block';
+
+    confirmBtn.addEventListener('click', () => {
+        favDialog.style.display = 'none';
+        
+
+        carCombustion = parseFloat(selectEl.value);
+        routeCombustion = routeLenInKm * carCombustion/100;
+        console.log("Route combustion " + routeCombustion);
+
+        setPopoutWithRouteLenAndRouteCombustion(routeCombustion.toFixed(2), routeLenInKm.toFixed(2));
+    });
+}
+
+function setPopoutWithRouteLenAndRouteCombustion(routeCombustion, routeLen) {
+    const infoBox = document.getElementById('routeInfo');
+    const infoContent = document.getElementById('routeInfoContent');
+
+    infoContent.innerHTML = 'Długość trasy wynosi:<br>' + routeLen + ' km<br> Zużycie paliwa wyniesie:<br>' + routeCombustion + 'l';
+
+    infoBox.style.display = 'block';
+    
+};

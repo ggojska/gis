@@ -97,6 +97,28 @@
         <div id="search-box" class="search-box" style="display: none"></div>
       </div>
       <div id="popup" class="ol-popup"></div>
+      <dialog id="favDialog">
+        <form method="dialog">
+          <p>
+            <label>Wybierz auto:
+              <select>
+                {% for car in current_user.cars %}
+
+                    <option value="{{ car.combustion }}">{{ car.make }} {{ car.model }}</span>                    
+                {% endfor %}
+                
+              </select>
+            </label>
+          </p>
+          <div>
+            <button id="confirmBtn">Confirm</button>
+          </div>
+        </form>
+      </dialog>
+
+      <div id="routeInfo">
+        <div id="routeInfoContent"></div>
+      </div>
     {% else %}
       <div id="content">
         {% block content %}{% endblock %}
